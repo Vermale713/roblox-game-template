@@ -6,7 +6,7 @@ option TypesOutput  = "./shared/types/NetworkTypes.luau"
 option Casing = Camel
 
 -- Point to your Promise library so Blink can generate promise-based function yields
-option PromiseLibrary = "ReplicatedStorage.Packages.Promise"
+option PromiseLibrary = "ReplicatedStorage.packages.Promise"
 
 -- Enable during development to catch type errors on fire; disable in production
 option WriteValidations = false

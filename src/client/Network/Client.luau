@@ -16,7 +16,7 @@ _G._BLINK["BLINK"] = true
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local Promise = require(ReplicatedStorage.Packages.Promise)
+local Promise = require(ReplicatedStorage.packages.Promise)
 local SerdesFunctions = {}
 local BASE_EVENT_NAME = "BLINK"
 local Invocations = 0

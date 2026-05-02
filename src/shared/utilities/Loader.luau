@@ -28,8 +28,8 @@ type Singleton = {
 }
 
 -- PRIVATE STATE
-local singletons: { [string]: Config<unknown> } = {}
-local sortedSingletons: {}
+local _singletons: { [string]: Config<unknown> } = {}
+local _sortedSingletons: {}
 
 -- PRIVATE FUNCTIONS
 local function sort<T>(registry: { [string]: Config<T> }): {}
@@ -88,7 +88,7 @@ end
 local Loader = {}
 
 function Loader.register<T>(name: string, config: Config<T>): ()
-	singletons[name] = config
+	_singletons[name] = config
 end
 
 function Loader.loadDirectory(dir: Instance, descendants: boolean?): Promise.TypedPromise<()>
@@ -110,10 +110,10 @@ end
 
 function Loader.start(): Promise.TypedPromise<()>
 	return Promise.new(function(resolve)
-		sortedSingletons = sort(singletons)
+		_sortedSingletons = sort(_singletons)
 
 		-- Initialize modules
-		for _, module: Singleton in sortedSingletons :: { Singleton } do
+		for _, module: Singleton in _sortedSingletons :: { Singleton } do
 			local method: () -> () = module[SINGLETON_LIFECYCLES.OnInit]
 			if method then
 				method()
@@ -121,7 +121,7 @@ function Loader.start(): Promise.TypedPromise<()>
 		end
 
 		-- Start modules
-		for _, module: Singleton in sortedSingletons :: { Singleton } do
+		for _, module: Singleton in _sortedSingletons :: { Singleton } do
 			local method: () -> () = module[SINGLETON_LIFECYCLES.OnStart]
 			if method then
 				method()
