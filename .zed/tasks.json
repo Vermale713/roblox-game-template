@@ -1,0 +1,6 @@
+[
+  {
+    "label": "dev",
+    "command": "just dev",
+  },
+]

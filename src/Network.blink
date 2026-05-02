@@ -1,0 +1,12 @@
+option ClientOutput = "./client/Network/Client.luau"
+option ServerOutput = "./server/Network/Server.luau"
+option TypesOutput  = "./shared/types/NetworkTypes.luau"
+
+-- Use camelCase to match project naming conventions
+option Casing = Camel
+
+-- Point to your Promise library so Blink can generate promise-based function yields
+option PromiseLibrary = "ReplicatedStorage.Packages.Promise"
+
+-- Enable during development to catch type errors on fire; disable in production
+option WriteValidations = false

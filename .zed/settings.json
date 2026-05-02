@@ -1,0 +1,47 @@
+{
+	"languages": {
+		"Luau": {
+			"formatter": {
+				"external": {
+					"command": "stylua",
+					"arguments": ["--respect-ignores", "-"],
+				},
+			},
+			"ensure_final_newline_on_save": false,
+		},
+	},
+	"lsp": {
+		"luau-lsp": {
+			"settings": {
+				"luau-lsp": {
+					"completion": {
+						"enabled": true,
+						"autocompleteEnd": true,
+						"imports": {
+							"enabled": true,
+							"suggestServices": true,
+							"suggestRequires": true,
+							"requireStyle": "alwaysAbsolute",
+							"separateGroupsWithLine": true,
+							"ignoreGlobs": [
+								"**/_Index/**",
+								"**/.pesde/**",
+							],
+						},
+					},
+				},
+				"roblox": {
+					"enabled": true,
+					"security_level": "plugin",
+				},
+				"fflags": {
+					"enable_new_solver": true,
+				},
+				"plugin": {
+					"enabled": true,
+					"port": 3667,
+				},
+			},
+		},
+	},
+}

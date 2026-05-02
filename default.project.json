@@ -1,0 +1,22 @@
+{
+	"name": "Game",
+	"legacyScripts": false,
+	"tree": {
+		"$className": "DataModel",
+		"ReplicatedStorage": {
+			"$path": "src/shared",
+			"packages": {
+				"$path": "roblox_packages"
+			},
+			"Client": {
+				"$path": "src/client"
+			}
+		},
+		"ServerScriptService": {
+			"$path": "src/server",
+			"serverPackages": {
+				"$path": "roblox_server_packages"
+			}
+		}
+	}
+}
