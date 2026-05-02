@@ -1,5 +1,5 @@
-option ClientOutput = "./client/Network/Client.luau"
-option ServerOutput = "./server/Network/Server.luau"
+option ClientOutput = "./client/network/Client.luau"
+option ServerOutput = "./server/network/Server.luau"
 option TypesOutput  = "./shared/types/NetworkTypes.luau"
 
 -- Use camelCase to match project naming conventions
