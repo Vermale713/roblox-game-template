@@ -152,5 +152,7 @@ local Queue: any = {
 
 
 return {
+	User = {
+	},
 
 }

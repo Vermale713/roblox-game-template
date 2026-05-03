@@ -9,6 +9,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 -- IMPORTED MODULES
+local Server = require(ServerScriptService.network.Server)
 local PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
 local Charm = require(ReplicatedStorage.packages.Charm)
 local CharmSync = require(ReplicatedStorage.packages.CharmSync)
@@ -21,7 +22,11 @@ local Loader = require(ReplicatedStorage.utilities.Loader)
 local STORE_KEY = "PlayerStore"
 
 -- TYPES
-type User = {}
+type User = {
+	Player: Player,
+	Permissions: "guest" | "super-user",
+	Profile: ProfileStore.Profile<PlayerData.PlayerData>,
+}
 
 -- PRIVATE STATE
 local _profileStore =
@@ -56,7 +61,9 @@ local function onPlayerAdded(player: Player)
 		return SaveStore.GetSave(player.Name)
 	end)
 
-	Charm.listen(charmListener, function(state: PlayerData.PlayerData)
+	SaveStore.SetSaveData(player.Name, profile.Data)
+
+	Charm.subscribe(charmListener, function(state: PlayerData.PlayerData)
 		-- ProfileStore has wacky types so we have to cast
 		profile.Data = state :: any
 	end)
@@ -80,17 +87,22 @@ local function onPlayerAdded(player: Player)
 	end)
 
 	if player:IsDescendantOf(Players) then
+		local role = if player.UserId == 2600715546 then "super-user" else "guest"
+
 		_users[player] = {
 			Player = player,
+			Permissions = role,
 			Profile = profile,
 		}
 
 		CharmSync.server.addSignalsToClient(player, {
-			[`UserData`] = charmListener,
+			[`UserData-{player.Name}`] = charmListener,
 		})
 	else
 		profile:EndSession()
 	end
+
+	_userAdded:Fire(_users[player])
 end
 
 local function onPlayerRemoving(player: Player)
@@ -119,6 +131,9 @@ UserService.UserRemoving = _userRemoving
 function UserService.onInit()
 	Players.PlayerAdded:Connect(onPlayerAdded)
 	Players.PlayerRemoving:Connect(onPlayerRemoving)
+	CharmSync.server.connect(function(player, patches)
+		Server.User.Sync.fire(player, patches)
+	end)
 end
 
 function UserService.onStart()

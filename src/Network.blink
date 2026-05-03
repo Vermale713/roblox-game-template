@@ -10,3 +10,12 @@ option PromiseLibrary = "ReplicatedStorage.packages.Promise"
 
 -- Enable during development to catch type errors on fire; disable in production
 option WriteValidations = false
+
+scope User {
+	event Sync {
+		from: Server,
+		type: Reliable,
+		call: SingleAsync,
+		data: unknown,
+	}
+}

@@ -1,15 +1,17 @@
+--!nonstrict
+-- we have to make this nonstrict otherwise
+-- ConchUi provides a type error
 --[=[
-	ConchService.luau
+	ConchController.luau
 	Handles the debug menu
 ]=]
 
 -- SERVICES
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
 
 -- IMPORTED MODULES
-local UserService = require(ServerScriptService.services.UserService)
 local Conch = require(ReplicatedStorage.packages.Conch)
+local ConchUi = require(ReplicatedStorage.packages.ConchUi)
 local Loader = require(ReplicatedStorage.utilities.Loader)
 
 -- TYPES
@@ -18,26 +20,22 @@ type Command = {
 	registerPermission: () -> (),
 }
 
-local ConchService = {}
-Loader.register("ConchService", {
-	Module = ConchService,
-	Dependencies = { "UserService" },
+local ConchController = {}
+Loader.register("ConchController", {
+	Module = ConchController,
+	Dependencies = {},
 })
 
-function ConchService.onInit()
+function ConchController.onInit()
 	Conch.initiate_default_lifecycle()
-	UserService.UserAdded:Connect(function(user)
-		local player = user.Player
-		local conchUser = Conch.get_user(player)
-		Conch.give_roles(conchUser, user.Permissions)
-	end)
+	ConchUi.bind_to(Enum.KeyCode.F4)
 end
 
-function ConchService.onStart()
+function ConchController.onStart()
 	local commands: { [string]: Command } = {}
 
 	-- Register commands
-	for _, commandModule in ServerScriptService.conch.commands:GetChildren() do
+	for _, commandModule in ReplicatedStorage.Client.conch.commands:GetChildren() do
 		if not commandModule:IsA("ModuleScript") then
 			continue
 		end
@@ -52,4 +50,4 @@ function ConchService.onStart()
 	end
 end
 
-return ConchService
+return ConchController
