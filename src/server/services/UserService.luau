@@ -15,6 +15,7 @@ local Charm = require(ReplicatedStorage.packages.Charm)
 local CharmSync = require(ReplicatedStorage.packages.CharmSync)
 local ProfileStore = require(ServerScriptService.serverPackages.ProfileStore)
 local SaveStore = require(ServerScriptService.store.SaveStore)
+local AnalyticsUtil = require(ServerScriptService.utilities.AnalyticsUtil)
 local Signal = require(ReplicatedStorage.packages.Signal)
 local Loader = require(ReplicatedStorage.utilities.Loader)
 
@@ -102,6 +103,7 @@ local function onPlayerAdded(player: Player)
 		profile:EndSession()
 	end
 
+	AnalyticsUtil.LogOnboardingStep(player, "Joined the game")
 	_userAdded:Fire(_users[player])
 end
 

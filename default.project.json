@@ -17,6 +17,9 @@
 			"serverPackages": {
 				"$path": "roblox_server_packages"
 			}
+		},
+		"ServerStorage": {
+			"$path": "src/storage"
 		}
 	}
 }
