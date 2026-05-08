@@ -22,7 +22,7 @@ local Loader = require(ReplicatedStorage.utilities.Loader)
 local STORE_KEY = "PlayerStore"
 
 -- TYPES
-type User = {
+export type User = {
 	Player: Player,
 	Permissions: "guest" | "super-user",
 	Profile: ProfileStore.Profile<PlayerData.PlayerData>,
@@ -127,6 +127,8 @@ Loader.register("UserService", {
 ]=]
 UserService.UserAdded = _userAdded
 UserService.UserRemoving = _userRemoving
+-- exported incase you need users and not Players:GetPlayers()
+UserService.Users = _users
 
 function UserService.onInit()
 	Players.PlayerAdded:Connect(onPlayerAdded)
