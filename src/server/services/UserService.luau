@@ -16,6 +16,7 @@ local CharmSync = require(ReplicatedStorage.packages.CharmSync)
 local ProfileStore = require(ServerScriptService.serverPackages.ProfileStore)
 local SaveStore = require(ServerScriptService.store.SaveStore)
 local AnalyticsUtil = require(ServerScriptService.utilities.AnalyticsUtil)
+local DataMigrationUtil = require(ServerScriptService.utilities.DataMigrationUtil)
 local Signal = require(ReplicatedStorage.packages.Signal)
 local Loader = require(ReplicatedStorage.utilities.Loader)
 
@@ -61,6 +62,11 @@ local function onPlayerAdded(player: Player)
 	local charmListener = Charm.computed(function()
 		return SaveStore.GetSave(player.Name)
 	end)
+
+	-- Migration
+	if profile.Data.Metadata.Version < PlayerData.Metadata.Version then
+		DataMigrationUtil.migrate(profile.Data)
+	end
 
 	SaveStore.SetSaveData(player.Name, profile.Data)
 

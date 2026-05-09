@@ -25,7 +25,6 @@ function AnalyticsUtil.LogOnboardingStep(player: Player, step: keyof<typeof(Onbo
 		resolve()
 	end):catch(function(err)
 		warn(`[AnalyticsUtil] encountered an error: {err}\n{debug.traceback()}`)
-		-- warn(`[AnalyticsUtil] encountered an error: {err}\n{debug.traceback()}`)
 	end)
 end
 
