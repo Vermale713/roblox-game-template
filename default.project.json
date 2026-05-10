@@ -8,7 +8,7 @@
 			"packages": {
 				"$path": "roblox_packages"
 			},
-			"Client": {
+			"client": {
 				"$path": "src/client"
 			}
 		},
