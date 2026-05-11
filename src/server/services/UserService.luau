@@ -142,7 +142,7 @@ function UserService.onInit()
 	Players.PlayerAdded:Connect(onPlayerAdded)
 	Players.PlayerRemoving:Connect(onPlayerRemoving)
 	CharmSync.server.connect(function(player, patches)
-		Server.User.Sync.fire(player, patches)
+		Server.User.sync.fire(player, patches)
 	end)
 end
 

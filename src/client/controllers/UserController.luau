@@ -34,7 +34,7 @@ function UserController.onInit()
 	CharmSync.client.addSignals({
 		[`UserData-{Players.LocalPlayer.Name}`] = SaveStore.SetSave,
 	})
-	Client.User.Sync.on(function(patches)
+	Client.User.sync.on(function(patches)
 		CharmSync.client.patch(patches)
 	end)
 end

@@ -12,7 +12,7 @@ option PromiseLibrary = "ReplicatedStorage.packages.Promise"
 option WriteValidations = false
 
 scope User {
-	event Sync {
+	event sync {
 		from: Server,
 		type: Reliable,
 		call: SingleAsync,

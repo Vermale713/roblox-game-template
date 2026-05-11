@@ -9,6 +9,10 @@
 /ServerPackages
 /DevPackages
 
+# Blink
+src/client/network
+src/server/network
+
 # Pesde
 *_packages
 
