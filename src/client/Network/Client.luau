@@ -162,7 +162,7 @@ local Queue: any = {
 local SerdesEvent = "?"
 local SerdesThread: thread?
 Queue.Reliable[0] = table.create(256)
-function SerdesFunctions.User_ReadEVENT_sync(): (any)
+function SerdesFunctions.User_ReadEVENT_Sync(): (any)
 	RecieveInstanceCursor += 1
 	local Value = RecieveInstances[RecieveInstanceCursor]
 	return Value
@@ -172,7 +172,7 @@ if not RunService:IsRunning() then
 	local NOOP = function() end
 	local Returns = table.freeze({
 	User = {
-		sync = {
+		Sync = {
 			on = NOOP
 		},
 	},
@@ -219,12 +219,12 @@ Reliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 		local BLOCK_START = Read(1)
 		local Index = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 		if Index == 0 then
-			local Value: any = SerdesFunctions.User_ReadEVENT_sync()
+			local Value: any = SerdesFunctions.User_ReadEVENT_Sync()
 			if Events.Reliable[0] ~= nil then
 				task.spawn(Events.Reliable[0], Value)
 			else
 				if #Queue.Reliable[0] > 256 then
-					warn("[Blink]: Event queue of \"sync\" exceeded 256, did you forget to implement a listener?")
+					warn("[Blink]: Event queue of \"Sync\" exceeded 256, did you forget to implement a listener?")
 				end
 				table.insert(Queue.Reliable[0], {Value} :: {any})
 			end
@@ -254,7 +254,7 @@ local Returns = table.freeze({
 	stepReplication = StepReplication,
 
 	User = {
-		sync = {
+		Sync = {
 			on = function(Listener: (Value: any) -> ()): () -> ()
 				Events.Reliable[0] = Listener
 				for Index, Arguments in Queue.Reliable[0] do

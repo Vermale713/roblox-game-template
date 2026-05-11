@@ -162,7 +162,7 @@ local Queue: any = {
 
 local SerdesEvent = "?"
 local SerdesThread: thread?
-function SerdesFunctions.User_WriteEVENT_sync(Value: any): ()
+function SerdesFunctions.User_WriteEVENT_Sync(Value: any): ()
 	-- Allocate BLOCK: 1 bytes
 	local BLOCK_START = Allocate(1)
 	buffer.writeu8(SendBuffer, BLOCK_START + 0, 0)
@@ -173,7 +173,7 @@ if not RunService:IsRunning() then
 	local NOOP = function() end
 	local Returns = table.freeze({
 	User = {
-		sync = {
+		Sync = {
 			fire = NOOP,
 			fireAll = NOOP,
 			fireList = NOOP,
@@ -267,15 +267,15 @@ local Returns = table.freeze({
 	stepReplication = StepReplication,
 
 	User = {
-		sync = {
+		Sync = {
 			fire = function(Player: Player, Value: any): ()
 				Load(PlayersMap[Player])
-				SerdesFunctions.User_WriteEVENT_sync(Value)
+				SerdesFunctions.User_WriteEVENT_Sync(Value)
 				PlayersMap[Player] = Save()
 			end,
 			fireAll = function(Value: any): ()
 				Load()
-				SerdesFunctions.User_WriteEVENT_sync(Value)
+				SerdesFunctions.User_WriteEVENT_Sync(Value)
 				local Buffer, Size, Instances = SendBuffer, SendCursor, SendInstances
 				for _, Player in Players:GetPlayers() do
 					Load(PlayersMap[Player])
@@ -287,7 +287,7 @@ local Returns = table.freeze({
 			end,
 			fireList = function(List: {Player}, Value: any): ()
 				Load()
-				SerdesFunctions.User_WriteEVENT_sync(Value)
+				SerdesFunctions.User_WriteEVENT_Sync(Value)
 				local Buffer, Size, Instances = SendBuffer, SendCursor, SendInstances
 				for _, Player in List do
 					Load(PlayersMap[Player])
@@ -299,7 +299,7 @@ local Returns = table.freeze({
 			end,
 			fireExcept = function(Except: Player, Value: any): ()
 				Load()
-				SerdesFunctions.User_WriteEVENT_sync(Value)
+				SerdesFunctions.User_WriteEVENT_Sync(Value)
 				local Buffer, Size, Instances = SendBuffer, SendCursor, SendInstances
 				for _, Player in Players:GetPlayers() do
 					if Player == Except then
