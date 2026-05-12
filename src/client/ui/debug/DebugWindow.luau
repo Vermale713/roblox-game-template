@@ -7,10 +7,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local DebugStore = require(ReplicatedStorage.Client.store.DebugStore)
-local SaveStore = require(ReplicatedStorage.Client.store.SaveStore)
-local PerformanceTab = require(ReplicatedStorage.Client.ui.debug.PerformanceTab)
-local PlayerTab = require(ReplicatedStorage.Client.ui.debug.PlayerTab)
+local DebugStore = require(ReplicatedStorage.client.store.DebugStore)
+local SaveStore = require(ReplicatedStorage.client.store.SaveStore)
+local PerformanceTab = require(ReplicatedStorage.client.ui.debug.PerformanceTab)
+local PlayerTab = require(ReplicatedStorage.client.ui.debug.PlayerTab)
 local Iris = require(ReplicatedStorage.packages.Iris)
 
 local function DebugWindow()

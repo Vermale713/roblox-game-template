@@ -35,7 +35,7 @@ function ConchController.onStart()
 	local commands: { [string]: Command } = {}
 
 	-- Register commands
-	for _, commandModule in ReplicatedStorage.Client.conch.commands:GetChildren() do
+	for _, commandModule in ReplicatedStorage.client.conch.commands:GetChildren() do
 		if not commandModule:IsA("ModuleScript") then
 			continue
 		end

@@ -8,11 +8,11 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local Client = require(ReplicatedStorage.Client.network.Client)
+local Client = require(ReplicatedStorage.client.network.Client)
 local PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
 local Charm = require(ReplicatedStorage.packages.Charm)
 local CharmSync = require(ReplicatedStorage.packages.CharmSync)
-local SaveStore = require(ReplicatedStorage.Client.store.SaveStore)
+local SaveStore = require(ReplicatedStorage.client.store.SaveStore)
 local Signal = require(ReplicatedStorage.packages.Signal)
 local Loader = require(ReplicatedStorage.utilities.Loader)
 
