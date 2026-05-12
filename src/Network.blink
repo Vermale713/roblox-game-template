@@ -13,9 +13,9 @@ option WriteValidations = false
 
 scope User {
 	event Sync {
-		from: Server,
-		type: Reliable,
-		call: SingleAsync,
-		data: unknown,
+		From: Server,
+		Type: Reliable,
+		Call: SingleAsync,
+		Data: unknown,
 	}
 }

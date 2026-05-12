@@ -14,7 +14,7 @@ local _startTime = os.clock()
 -- PRIVATE FUNCTIONS
 
 -- SCRIPT
-Loader.loadDirectory(ReplicatedStorage.Client, true)
+Loader.loadDirectory(ReplicatedStorage.client, true)
 	:andThen(Loader.start)
 	:andThen(function()
 		print(`[Main] Server has successfully started in: {os.clock() - _startTime}`)
