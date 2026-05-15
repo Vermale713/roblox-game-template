@@ -23,7 +23,6 @@ local function DebugWindow()
 
 	if not window.state.isOpened:get() then
 		Iris.End()
-		Iris.Disabled = true
 		return
 	end
 

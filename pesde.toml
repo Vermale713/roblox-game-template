@@ -28,7 +28,7 @@ lune = "^0.10.2"
 [dependencies]
 Promise = { wally = "howmanysmall/typed-promise", version = "^4.0.6" }
 ProfileStore = { wally = "lm-loleris/profilestore", version = "^1.0.3" }
-Charm = { wally = "littensy/charm", version = "^0.11.0-rc.5" }
+Charm = { wally = "littensy/charm", version = "^0.11.0-rc.6" }
 CharmSync = { wally = "littensy/charm-sync", version = "^0.4.0-rc.7" }
 UiLabs = { wally = "pepeeltoro41/ui-labs", version = "^2.4.2" }
 Fluid = { wally = "ffrostfall/fluid", version = "^0.6.4" }
