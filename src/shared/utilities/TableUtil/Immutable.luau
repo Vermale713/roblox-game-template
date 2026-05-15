@@ -5,6 +5,20 @@
 
 local Immutable = {}
 
+function Immutable.deepClone<T>(object: T): T
+	local result = {}
+
+	for i, v in object :: { [any]: any } do
+		if typeof(v) == "table" then
+			result[i] = Immutable.deepClone(v)
+		else
+			result[i] = v
+		end
+	end
+
+	return result
+end
+
 function Immutable.filter<K, V>(object: { [K]: V }, predicate: (V, K) -> boolean): { [K]: V }
 	local result: { [K]: V } = {}
 	for key, value in object do

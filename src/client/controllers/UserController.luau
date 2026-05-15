@@ -9,11 +9,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
 local Client = require(ReplicatedStorage.client.network.Client)
-local PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
-local Charm = require(ReplicatedStorage.packages.Charm)
 local CharmSync = require(ReplicatedStorage.packages.CharmSync)
 local SaveStore = require(ReplicatedStorage.client.store.SaveStore)
-local Signal = require(ReplicatedStorage.packages.Signal)
 local Loader = require(ReplicatedStorage.utilities.Loader)
 
 -- CONSTANTS
@@ -23,6 +20,7 @@ local Loader = require(ReplicatedStorage.utilities.Loader)
 -- PRIVATE STATE
 
 -- PRIVATE FUNCTIONS
+
 -- PUBLIC MODULE
 local UserController = {}
 Loader.register("UserController", {
