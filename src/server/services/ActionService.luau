@@ -40,7 +40,6 @@ type ActionPayload = NetworkTypes.Action_ActionEvent
 -- PRIVATE STATE
 local _actions: { [string]: ActionDefinition } = {}
 local _activePlayerActions: { [Player]: { [string]: ActionInstance } } = {}
-local _activePlayerCooldowns = {}
 
 -- PRIVATE FUNCTIONS
 local function onUserAdded(user: User)
