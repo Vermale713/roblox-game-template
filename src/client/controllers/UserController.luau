@@ -16,10 +16,15 @@ local Loader = require(ReplicatedStorage.utilities.Loader)
 -- CONSTANTS
 
 -- TYPES
+type SyncPayload = CharmSync.SyncPayload
 
 -- PRIVATE STATE
 
 -- PRIVATE FUNCTIONS
+local function onSync(patches: { SyncPayload })
+	print("patching client")
+	CharmSync.client.patch(patches)
+end
 
 -- PUBLIC MODULE
 local UserController = {}
@@ -30,11 +35,9 @@ Loader.register("UserController", {
 
 function UserController.onInit()
 	CharmSync.client.addSignals({
-		[`UserData-{Players.LocalPlayer.Name}`] = SaveStore.SetSave,
+		[`User-{Players.LocalPlayer.Name}`] = SaveStore.SetSave,
 	})
-	Client.User.Sync.on(function(patches)
-		CharmSync.client.patch(patches)
-	end)
+	Client.User.Sync.on(onSync)
 end
 
 return UserController

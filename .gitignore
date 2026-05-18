@@ -12,6 +12,9 @@
 # Blink
 src/client/network
 src/server/network
+src/shared/types/NetworkTypes.luau
+src/client/network/Client.luau
+src/server/network/Server.luau
 
 # Pesde
 *_packages

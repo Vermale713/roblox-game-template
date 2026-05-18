@@ -12,10 +12,21 @@ option PromiseLibrary = "ReplicatedStorage.packages.Promise"
 option WriteValidations = false
 
 scope User {
+	map SaveMap = {[string]: unknown}
+
+	enum SyncPayload = "type" {
+		init {
+			data: SaveMap
+		},
+		patch {
+			data: SaveMap
+		}
+	}
+
 	event Sync {
 		From: Server,
 		Type: Reliable,
 		Call: SingleAsync,
-		Data: unknown,
+		Data: SyncPayload[],
 	}
 }

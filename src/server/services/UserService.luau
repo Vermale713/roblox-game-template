@@ -59,21 +59,10 @@ local function onPlayerAdded(player: Player)
 	profile:AddUserId(player.UserId)
 	profile:Reconcile()
 
-	local charmListener = Charm.computed(function()
-		return SaveStore.GetSave(player.Name)
-	end)
-
 	-- Migration
 	if profile.Data.Metadata.Version < PlayerData.Metadata.Version then
 		DataMigrationUtil.migrate(profile.Data)
 	end
-
-	SaveStore.SetSaveData(player.Name, profile.Data)
-
-	Charm.subscribe(charmListener, function(state: PlayerData.PlayerData)
-		-- ProfileStore has wacky types so we have to cast
-		profile.Data = state :: any
-	end)
 
 	local sessionStart = os.time()
 
@@ -93,6 +82,18 @@ local function onPlayerAdded(player: Player)
 		profile.Data.Metadata.TotalPlaytime += os.time() - sessionStart
 	end)
 
+	local charmListener = Charm.computed(function()
+		return SaveStore.GetSave(player.Name)
+	end)
+
+	print(profile.Data)
+	SaveStore.SetSaveData(player.Name, profile.Data)
+
+	Charm.subscribe(charmListener, function(state: PlayerData.PlayerData)
+		-- ProfileStore has wacky types so we have to cast
+		profile.Data = state :: any
+	end)
+
 	if player:IsDescendantOf(Players) then
 		local role = if player.UserId == 2600715546 then "super-user" else "guest"
 
@@ -103,7 +104,7 @@ local function onPlayerAdded(player: Player)
 		}
 
 		CharmSync.server.addSignalsToClient(player, {
-			[`UserData-{player.Name}`] = charmListener,
+			[`User-{player.Name}`] = charmListener,
 		})
 	else
 		profile:EndSession()
