@@ -18,7 +18,8 @@ local Loader = require(ReplicatedStorage.utilities.Loader)
 -- TYPES
 type R15Character = GlobalTypes.R15Character
 type User = UserService.User
-type Character = {
+
+export type Character = {
 	Character: R15Character,
 	Player: Player,
 }

@@ -30,3 +30,24 @@ scope User {
 		Data: SyncPayload[],
 	}
 }
+
+scope Action {
+	struct ActionEvent {
+		Type: string,
+		Action: string,
+	}
+
+	event RequestActionEvent {
+		From: Client,
+		Type: Reliable,
+		Call: SingleAsync,
+		Data: ActionEvent,
+	}
+
+	event NotifyActionEvent {
+		From: Server,
+		Type: Reliable,
+		Call: SingleAsync,
+		Data: ActionEvent,
+	}
+}
