@@ -13,13 +13,7 @@ local PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
 local LATEST_VERSION = PlayerData.Metadata.Version
 
 -- PRIVATE STATE
-local _migrations: { (data: PlayerData.PlayerData) -> () } = {
-	-- Example Migration
-	-- [1] = function(data)
-	-- modify some data
-	-- data.Metadata.Version += 1
-	-- end,
-}
+local _migrations: { (data: PlayerData.PlayerData) -> () } = {}
 
 local DataMigrationUtil = {}
 
@@ -30,6 +24,7 @@ function DataMigrationUtil.migrate(data: PlayerData.PlayerData)
 		if migration then
 			migration(data)
 		end
+		data.Metadata.Version += 1
 	end
 end
 
