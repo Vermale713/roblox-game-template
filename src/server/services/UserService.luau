@@ -86,7 +86,6 @@ local function onPlayerAdded(player: Player)
 		return SaveStore.GetSave(player.Name)
 	end)
 
-	print(profile.Data)
 	SaveStore.SetSaveData(player.Name, profile.Data)
 
 	Charm.subscribe(charmListener, function(state: PlayerData.PlayerData)

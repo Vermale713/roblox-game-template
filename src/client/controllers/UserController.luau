@@ -22,7 +22,6 @@ type SyncPayload = CharmSync.SyncPayload
 
 -- PRIVATE FUNCTIONS
 local function onSync(patches: { SyncPayload })
-	print("patching client")
 	CharmSync.client.patch(patches)
 end
 
