@@ -41,6 +41,17 @@ local function sort<T>(registry: { [string]: Config<T> }): {}
 		inDegree[name] = inDegree[name] or 0
 	end
 
+	for name, config in registry do
+		for _, dependency in config.Dependencies do
+			if not graph[dependency] then
+				error(`[Loader] Unknown dependency '{dependency}' required by '{name}'`)
+			end
+
+			table.insert(graph[dependency], name)
+			inDegree[name] += 1
+		end
+	end
+
 	local queue: { string } = {}
 	for name, degree in inDegree do
 		if degree == 0 then
