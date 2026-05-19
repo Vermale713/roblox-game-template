@@ -132,14 +132,26 @@ function Loader.start(): Promise.TypedPromise<()>
 		end
 
 		-- Start modules
+		local startPromises: { Promise.TypedPromise<any> } = {}
 		for _, module: Singleton in _sortedSingletons :: { Singleton } do
-			local method: () -> () = module[SINGLETON_LIFECYCLES.OnStart]
-			if method then
-				method()
-			end
+			task.spawn(function()
+				local method: () -> () = module[SINGLETON_LIFECYCLES.OnStart]
+				if method then
+					table.insert(
+						startPromises,
+						Promise.new(function(resolveStart)
+							method()
+							resolveStart()
+						end) :: Promise.TypedPromise<any>
+					)
+					method()
+				end
+			end)
 		end
 
-		resolve()
+		Promise.allSettled(startPromises):andThen(function()
+			resolve()
+		end)
 	end)
 end
 
