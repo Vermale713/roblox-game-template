@@ -12,21 +12,22 @@ local Loader = require(ReplicatedStorage.utilities.Loader)
 
 -- TYPES
 type ContextOptions = {
-	priority: number?,
-	sink: boolean?,
-	enabled: boolean?,
+	Priority: number?,
+	Sink: boolean?,
+	Enabled: boolean?,
 }
 
 type ActionOptions = {
-	type: Enum.InputActionType?,
-	enabled: boolean?,
+	Type: Enum.InputActionType?,
+	Enabled: boolean?,
+	-- Methods
 	onPressed: () -> ()?,
 	onReleased: () -> ()?,
 	onChanged: (value: any) -> ()?,
 }
 
 type BindingOptions = {
-	keycode: Enum.KeyCode,
+	KeyCode: Enum.KeyCode,
 }
 
 -- PRIVATE STATE
