@@ -9,6 +9,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 -- IMPORTED MODULES
+local Character = require(ServerScriptService.services.CharacterService.classes.Character)
 local GlobalTypes = require(ReplicatedStorage.types.GlobalTypes)
 local UserService = require(ServerScriptService.services.UserService)
 local Loader = require(ReplicatedStorage.utilities.Loader)
@@ -19,10 +20,7 @@ local Loader = require(ReplicatedStorage.utilities.Loader)
 type R15Character = GlobalTypes.R15Character
 type User = UserService.User
 
-export type Character = {
-	Character: R15Character,
-	Player: Player,
-}
+export type Character = Character.Character
 
 -- PRIVATE STATE
 local _spawnerConnections: { [Player]: RBXScriptConnection } = {}
@@ -38,12 +36,9 @@ local function onUserAdded(user: User)
 	end
 
 	local connection = player.CharacterAdded:Connect(function(model)
-		local character = model :: R15Character
+		local character = Character.new(model :: GlobalTypes.R15Character)
 
-		_characters[player] = {
-			Character = character,
-			Player = player,
-		}
+		_characters[player] = character
 
 		character.Humanoid.Died:Once(function()
 			_characters[player] = nil
