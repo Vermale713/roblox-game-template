@@ -1,6 +1,10 @@
 [
-  {
-    "label": "dev",
-    "command": "just dev",
-  },
+	{
+		"label": "dev",
+		"command": "just dev",
+	},
+	{
+		"label": "merge template",
+		"command": "just sync",
+	},
 ]
