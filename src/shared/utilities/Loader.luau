@@ -144,7 +144,6 @@ function Loader.start(): Promise.TypedPromise<()>
 							resolveStart()
 						end) :: Promise.TypedPromise<any>
 					)
-					method()
 				end
 			end)
 		end
