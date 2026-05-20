@@ -69,27 +69,29 @@ local function onActionEventRequest(player: Player, payload: ActionPayload)
 		return
 	end
 
-	if action.CheckForActives then
-		for _, actionInstance in playerActions do
-			local definition = _actions[actionInstance.Name]
-			if not definition.CheckedByOthers then
-				continue
-			end
-
-			return
-		end
-	end
-
-	local actionInstance: ActionInstance = {
-		Name = actionName,
-		StartedAt = os.time(),
-	}
-	playerActions[actionName] = actionInstance
-
 	if actionType == "Start" then
+		if action.CheckForActives then
+			for _, actionInstance in playerActions do
+				local definition = _actions[actionInstance.Name]
+				if not definition.CheckedByOthers then
+					continue
+				end
+
+				return
+			end
+		end
+
+		local actionInstance: ActionInstance = {
+			Name = actionName,
+			StartedAt = os.time(),
+		}
+		playerActions[actionName] = actionInstance
+
 		-- start action
 		action.start(character)
 	else
+		playerActions[actionName] = nil
+
 		-- stop action
 		action.stop(character)
 	end
