@@ -14,7 +14,9 @@ local Iris = require(ReplicatedStorage.packages.Iris)
 local function traversePlayerData(data: { [string]: any })
 	for key, value in data do
 		if typeof(value) == "table" then
-			Iris.Tree({ key })
+			local isUncollapsed = Iris.State(true)
+
+			Iris.Tree({ key }, { isUncollapsed = isUncollapsed })
 
 			traversePlayerData(value)
 
