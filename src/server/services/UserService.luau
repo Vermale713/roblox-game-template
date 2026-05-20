@@ -24,6 +24,8 @@ local Loader = require(ReplicatedStorage.utilities.Loader)
 local STORE_KEY = "PlayerStore"
 
 -- TYPES
+type SyncPayload = CharmSync.SyncPayload
+
 export type User = {
 	Player: Player,
 	Permissions: "guest" | "super-user",
@@ -123,6 +125,10 @@ local function onPlayerRemoving(player: Player)
 	_userRemoving:Fire(user)
 end
 
+local function onSync(player: Player, patches: { SyncPayload })
+	Server.User.Sync.fire(player, patches)
+end
+
 -- PUBLIC MODULE
 local UserService = {}
 Loader.register("UserService", {
@@ -141,9 +147,7 @@ UserService.Users = _users
 function UserService.onInit()
 	Players.PlayerAdded:Connect(onPlayerAdded)
 	Players.PlayerRemoving:Connect(onPlayerRemoving)
-	CharmSync.server.connect(function(player, patches)
-		Server.User.Sync.fire(player, patches)
-	end)
+	CharmSync.server.connect(onSync)
 end
 
 function UserService.onStart()
