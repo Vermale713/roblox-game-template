@@ -77,9 +77,9 @@ function InputController.createContext(name: string, options: ContextOptions): I
 	options = options or {} :: ContextOptions
 
 	local context = Instance.new("InputContext")
-	context.Priority = options.priority or 0
-	context.Sink = options.sink or false
-	context.Enabled = if options.enabled ~= nil then options.enabled else true
+	context.Priority = options.Priority or 0
+	context.Sink = options.Sink or false
+	context.Enabled = if options.Enabled ~= nil then options.Enabled else true
 	context.Name = name
 
 	context.Parent = _contextFolder
@@ -94,8 +94,8 @@ function InputController.createAction(context: InputContext, name: string, optio
 
 	local action = Instance.new("InputAction")
 	action.Name = name
-	action.Type = options.type or Enum.InputActionType.Bool
-	action.Enabled = if options.enabled ~= nil then options.enabled else true
+	action.Type = options.Type or Enum.InputActionType.Bool
+	action.Enabled = if options.Enabled ~= nil then options.Enabled else true
 	action.Parent = context
 
 	if options.onPressed then
@@ -118,7 +118,7 @@ function InputController.addBinding(
 ): InputBinding
 	local binding = Instance.new("InputBinding")
 	binding.Name = name
-	binding.KeyCode = options.keycode
+	binding.KeyCode = options.KeyCode
 	binding.Parent = action
 
 	return binding
