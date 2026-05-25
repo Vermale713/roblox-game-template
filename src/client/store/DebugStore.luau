@@ -17,14 +17,18 @@ local Iris = require(ReplicatedStorage.packages.Iris)
 -- PRIVATE STATE
 local _screenSize = workspace.CurrentCamera.ViewportSize
 local _isOpened = Iris.State(false)
-local position = Iris.State(screenSize / 2)
+local _position = Iris.State(_screenSize / 2)
+local _frameTimes = Iris.State({})
+local _pings = Iris.State({})
 
 -- PRIVATE FUNCTIONS
 
 -- MODULES
 local DebugStore = {}
 
-DebugStore.IsOpened = isOpened
-DebugStore.Position = position
+DebugStore.IsOpened = _isOpened
+DebugStore.Position = _position
+DebugStore.FrameTimes = _frameTimes
+DebugStore.Pings = _pings
 
 return DebugStore

@@ -9,6 +9,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Stats = game:GetService("Stats")
 
 -- IMPORTED MODULES
+local DebugStore = require(ReplicatedStorage.client.store.DebugStore)
 local Iris = require(ReplicatedStorage.packages.Iris)
 local NumberUtil = require(ReplicatedStorage.utilities.NumberUtil)
 
@@ -18,8 +19,6 @@ local SAMPLE_COUNT = 60
 -- PRIVATE STATE
 local _frameTimes = {}
 local _pings = {}
-local frameTimesState = Iris.State(frameTimes)
-local pingsState = Iris.State(pings)
 
 local function PerformanceTab()
 	Iris.SeparatorText({ "Basic Performance Data" })
@@ -29,24 +28,24 @@ local function PerformanceTab()
 	Iris.Text({ `FPS: {NumberUtil.truncate(fps)}` })
 	Iris.Text({ `Ping: {NumberUtil.truncate(ping)}` })
 
-	table.insert(frameTimes, fps)
-	if #frameTimes > SAMPLE_COUNT then
-		table.remove(frameTimes, 1)
+	table.insert(_frameTimes, fps)
+	if #_frameTimes > SAMPLE_COUNT then
+		table.remove(_frameTimes, 1)
 	end
 
-	table.insert(pings, ping)
-	if #pings > SAMPLE_COUNT then
-		table.remove(pings, 1)
+	table.insert(_pings, ping)
+	if #_pings > SAMPLE_COUNT then
+		table.remove(_pings, 1)
 	end
 
-	frameTimesState:set(frameTimes, true)
-	pingsState:set(pings, true)
+	DebugStore.FrameTimes:set(_frameTimes, true)
+	DebugStore.Pings:set(_pings, true)
 
 	Iris.SeparatorText({ "Frame Time" })
-	Iris.PlotHistogram({ "Frame Per Second", 100, 0, 300, "", 0 }, { values = frameTimesState })
+	Iris.PlotHistogram({ "Frame Per Second", 100, 0, 300, "", 0 }, { values = DebugStore.FrameTimes })
 
 	Iris.SeparatorText({ "Ping" })
-	Iris.PlotHistogram({ "Ping (ms)", 100, 0, 300, "", 0 }, { values = pingsState })
+	Iris.PlotHistogram({ "Ping (ms)", 100, 0, 300, "", 0 }, { values = DebugStore.Pings })
 end
 
 return PerformanceTab
