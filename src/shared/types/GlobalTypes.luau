@@ -1,20 +1,14 @@
 export type function Partial(ty: type): type
-	local tag = ty.tag
-
 	local result = types.copy(ty)
-
-	if tag == "table" then
-		for key, property in ty:properties() do
-			if property.read then
-				result:setreadproperty(key, types.unionof(property.read, types.singleton(nil)))
-			end
-			if property.write then
-				result:setwriteproperty(key, types.unionof(property.write, types.singleton(nil)))
-			end
+	for key, property in ty:properties() do
+		if property.read then
+			result:setreadproperty(key, types.unionof(property.read, types.singleton(nil)))
 		end
-		return result
+		if property.write then
+			result:setwriteproperty(key, types.unionof(property.write, types.singleton(nil)))
+		end
 	end
-	error("Incompatible type")
+	return result
 end
 
 export type R15Character = Model & {
