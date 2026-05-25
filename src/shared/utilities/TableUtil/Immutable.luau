@@ -2,7 +2,16 @@
 	Immutable.luau
 	A module for immutable table updates
 ]=]
+-- SERVICES
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+-- IMPORTED MODULES
+local GlobalTypes = require(ReplicatedStorage.types.GlobalTypes)
+
+-- TYPES
+type Partial<T> = GlobalTypes.Partial<T>
+
+-- PUBLIC MODULE
 local Immutable = {}
 
 function Immutable.deepClone<T>(object: T): T
@@ -57,7 +66,7 @@ function Immutable.delete<T>(object: T & {}, key: keyof<T>): T
 	return object
 end
 
-function Immutable.join<T>(object: T & {}, source: T?): T
+function Immutable.join<T>(object: T & {}, source: Partial<T>): T
 	if not source then
 		return object
 	end
