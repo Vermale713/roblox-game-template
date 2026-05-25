@@ -4,6 +4,7 @@
 ]=]
 
 -- SERVICES
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
@@ -26,8 +27,12 @@ export type ActionDefinition = {
 	CheckedByOthers: boolean, -- Allows to be checked by other actions
 	Interruptable: boolean,
 	-- Methods
-	start: (character: Character) -> (),
+	start: (ctx: ActionContext, character: Character) -> (),
 	stop: (character: Character) -> (),
+}
+
+export type ActionContext = {
+	stop: () -> (),
 }
 
 type ActionInstance = {
@@ -50,6 +55,22 @@ end
 local function onUserRemoving(user: User)
 	local player = user.Player
 	_activePlayerActions[player] = nil
+end
+
+local function onCharacterRemoving(character: Character)
+	local model = character.Model
+	local player = Players:GetPlayerFromCharacter(model)
+	if not player then
+		return
+	end
+	local activeActions = _activePlayerActions[player]
+
+	for actionName, actionDefinition in activeActions do
+		local action = _actions[actionName]
+		action.stop(character)
+	end
+
+	table.clear(_activePlayerActions[player])
 end
 
 local function onActionEventRequest(player: Player, payload: ActionPayload)
@@ -81,6 +102,21 @@ local function onActionEventRequest(player: Player, payload: ActionPayload)
 			end
 		end
 
+		local function contextStopAction()
+			local character = CharacterService.Characters[player]
+			if not character then
+				return
+			end
+
+			playerActions[actionName] = nil
+
+			action.stop(character)
+		end
+
+		local context: ActionContext = {
+			stop = contextStopAction,
+		}
+
 		local actionInstance: ActionInstance = {
 			Name = actionName,
 			StartedAt = os.time(),
@@ -88,7 +124,7 @@ local function onActionEventRequest(player: Player, payload: ActionPayload)
 		playerActions[actionName] = actionInstance
 
 		-- start action
-		action.start(character)
+		action.start(context, character)
 	else
 		playerActions[actionName] = nil
 
@@ -110,6 +146,7 @@ Loader.register("ActionService", {
 function ActionService.onInit()
 	UserService.UserAdded:Connect(onUserAdded)
 	UserService.UserRemoving:Connect(onUserRemoving)
+	CharacterService.CharacterRemoving:Connect(onCharacterRemoving)
 	Server.Action.RequestActionEvent.on(onActionEventRequest)
 end
 
