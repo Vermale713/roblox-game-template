@@ -66,7 +66,7 @@ function Immutable.delete<T>(object: T & {}, key: keyof<T>): T
 	return object
 end
 
-function Immutable.join<T>(object: T & {}, source: Partial<T>): T
+function Immutable.join<T>(object: T & {}, source: Partial<T>?): T
 	if not source then
 		return object
 	end
