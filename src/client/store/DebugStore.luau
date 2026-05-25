@@ -15,8 +15,8 @@ local Iris = require(ReplicatedStorage.packages.Iris)
 -- TYPES
 
 -- PRIVATE STATE
-local screenSize = workspace.CurrentCamera.ViewportSize
-local isOpened = Iris.State(false)
+local _screenSize = workspace.CurrentCamera.ViewportSize
+local _isOpened = Iris.State(false)
 local position = Iris.State(screenSize / 2)
 
 -- PRIVATE FUNCTIONS

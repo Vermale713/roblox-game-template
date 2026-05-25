@@ -16,8 +16,8 @@ local NumberUtil = require(ReplicatedStorage.utilities.NumberUtil)
 local SAMPLE_COUNT = 60
 
 -- PRIVATE STATE
-local frameTimes = {}
-local pings = {}
+local _frameTimes = {}
+local _pings = {}
 local frameTimesState = Iris.State(frameTimes)
 local pingsState = Iris.State(pings)
 
