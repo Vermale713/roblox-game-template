@@ -3,12 +3,7 @@
 	A module for number manipulation or formatting
 ]=]
 
--- SERVICES
--- local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
--- IMPORTED MODULES
--- local Immutable = require(ReplicatedStorage.utilities.TableUtil.Immutable)
-
+-- PUBLIC MODULE
 local NumberUtil = {}
 
 function NumberUtil.truncate(num: number, decimals: number?)

@@ -89,7 +89,6 @@ src/
 │
 ├── shared/
 │   ├── utilities/                ← your stateless helper functions
-│   │   ├── TableUtil.luau
 │   │   └── MathUtil.luau
 │   ├── libraries/                ← your authored reusable systems
 │   │   └── Loader.luau
@@ -122,7 +121,7 @@ Use these exact names for typed subfolders — consistency matters more than cre
 | `services/` | Server-side stateful logic |
 | `controllers/` | Client-side stateful logic |
 | `components/` | Fluid components and Iris widgets |
-| `utilities/` | Your own stateless pure helper functions (`TableUtil.luau`, `MathUtil.luau`) |
+| `utilities/` | Your own stateless pure helper functions (`MathUtil.luau`) |
 | `libraries/` | Your own reusable systems with internal logic that could drop into any project (`Loader.luau`, `Signal.luau`) |
 | `packages/` | Third-party packages you didn't write (Promise, Janitor, etc.) |
 | `types/` | Shared type definitions only — no runtime logic |
