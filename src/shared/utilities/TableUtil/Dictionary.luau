@@ -27,7 +27,7 @@ function Dictionary.merge<T>(object: T & {}, source: any): T
 			result[key] = value
 		end
 	end
-	return object
+	return result
 end
 
 return Dictionary
