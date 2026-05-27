@@ -1,10 +1,7 @@
--- TYPES
-type Dictionary<K, V> = { [K]: V }
-
 -- PUBLIC MODULE
 local Dictionary = {}
 
-function Dictionary.set<T>(object: T & {}, key: keyof<T>, value: index<T, keyof<T>>): T
+function Dictionary.set<T>(object: T & {}, key: string, value: any): T
 	if object[key] ~= value then
 		object = table.clone(object)
 		object[key] = value
@@ -12,7 +9,7 @@ function Dictionary.set<T>(object: T & {}, key: keyof<T>, value: index<T, keyof<
 	return object
 end
 
-function Dictionary.delete<T>(object: T & {}, key: keyof<T>): T
+function Dictionary.delete<T>(object: T & {}, key: string): T
 	if object[key] ~= nil then
 		object = table.clone(object)
 		object[key] = nil
