@@ -10,7 +10,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- IMPORTED MODULES
 local PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
 local Charm = require(ReplicatedStorage.packages.Charm)
-local Sift = require(ReplicatedStorage.packages.Sift)
+local TableUtil = require(ReplicatedStorage.utilities.TableUtil)
 
 -- CONSTANTS
 
@@ -36,13 +36,13 @@ end
 
 function SaveStore.SetSaveData(username: string, save: PlayerData.PlayerData): ()
 	_setSaves(function(saves: Saves)
-		return Sift.Dictionary.set(saves, username, save)
+		return TableUtil.Dictionary.set(saves, username, save)
 	end)
 end
 
 function SaveStore.RemoveSave(username: string): ()
 	_setSaves(function(saves: Saves)
-		return Sift.Dictionary.removeKey(saves, username)
+		return TableUtil.Dictionary.delete(saves, username)
 	end)
 end
 
