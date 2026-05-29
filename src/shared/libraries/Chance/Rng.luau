@@ -23,6 +23,33 @@ function Rng.int(min: number, max: number): number
 	return _rng:NextInteger(min, max)
 end
 
+function Rng.shuffle<T>(list: T & {}): T
+	assert(#list > 0, "list cannot be empty")
+	local copy = table.clone(list)
+	for i = #copy, 2, -1 do
+		local j = _rng:NextInteger(1, i)
+		copy[i], copy[j] = copy[j], copy[i]
+	end
+	return copy
+end
+
+function Rng.pick<T>(list: { T }): T
+	assert(#list > 0, "list cannot be empty")
+	return list[_rng:NextInteger(1, #list)]
+end
+
+function Rng.sample<T>(list: { T }, elements: number): { T }
+	assert(#list > 0, "list cannot be empty")
+	assert(elements > 0, "elements must be greater than 0")
+	assert(elements <= #list, "elements cannot exceed list size")
+	local shuffled = Rng.shuffle(list)
+	local result = {}
+	for i = 1, elements do
+		result[i] = shuffled[i]
+	end
+	return result
+end
+
 function Rng.weighted(options: { { item: any, weight: any } })
 	assert(#options > 0, "options cannot be empty")
 
