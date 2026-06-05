@@ -50,7 +50,7 @@ function Rng.sample<T>(list: { T }, elements: number): { T }
 	return result
 end
 
-function Rng.weighted(options: { { item: any, weight: any } })
+function Rng.weighted(options: { { [string]: any } }, itemKey: string, weightKey: string)
 	assert(#options > 0, "options cannot be empty")
 
 	local total = 0
@@ -61,9 +61,9 @@ function Rng.weighted(options: { { item: any, weight: any } })
 	local roll = _rng:NextNumber(0, total)
 	local cumulative = 0
 	for _, option in options do
-		cumulative += option.weight
+		cumulative += option[weightKey]
 		if roll <= cumulative then
-			return option.item
+			return option[itemKey]
 		end
 	end
 
