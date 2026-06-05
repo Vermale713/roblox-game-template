@@ -4,16 +4,16 @@
 ]=]
 
 -- SERVICES
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
+const Players = game:GetService("Players")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ServerScriptService = game:GetService("ServerScriptService")
 
 -- IMPORTED MODULES
-local Signal = require(ReplicatedStorage.packages.Signal)
-local Character = require(ServerScriptService.services.CharacterService.classes.Character)
-local GlobalTypes = require(ReplicatedStorage.types.GlobalTypes)
-local UserService = require(ServerScriptService.services.UserService)
-local Loader = require(ReplicatedStorage.utilities.Loader)
+const Signal = require(ReplicatedStorage.packages.Signal)
+const Character = require(ServerScriptService.services.CharacterService.classes.Character)
+const GlobalTypes = require(ReplicatedStorage.types.GlobalTypes)
+const UserService = require(ServerScriptService.services.UserService)
+const Loader = require(ReplicatedStorage.utilities.Loader)
 
 -- CONSTANTS
 
@@ -30,7 +30,7 @@ local _spawnerConnections: { [Player]: RBXScriptConnection } = {}
 local _characters: { [Player]: Character } = {}
 
 -- PRIVATE FUNCTIONS
-local function onUserAdded(user: User)
+const function onUserAdded(user: User)
 	local player = user.Player
 
 	if _spawnerConnections[player] then
@@ -59,7 +59,7 @@ local function onUserAdded(user: User)
 	player:LoadCharacterAsync()
 end
 
-local function onUserRemoving(user: User)
+const function onUserRemoving(user: User)
 	local player = user.Player
 
 	local connection = _spawnerConnections[player]

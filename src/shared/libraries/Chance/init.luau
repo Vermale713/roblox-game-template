@@ -4,10 +4,10 @@
 ]=]
 
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local Rng = require(ReplicatedStorage.libraries.Chance.Rng)
+const Rng = require(ReplicatedStorage.libraries.Chance.Rng)
 
 -- PUBLIC MODULE
 local Chance = {}

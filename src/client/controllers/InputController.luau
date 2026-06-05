@@ -5,10 +5,10 @@
 ]=]
 
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local Loader = require(ReplicatedStorage.utilities.Loader)
+const Loader = require(ReplicatedStorage.utilities.Loader)
 
 -- TYPES
 type ContextOptions = {

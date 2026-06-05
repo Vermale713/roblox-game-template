@@ -4,12 +4,12 @@
 ]=]
 
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local DebugWindow = require(ReplicatedStorage.client.ui.debug.DebugWindow)
-local Iris = require(ReplicatedStorage.packages.Iris)
-local Loader = require(ReplicatedStorage.utilities.Loader)
+const DebugWindow = require(ReplicatedStorage.client.ui.debug.DebugWindow)
+const Iris = require(ReplicatedStorage.packages.Iris)
+const Loader = require(ReplicatedStorage.utilities.Loader)
 
 local DebugController = {}
 Loader.register("DebugController", {

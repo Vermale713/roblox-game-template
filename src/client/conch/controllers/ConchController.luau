@@ -7,12 +7,12 @@
 ]=]
 
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local Conch = require(ReplicatedStorage.packages.Conch)
-local ConchUi = require(ReplicatedStorage.packages.ConchUi)
-local Loader = require(ReplicatedStorage.utilities.Loader)
+const Conch = require(ReplicatedStorage.packages.Conch)
+const ConchUi = require(ReplicatedStorage.packages.ConchUi)
+const Loader = require(ReplicatedStorage.utilities.Loader)
 
 -- TYPES
 type Command = {

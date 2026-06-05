@@ -1,9 +1,9 @@
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ServerScriptService = game:GetService("ServerScriptService")
 
 -- IMPORTED MODULES
-local Loader = require(ReplicatedStorage.utilities.Loader)
+const Loader = require(ReplicatedStorage.utilities.Loader)
 
 -- CONSTANTS
 

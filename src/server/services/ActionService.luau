@@ -4,17 +4,17 @@
 ]=]
 
 -- SERVICES
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
+const Players = game:GetService("Players")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ServerScriptService = game:GetService("ServerScriptService")
 
 -- IMPORTED MODULES
-local GlobalTypes = require(ReplicatedStorage.types.GlobalTypes)
-local NetworkTypes = require(ReplicatedStorage.types.NetworkTypes)
-local Server = require(ServerScriptService.network.Server)
-local CharacterService = require(ServerScriptService.services.CharacterService)
-local UserService = require(ServerScriptService.services.UserService)
-local Loader = require(ReplicatedStorage.utilities.Loader)
+const GlobalTypes = require(ReplicatedStorage.types.GlobalTypes)
+const NetworkTypes = require(ReplicatedStorage.types.NetworkTypes)
+const Server = require(ServerScriptService.network.Server)
+const CharacterService = require(ServerScriptService.services.CharacterService)
+const UserService = require(ServerScriptService.services.UserService)
+const Loader = require(ReplicatedStorage.utilities.Loader)
 
 -- TYPES
 type User = UserService.User
@@ -47,17 +47,17 @@ local _actions: { [string]: ActionDefinition } = {}
 local _activePlayerActions: { [Player]: { [string]: ActionInstance } } = {}
 
 -- PRIVATE FUNCTIONS
-local function onUserAdded(user: User)
+const function onUserAdded(user: User)
 	local player = user.Player
 	_activePlayerActions[player] = {}
 end
 
-local function onUserRemoving(user: User)
+const function onUserRemoving(user: User)
 	local player = user.Player
 	_activePlayerActions[player] = nil
 end
 
-local function onCharacterRemoving(character: Character)
+const function onCharacterRemoving(character: Character)
 	local model = character.Model
 	local player = Players:GetPlayerFromCharacter(model)
 	if not player then
@@ -73,7 +73,7 @@ local function onCharacterRemoving(character: Character)
 	table.clear(_activePlayerActions[player])
 end
 
-local function onActionEventRequest(player: Player, payload: ActionPayload)
+const function onActionEventRequest(player: Player, payload: ActionPayload)
 	local actionName = payload.Action
 	local actionType = payload.Type
 	local playerActions = _activePlayerActions[player]

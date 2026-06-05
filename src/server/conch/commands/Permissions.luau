@@ -1,8 +1,8 @@
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local Conch = require(ReplicatedStorage.packages.Conch)
+const Conch = require(ReplicatedStorage.packages.Conch)
 
 local Command = {}
 

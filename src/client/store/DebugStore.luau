@@ -5,10 +5,10 @@
 ]=]
 
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local Iris = require(ReplicatedStorage.packages.Iris)
+const Iris = require(ReplicatedStorage.packages.Iris)
 
 -- CONSTANTS
 

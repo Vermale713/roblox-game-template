@@ -4,13 +4,13 @@
 ]=]
 
 -- SERVICES
-local AnalyticsService = game:GetService("AnalyticsService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerStorage = game:GetService("ServerStorage")
+const AnalyticsService = game:GetService("AnalyticsService")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ServerStorage = game:GetService("ServerStorage")
 
 -- IMPORTED MODULES
-local OnboardingData = require(ServerStorage.data.analytics.OnboardingData)
-local Promise = require(ReplicatedStorage.packages.Promise)
+const OnboardingData = require(ServerStorage.data.analytics.OnboardingData)
+const Promise = require(ReplicatedStorage.packages.Promise)
 
 -- PUBLIC MODULE
 local AnalyticsUtil = {}

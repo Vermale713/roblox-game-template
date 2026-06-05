@@ -4,14 +4,14 @@
 ]=]
 
 -- SERVICES
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const Players = game:GetService("Players")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local Client = require(ReplicatedStorage.client.network.Client)
-local CharmSync = require(ReplicatedStorage.packages.CharmSync)
-local SaveStore = require(ReplicatedStorage.client.store.SaveStore)
-local Loader = require(ReplicatedStorage.utilities.Loader)
+const Client = require(ReplicatedStorage.client.network.Client)
+const CharmSync = require(ReplicatedStorage.packages.CharmSync)
+const SaveStore = require(ReplicatedStorage.client.store.SaveStore)
+const Loader = require(ReplicatedStorage.utilities.Loader)
 
 -- CONSTANTS
 

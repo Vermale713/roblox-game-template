@@ -4,10 +4,10 @@
 ]=]
 
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local Promise = require(ReplicatedStorage.packages.Promise)
+const Promise = require(ReplicatedStorage.packages.Promise)
 
 -- CONSTANTS
 local SINGLETON_LIFECYCLES = {

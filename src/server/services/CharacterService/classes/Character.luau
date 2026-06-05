@@ -4,10 +4,10 @@
 ]=]
 
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local GlobalTypes = require(ReplicatedStorage.types.GlobalTypes)
+const GlobalTypes = require(ReplicatedStorage.types.GlobalTypes)
 
 --TYPES
 type CharacterImpl = {

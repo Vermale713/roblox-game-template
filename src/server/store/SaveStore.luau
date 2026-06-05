@@ -5,12 +5,12 @@
 ]=]
 
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
-local Charm = require(ReplicatedStorage.packages.Charm)
-local TableUtil = require(ReplicatedStorage.utilities.TableUtil)
+const PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
+const Charm = require(ReplicatedStorage.packages.Charm)
+const TableUtil = require(ReplicatedStorage.utilities.TableUtil)
 
 -- CONSTANTS
 

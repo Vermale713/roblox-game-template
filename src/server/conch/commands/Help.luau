@@ -1,11 +1,11 @@
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local Conch = require(ReplicatedStorage.packages.Conch)
+const Conch = require(ReplicatedStorage.packages.Conch)
 
 -- PRIVATE FUNCTIONS
-local function getLongest(key: "name" | "description", commands: any): number
+const function getLongest(key: "name" | "description", commands: any): number
 	local longest = 0
 	for _, command in commands do
 		if #command[key] > longest then
@@ -15,7 +15,7 @@ local function getLongest(key: "name" | "description", commands: any): number
 	return longest
 end
 
-local function appendSpaces(text: string, lineWidth: number): string
+const function appendSpaces(text: string, lineWidth: number): string
 	return `{text}{string.rep(" ", lineWidth - #text)}`
 end
 

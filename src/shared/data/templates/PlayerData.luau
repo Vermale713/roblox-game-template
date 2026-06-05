@@ -1,4 +1,4 @@
-local PlayerData = {
+const PlayerData = {
 	-- Monetization
 	RobuxSpent = 0,
 

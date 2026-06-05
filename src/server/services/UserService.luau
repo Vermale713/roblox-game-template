@@ -4,24 +4,24 @@
 ]=]
 
 -- SERVICES
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
+const Players = game:GetService("Players")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ServerScriptService = game:GetService("ServerScriptService")
 
 -- IMPORTED MODULES
-local Server = require(ServerScriptService.network.Server)
-local PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
-local Charm = require(ReplicatedStorage.packages.Charm)
-local CharmSync = require(ReplicatedStorage.packages.CharmSync)
-local ProfileStore = require(ServerScriptService.serverPackages.ProfileStore)
-local SaveStore = require(ServerScriptService.store.SaveStore)
-local AnalyticsUtil = require(ServerScriptService.utilities.AnalyticsUtil)
-local DataMigrationUtil = require(ServerScriptService.utilities.DataMigrationUtil)
-local Signal = require(ReplicatedStorage.packages.Signal)
-local Loader = require(ReplicatedStorage.utilities.Loader)
+const Server = require(ServerScriptService.network.Server)
+const PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
+const Charm = require(ReplicatedStorage.packages.Charm)
+const CharmSync = require(ReplicatedStorage.packages.CharmSync)
+const ProfileStore = require(ServerScriptService.serverPackages.ProfileStore)
+const SaveStore = require(ServerScriptService.store.SaveStore)
+const AnalyticsUtil = require(ServerScriptService.utilities.AnalyticsUtil)
+const DataMigrationUtil = require(ServerScriptService.utilities.DataMigrationUtil)
+const Signal = require(ReplicatedStorage.packages.Signal)
+const Loader = require(ReplicatedStorage.utilities.Loader)
 
 -- CONSTANTS
-local STORE_KEY = "PlayerStore"
+const STORE_KEY = "PlayerStore"
 
 -- TYPES
 type SyncPayload = CharmSync.SyncPayload
@@ -40,7 +40,7 @@ local _userAdded = Signal.new() :: Signal.Signal<User>
 local _userRemoving = Signal.new() :: Signal.Signal<User>
 
 -- PRIVATE FUNCTIONS
-local function onPlayerAdded(player: Player)
+const function onPlayerAdded(player: Player)
 	if _users[player] then
 		-- Player might have not been cleaned up properly
 		player:Kick("Preexisting user - Please rejoin")
@@ -115,7 +115,7 @@ local function onPlayerAdded(player: Player)
 	_userAdded:Fire(_users[player])
 end
 
-local function onPlayerRemoving(player: Player)
+const function onPlayerRemoving(player: Player)
 	local user = _users[player]
 	if not user then
 		-- Player left before user was created
@@ -125,7 +125,7 @@ local function onPlayerRemoving(player: Player)
 	_userRemoving:Fire(user)
 end
 
-local function onSync(player: Player, patches: { SyncPayload })
+const function onSync(player: Player, patches: { SyncPayload })
 	Server.User.Sync.fire(player, patches)
 end
 

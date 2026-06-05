@@ -2,8 +2,11 @@
 	Collections.luau
 	A collection of data structures
 ]=]
-local Queue = require(script.Queue)
 
+-- IMPORTED MODULES
+const Queue = require(script.Queue)
+
+-- PUBLIC MODULE
 local Collections = {}
 
 Collections.Queue = Queue

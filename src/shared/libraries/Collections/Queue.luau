@@ -8,7 +8,7 @@
 -- IMPORTED MODULES
 
 -- CONSTANTS
-local DEFAULT_QUEUE_SIZE = 100
+const DEFAULT_QUEUE_SIZE = 100
 
 -- TYPES
 type QueueImpl<T> = {

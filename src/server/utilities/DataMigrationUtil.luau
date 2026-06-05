@@ -4,13 +4,13 @@
 ]=]
 
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
+const PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
 
 -- CONSTANTS
-local LATEST_VERSION = PlayerData.Metadata.Version
+const LATEST_VERSION = PlayerData.Metadata.Version
 
 -- PRIVATE STATE
 local _migrations: { (data: PlayerData.PlayerData) -> () } = {}

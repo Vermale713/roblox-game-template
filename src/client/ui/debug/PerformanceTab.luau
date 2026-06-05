@@ -4,23 +4,23 @@
 ]=]
 
 -- SERVICES
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Stats = game:GetService("Stats")
+const Players = game:GetService("Players")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
+const Stats = game:GetService("Stats")
 
 -- IMPORTED MODULES
-local DebugStore = require(ReplicatedStorage.client.store.DebugStore)
-local Iris = require(ReplicatedStorage.packages.Iris)
-local NumberUtil = require(ReplicatedStorage.utilities.NumberUtil)
+const DebugStore = require(ReplicatedStorage.client.store.DebugStore)
+const Iris = require(ReplicatedStorage.packages.Iris)
+const NumberUtil = require(ReplicatedStorage.utilities.NumberUtil)
 
 -- CONSTANTS
-local SAMPLE_COUNT = 60
+const SAMPLE_COUNT = 60
 
 -- PRIVATE STATE
 local _frameTimes = {}
 local _pings = {}
 
-local function PerformanceTab()
+const function PerformanceTab()
 	Iris.SeparatorText({ "Basic Performance Data" })
 	local fps = 1 / Stats.FrameTime
 	local ping = Players.LocalPlayer:GetNetworkPing() * 1000

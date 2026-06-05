@@ -4,14 +4,14 @@
 ]=]
 
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
-local Iris = require(ReplicatedStorage.packages.Iris)
+const PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
+const Iris = require(ReplicatedStorage.packages.Iris)
 
 -- PRIVATE FUNCTIONS
-local function traversePlayerData(data: { [string]: any })
+const function traversePlayerData(data: { [string]: any })
 	for key, value in data do
 		if typeof(value) == "table" then
 			local isUncollapsed = Iris.State(true)

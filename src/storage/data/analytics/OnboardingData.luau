@@ -1,4 +1,4 @@
-local OnboardingData = {
+const OnboardingData = {
 	["Joined the game"] = 1,
 }
 

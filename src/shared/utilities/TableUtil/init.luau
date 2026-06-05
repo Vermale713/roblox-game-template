@@ -4,10 +4,10 @@
 ]=]
 
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local Dictionary = require(ReplicatedStorage.utilities.TableUtil.Dictionary)
+const Dictionary = require(ReplicatedStorage.utilities.TableUtil.Dictionary)
 
 -- PUBLIC MODULE
 local TableUtil = {}

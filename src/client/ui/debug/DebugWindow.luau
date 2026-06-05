@@ -4,16 +4,16 @@
 ]=]
 
 -- SERVICES
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- IMPORTED MODULES
-local DebugStore = require(ReplicatedStorage.client.store.DebugStore)
-local SaveStore = require(ReplicatedStorage.client.store.SaveStore)
-local PerformanceTab = require(ReplicatedStorage.client.ui.debug.PerformanceTab)
-local PlayerTab = require(ReplicatedStorage.client.ui.debug.PlayerTab)
-local Iris = require(ReplicatedStorage.packages.Iris)
+const DebugStore = require(ReplicatedStorage.client.store.DebugStore)
+const SaveStore = require(ReplicatedStorage.client.store.SaveStore)
+const PerformanceTab = require(ReplicatedStorage.client.ui.debug.PerformanceTab)
+const PlayerTab = require(ReplicatedStorage.client.ui.debug.PlayerTab)
+const Iris = require(ReplicatedStorage.packages.Iris)
 
-local function DebugWindow()
+const function DebugWindow()
 	local window = Iris.Window({ "Debug Menu" }, { isOpened = DebugStore.IsOpened, position = DebugStore.Position })
 
 	if not window.state.isUncollapsed:get() then

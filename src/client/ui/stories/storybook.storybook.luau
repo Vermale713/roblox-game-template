@@ -1,6 +1,8 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+-- SERVICES
+const ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local UiLabs = require(ReplicatedStorage.packages.UiLabs)
+-- IMPORTED MODULES
+const UiLabs = require(ReplicatedStorage.packages.UiLabs)
 
 local storybook: UiLabs.Storybook = {
 	name = "Stories",
