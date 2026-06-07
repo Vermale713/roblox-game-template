@@ -55,7 +55,7 @@ function Rng.weighted(options: { { [string]: any } }, itemKey: string, weightKey
 
 	local total = 0
 	for _, option in options do
-		total += option.weight
+		total += option[weightKey]
 	end
 
 	const roll = _rng:NextNumber(0, total)
@@ -69,7 +69,7 @@ function Rng.weighted(options: { { [string]: any } }, itemKey: string, weightKey
 
 	-- edge case should never happen
 	warn("edge case in weighted()")
-	return options[#options].item
+	return options[#options][itemKey]
 end
 
 return Rng
