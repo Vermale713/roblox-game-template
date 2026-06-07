@@ -18,7 +18,7 @@ type Command = {
 	registerPermission: () -> (),
 }
 
-local ConchService = {}
+const ConchService = {}
 Loader.register("ConchService", {
 	Module = ConchService,
 	Dependencies = { "UserService" },
@@ -27,14 +27,14 @@ Loader.register("ConchService", {
 function ConchService.onInit()
 	Conch.initiate_default_lifecycle()
 	UserService.UserAdded:Connect(function(user)
-		local player = user.Player
-		local conchUser = Conch.get_user(player)
+		const player = user.Player
+		const conchUser = Conch.get_user(player)
 		Conch.give_roles(conchUser, user.Permissions)
 	end)
 end
 
 function ConchService.onStart()
-	local commands: { [string]: Command } = {}
+	const commands: { [string]: Command } = {}
 
 	-- Register commands
 	for _, commandModule in ServerScriptService.conch.commands:GetChildren() do

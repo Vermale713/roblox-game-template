@@ -19,7 +19,8 @@ const function appendSpaces(text: string, lineWidth: number): string
 	return `{text}{string.rep(" ", lineWidth - #text)}`
 end
 
-local Command = {}
+-- PUBLIC MODULE
+const Command = {}
 
 function Command.registerCommand()
 	Conch.register("help", {
@@ -28,31 +29,31 @@ function Command.registerCommand()
 		arguments = function() end,
 		callback = function(...)
 			-- Have to cast as because conch types are not correct
-			local context = Conch.get_command_context() :: any
-			local console = Conch.console :: any
+			const context = Conch.get_command_context() :: any
+			const console = Conch.console :: any
 
 			if not context then
 				return
 			end
 
-			local commands: { { name: string, description: string, permissions: string } } = {}
+			const commands: { { name: string, description: string, permissions: string } } = {}
 
 			for _, command in console.commands do
 				if not Conch.has_permissions(context.executor, table.unpack(command.permissions)) then
 					continue
 				end
 
-				local args: { string } = {}
+				const args: { string } = {}
 
 				for _, arg in command.type.arguments do
-					local prefix = if arg.kind == "varargs" then "..." else ""
-					local suffix = if arg.optional then "?" else ""
+					const prefix = if arg.kind == "varargs" then "..." else ""
+					const suffix = if arg.optional then "?" else ""
 
 					table.insert(args, `{prefix}{arg.type.type}{suffix}`)
 				end
 
-				local permissions = table.concat(command.permissions, ", ")
-				local name = if #args > 0 then `{command.name}: -{table.concat(args, " -")}` else command.name
+				const permissions = table.concat(command.permissions, ", ")
+				const name = if #args > 0 then `{command.name}: -{table.concat(args, " -")}` else command.name
 
 				table.insert(commands, {
 					name = name :: string,
@@ -61,16 +62,16 @@ function Command.registerCommand()
 				})
 			end
 
-			local lineNameWidth = getLongest("name", commands)
-			local lineDescriptionWidth = getLongest("description", commands)
+			const lineNameWidth = getLongest("name", commands)
+			const lineDescriptionWidth = getLongest("description", commands)
 
 			table.sort(commands, function(a, b)
 				return (a.name :: string) < (b.name :: string)
 			end)
 
-			local headerName = appendSpaces("Name", lineNameWidth)
-			local headerDescription = appendSpaces("Description", lineDescriptionWidth)
-			local headerPermissions = "Permissions"
+			const headerName = appendSpaces("Name", lineNameWidth)
+			const headerDescription = appendSpaces("Description", lineDescriptionWidth)
+			const headerPermissions = "Permissions"
 
 			Conch.log("info", `{headerName}   {headerDescription}   {headerPermissions}`)
 

@@ -13,7 +13,7 @@ const OnboardingData = require(ServerStorage.data.analytics.OnboardingData)
 const Promise = require(ReplicatedStorage.packages.Promise)
 
 -- PUBLIC MODULE
-local AnalyticsUtil = {}
+const AnalyticsUtil = {}
 
 function AnalyticsUtil.LogOnboardingStep(player: Player, step: keyof<typeof(OnboardingData)>)
 	Promise.new(function(resolve, reject)

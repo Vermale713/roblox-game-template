@@ -13,14 +13,15 @@ const PlayerData = require(ReplicatedStorage.data.templates.PlayerData)
 const LATEST_VERSION = PlayerData.Metadata.Version
 
 -- PRIVATE STATE
-local _migrations: { (data: PlayerData.PlayerData) -> () } = {}
+const _migrations: { (data: PlayerData.PlayerData) -> () } = {}
 
-local DataMigrationUtil = {}
+-- PUBLIC MODULE
+const DataMigrationUtil = {}
 
 function DataMigrationUtil.migrate(data: PlayerData.PlayerData)
-	local version = data.Metadata.Version
+	const version = data.Metadata.Version
 	while version < LATEST_VERSION do
-		local migration = _migrations[version]
+		const migration = _migrations[version]
 		if migration then
 			migration(data)
 		end

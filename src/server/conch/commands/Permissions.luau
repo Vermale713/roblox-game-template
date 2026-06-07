@@ -4,7 +4,8 @@ const ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- IMPORTED MODULES
 const Conch = require(ReplicatedStorage.packages.Conch)
 
-local Command = {}
+-- PUBLIC MODULE
+const Command = {}
 
 function Command.registerCommand()
 	Conch.register("permission", {
@@ -14,7 +15,7 @@ function Command.registerCommand()
 			return Conch.args.player("Player", "The player to check args for")
 		end,
 		callback = function(player: Player)
-			local user = Conch.get_user(player)
+			const user = Conch.get_user(player)
 			Conch.log("info", user.roles[1])
 		end,
 	})

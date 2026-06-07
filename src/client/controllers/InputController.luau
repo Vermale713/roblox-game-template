@@ -31,21 +31,19 @@ type BindingOptions = {
 }
 
 -- PRIVATE STATE
-local _contextFolder: Folder
-local _contexts: { [string]: InputContext } = {}
+const _contextFolder: Folder = Instance.new("Folder")
+const _contexts: { [string]: InputContext } = {}
 
-local InputController = {}
+const InputController = {}
 Loader.register("InputController", {
 	Module = InputController,
 	Dependencies = {},
 })
 
 function InputController.onInit()
-	local folder = Instance.new("Folder")
+	const folder = _contextFolder 
 	folder.Name = "inputs"
 	folder.Parent = ReplicatedStorage
-
-	_contextFolder = folder
 end
 
 --[=[
@@ -58,7 +56,7 @@ end
 	@error "InputContext not found" -- Thrown when no context with 'name' exists.
 ]=]
 function InputController.getContext(name: string): InputContext
-	local context = _contexts[name]
+	const context = _contexts[name]
 	assert(context and context:IsA("InputContext"), "InputContext not found")
 
 	return context
@@ -76,7 +74,7 @@ end
 function InputController.createContext(name: string, options: ContextOptions): InputContext
 	options = options or {} :: ContextOptions
 
-	local context = Instance.new("InputContext")
+	const context = Instance.new("InputContext")
 	context.Priority = options.Priority or 0
 	context.Sink = options.Sink or false
 	context.Enabled = if options.Enabled ~= nil then options.Enabled else true
@@ -92,7 +90,7 @@ end
 function InputController.createAction(context: InputContext, name: string, options: ActionOptions): InputAction
 	options = options or {} :: ActionOptions
 
-	local action = Instance.new("InputAction")
+	const action = Instance.new("InputAction")
 	action.Name = name
 	action.Type = options.Type or Enum.InputActionType.Bool
 	action.Enabled = if options.Enabled ~= nil then options.Enabled else true
@@ -116,7 +114,7 @@ function InputController.addBinding(
 	name: "Keyboard" | "Gamepad",
 	options: BindingOptions
 ): InputBinding
-	local binding = Instance.new("InputBinding")
+	const binding = Instance.new("InputBinding")
 	binding.Name = name
 	binding.KeyCode = options.KeyCode
 	binding.Parent = action
@@ -125,7 +123,7 @@ function InputController.addBinding(
 end
 
 function InputController.addUIBinding(action: InputAction, guiButton: GuiButton): InputBinding
-	local binding = Instance.new("InputBinding")
+	const binding = Instance.new("InputBinding")
 	binding.Name = "Touch"
 	binding.UIButton = guiButton
 	binding.Parent = action
@@ -143,7 +141,7 @@ function InputController.isPressed(action: InputAction): boolean
 end
 
 function InputController.destroyContext(name: string): ()
-	local context = _contexts[name]
+	const context = _contexts[name]
 	context:Destroy()
 	_contexts[name] = nil
 end

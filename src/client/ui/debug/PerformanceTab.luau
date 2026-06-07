@@ -17,13 +17,13 @@ const NumberUtil = require(ReplicatedStorage.utilities.NumberUtil)
 const SAMPLE_COUNT = 60
 
 -- PRIVATE STATE
-local _frameTimes = {}
-local _pings = {}
+const _frameTimes = {}
+const _pings = {}
 
 const function PerformanceTab()
 	Iris.SeparatorText({ "Basic Performance Data" })
-	local fps = 1 / Stats.FrameTime
-	local ping = Players.LocalPlayer:GetNetworkPing() * 1000
+	const fps = 1 / Stats.FrameTime
+	const ping = Players.LocalPlayer:GetNetworkPing() * 1000
 
 	Iris.Text({ `FPS: {NumberUtil.truncate(fps)}` })
 	Iris.Text({ `Ping: {NumberUtil.truncate(ping)}` })

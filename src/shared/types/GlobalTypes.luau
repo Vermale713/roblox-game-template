@@ -1,5 +1,5 @@
 export type function Partial(ty: type): type
-	local result = types.copy(ty)
+	const result = types.copy(ty)
 	for key, property in ty:properties() do
 		if property.read then
 			result:setreadproperty(key, types.unionof(property.read, types.singleton(nil)))

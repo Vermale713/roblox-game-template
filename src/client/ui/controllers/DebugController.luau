@@ -11,7 +11,7 @@ const DebugWindow = require(ReplicatedStorage.client.ui.debug.DebugWindow)
 const Iris = require(ReplicatedStorage.packages.Iris)
 const Loader = require(ReplicatedStorage.utilities.Loader)
 
-local DebugController = {}
+const DebugController = {}
 Loader.register("DebugController", {
 	Module = DebugController,
 	Dependencies = {},

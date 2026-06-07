@@ -7,7 +7,7 @@
 const Queue = require(script.Queue)
 
 -- PUBLIC MODULE
-local Collections = {}
+const Collections = {}
 
 Collections.Queue = Queue
 

@@ -29,7 +29,7 @@ type CharacterProto = {
 
 export type Character = setmetatable<CharacterProto, CharacterImpl>
 
-local Character = {} :: CharacterImpl
+const Character = {} :: CharacterImpl
 Character.__index = Character
 
 function Character.new(rig: GlobalTypes.R15Character): Character
@@ -42,7 +42,7 @@ function Character.new(rig: GlobalTypes.R15Character): Character
 end
 
 function Character.isAlive(self: Character): boolean
-	local health = self.Humanoid.Health
+	const health = self.Humanoid.Health
 
 	return health > 0
 end

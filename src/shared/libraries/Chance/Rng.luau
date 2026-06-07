@@ -4,10 +4,10 @@
 ]=]
 
 -- PRIVATE STATE
-local _rng = Random.new()
+const _rng = Random.new()
 
 -- PUBLIC MODULE
-local Rng = {}
+const Rng = {}
 
 function Rng.roll(weight: number?): boolean
 	return _rng:NextNumber() < (weight or 0.5)
@@ -25,9 +25,9 @@ end
 
 function Rng.shuffle<T>(list: T & {}): T
 	assert(#list > 0, "list cannot be empty")
-	local copy = table.clone(list)
+	const copy = table.clone(list)
 	for i = #copy, 2, -1 do
-		local j = _rng:NextInteger(1, i)
+		const j = _rng:NextInteger(1, i)
 		copy[i], copy[j] = copy[j], copy[i]
 	end
 	return copy
@@ -42,8 +42,8 @@ function Rng.sample<T>(list: { T }, elements: number): { T }
 	assert(#list > 0, "list cannot be empty")
 	assert(elements > 0, "elements must be greater than 0")
 	assert(elements <= #list, "elements cannot exceed list size")
-	local shuffled = Rng.shuffle(list)
-	local result = {}
+	const shuffled = Rng.shuffle(list)
+	const result = {}
 	for i = 1, elements do
 		result[i] = shuffled[i]
 	end
@@ -58,7 +58,7 @@ function Rng.weighted(options: { { [string]: any } }, itemKey: string, weightKey
 		total += option.weight
 	end
 
-	local roll = _rng:NextNumber(0, total)
+	const roll = _rng:NextNumber(0, total)
 	local cumulative = 0
 	for _, option in options do
 		cumulative += option[weightKey]

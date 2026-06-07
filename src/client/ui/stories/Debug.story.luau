@@ -7,10 +7,10 @@ const DebugWindow = require(ReplicatedStorage.client.ui.debug.DebugWindow)
 const Iris = require(ReplicatedStorage.packages.Iris)
 const UiLabs = require(ReplicatedStorage.packages.UiLabs)
 
-local story = UiLabs.CreateIrisStory({
+const story = UiLabs.CreateIrisStory({
 	iris = Iris,
 }, function()
-	local conn = Iris:Connect(function()
+	const conn = Iris:Connect(function()
 		DebugWindow()
 	end)
 

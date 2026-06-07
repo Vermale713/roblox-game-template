@@ -35,7 +35,7 @@ export type Queue<T> = setmetatable<QueueProto<T>, QueueImpl<T>>
 -- PRIVATE FUNCTIONS
 
 -- PUBLIC MODULE
-local Queue = {} :: QueueImpl<any>
+const Queue = {} :: QueueImpl<any>
 Queue.__index = Queue
 
 function Queue.new<T>(cap: number?): Queue<T>
@@ -54,7 +54,7 @@ function Queue.enqueue<T>(self: Queue<T>, value: T)
 		return
 	end
 	-- 1 based index fix
-	local rear = ((self._first - 1 + self._size) % self._capacity) + 1
+	const rear = ((self._first - 1 + self._size) % self._capacity) + 1
 	self._data[rear] = value
 	self._size += 1
 end
@@ -64,7 +64,7 @@ function Queue.dequeue<T>(self: Queue<T>): T?
 		return nil
 	end
 
-	local result = self._data[self._first]
+	const result = self._data[self._first]
 	self._data[self._first] = nil
 	-- 1 based index fix
 	self._first = (self._first % self._capacity) + 1
@@ -77,7 +77,7 @@ function Queue.peek<T>(self: Queue<T>): T?
 		return nil
 	end
 
-	local result = self._data[self._first]
+	const result = self._data[self._first]
 	return result
 end
 

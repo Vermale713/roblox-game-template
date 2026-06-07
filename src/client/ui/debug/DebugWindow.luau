@@ -14,7 +14,7 @@ const PlayerTab = require(ReplicatedStorage.client.ui.debug.PlayerTab)
 const Iris = require(ReplicatedStorage.packages.Iris)
 
 const function DebugWindow()
-	local window = Iris.Window({ "Debug Menu" }, { isOpened = DebugStore.IsOpened, position = DebugStore.Position })
+	const window = Iris.Window({ "Debug Menu" }, { isOpened = DebugStore.IsOpened, position = DebugStore.Position })
 
 	if not window.state.isUncollapsed:get() then
 		Iris.End()
@@ -28,15 +28,15 @@ const function DebugWindow()
 
 	Iris.TabBar()
 
-	local playerTab = Iris.Tab({ "Local Player State" })
+	const playerTab = Iris.Tab({ "Local Player State" })
 	if playerTab.state.isOpened:get() then
-		local playerData = SaveStore.GetSave()
+		const playerData = SaveStore.GetSave()
 
 		PlayerTab(playerData)
 	end
 	Iris.End()
 
-	local performanceTab = Iris.Tab({ "Performance" })
+	const performanceTab = Iris.Tab({ "Performance" })
 	if performanceTab.state.isOpened:get() then
 		PerformanceTab()
 	end

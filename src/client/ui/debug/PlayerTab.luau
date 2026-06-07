@@ -14,7 +14,7 @@ const Iris = require(ReplicatedStorage.packages.Iris)
 const function traversePlayerData(data: { [string]: any })
 	for key, value in data do
 		if typeof(value) == "table" then
-			local isUncollapsed = Iris.State(true)
+			const isUncollapsed = Iris.State(true)
 
 			Iris.Tree({ key }, { isUncollapsed = isUncollapsed })
 
@@ -27,7 +27,7 @@ const function traversePlayerData(data: { [string]: any })
 	end
 end
 
-local function PlayerTab(data: PlayerData.PlayerData)
+const function PlayerTab(data: PlayerData.PlayerData)
 	Iris.SeparatorText({ "Player Data" })
 	traversePlayerData(data :: { [string]: any })
 end

@@ -15,16 +15,16 @@ const Iris = require(ReplicatedStorage.packages.Iris)
 -- TYPES
 
 -- PRIVATE STATE
-local _screenSize = workspace.CurrentCamera.ViewportSize
-local _isOpened = Iris.State(false)
-local _position = Iris.State(_screenSize / 2)
-local _frameTimes = Iris.State({})
-local _pings = Iris.State({})
+const _screenSize = workspace.CurrentCamera.ViewportSize
+const _isOpened = Iris.State(false)
+const _position = Iris.State(_screenSize / 2)
+const _frameTimes = Iris.State({})
+const _pings = Iris.State({})
 
 -- PRIVATE FUNCTIONS
 
--- MODULES
-local DebugStore = {}
+-- PUBLIC MODULES
+const DebugStore = {}
 
 DebugStore.IsOpened = _isOpened
 DebugStore.Position = _position

@@ -1,5 +1,5 @@
 -- PUBLIC MODULE
-local Dictionary = {}
+const Dictionary = {}
 
 function Dictionary.set<T>(object: T & {}, key: string, value: any): T
 	if object[key] ~= value then

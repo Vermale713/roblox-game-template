@@ -10,7 +10,7 @@ const ReplicatedStorage = game:GetService("ReplicatedStorage")
 const Promise = require(ReplicatedStorage.packages.Promise)
 
 -- CONSTANTS
-local SINGLETON_LIFECYCLES = {
+const SINGLETON_LIFECYCLES = {
 	OnInit = "onInit",
 	OnStart = "onStart",
 }
@@ -28,13 +28,13 @@ type Singleton = {
 }
 
 -- PRIVATE STATE
-local _singletons: { [string]: Config<unknown> } = {}
+const _singletons: { [string]: Config<unknown> } = {}
 local _sortedSingletons: {}
 
 -- PRIVATE FUNCTIONS
-local function sort<T>(registry: { [string]: Config<T> }): {}
-	local graph: { [string]: { string } } = {}
-	local inDegree: { [string]: number } = {}
+const function sort<T>(registry: { [string]: Config<T> }): {}
+	const graph: { [string]: { string } } = {}
+	const inDegree: { [string]: number } = {}
 
 	for name in registry do
 		graph[name] = {}
@@ -52,16 +52,16 @@ local function sort<T>(registry: { [string]: Config<T> }): {}
 		end
 	end
 
-	local queue: { string } = {}
+	const queue: { string } = {}
 	for name, degree in inDegree do
 		if degree == 0 then
 			table.insert(queue, name)
 		end
 	end
 
-	local sorted = {}
+	const sorted = {}
 	while #queue > 0 do
-		local current = table.remove(queue, 1) :: string
+		const current = table.remove(queue, 1) :: string
 		table.insert(sorted, registry[current].Module)
 
 		for _, dependent in graph[current] do
@@ -78,12 +78,12 @@ local function sort<T>(registry: { [string]: Config<T> }): {}
 	end
 
 	if #sorted ~= registrySize then
-		local loaded = {}
+		const loaded = {}
 		for _, module in sorted do
 			loaded[module] = true
 		end
 
-		local culprits: { string } = {}
+		const culprits: { string } = {}
 		for name, config in registry do
 			if not loaded[config.Module] then
 				table.insert(culprits, name)
@@ -96,7 +96,7 @@ local function sort<T>(registry: { [string]: Config<T> }): {}
 end
 
 -- PUBLIC MODULE
-local Loader = {}
+const Loader = {}
 
 function Loader.register<T>(name: string, config: Config<T>): ()
 	_singletons[name] = config
@@ -106,7 +106,7 @@ function Loader.loadDirectory(dir: Instance, descendants: boolean?): Promise.Typ
 	return Promise.new(function(resolve)
 		descendants = descendants or false
 
-		local dirDescendants = if descendants then dir:GetDescendants() else dir:GetChildren()
+		const dirDescendants = if descendants then dir:GetDescendants() else dir:GetChildren()
 
 		for _, descendant: Instance in dirDescendants do
 			if descendant:IsA("ModuleScript") then
@@ -125,17 +125,17 @@ function Loader.start(): Promise.TypedPromise<()>
 
 		-- Initialize modules
 		for _, module: Singleton in _sortedSingletons :: { Singleton } do
-			local method: () -> () = module[SINGLETON_LIFECYCLES.OnInit]
+			const method: () -> () = module[SINGLETON_LIFECYCLES.OnInit]
 			if method then
 				method()
 			end
 		end
 
 		-- Start modules
-		local startPromises: { Promise.TypedPromise<any> } = {}
+		const startPromises: { Promise.TypedPromise<any> } = {}
 		for _, module: Singleton in _sortedSingletons :: { Singleton } do
 			task.spawn(function()
-				local method: () -> () = module[SINGLETON_LIFECYCLES.OnStart]
+				const method: () -> () = module[SINGLETON_LIFECYCLES.OnStart]
 				if method then
 					table.insert(
 						startPromises,

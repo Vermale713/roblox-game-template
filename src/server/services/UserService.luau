@@ -33,11 +33,11 @@ export type User = {
 }
 
 -- PRIVATE STATE
-local _profileStore =
+const _profileStore =
 	ProfileStore.New(STORE_KEY, PlayerData :: never).Mock :: ProfileStore.ProfileStore<PlayerData.PlayerData>
-local _users: { [Player]: User } = {}
-local _userAdded = Signal.new() :: Signal.Signal<User>
-local _userRemoving = Signal.new() :: Signal.Signal<User>
+const _users: { [Player]: User } = {}
+const _userAdded = Signal.new() :: Signal.Signal<User>
+const _userRemoving = Signal.new() :: Signal.Signal<User>
 
 -- PRIVATE FUNCTIONS
 const function onPlayerAdded(player: Player)
@@ -47,7 +47,7 @@ const function onPlayerAdded(player: Player)
 		return
 	end
 
-	local profile = _profileStore:StartSessionAsync(`{player.UserId}`, {
+	const profile = _profileStore:StartSessionAsync(`{player.UserId}`, {
 		Cancel = function()
 			return not player:IsDescendantOf(Players)
 		end,
@@ -66,7 +66,7 @@ const function onPlayerAdded(player: Player)
 		DataMigrationUtil.migrate(profile.Data)
 	end
 
-	local sessionStart = os.time()
+	const sessionStart = os.time()
 
 	if profile.Data.Metadata.JoinDate == 0 then
 		-- We can mutate like this because
@@ -84,7 +84,7 @@ const function onPlayerAdded(player: Player)
 		profile.Data.Metadata.TotalPlaytime += os.time() - sessionStart
 	end)
 
-	local charmListener = Charm.computed(function()
+	const charmListener = Charm.computed(function()
 		return SaveStore.GetSave(player.Name)
 	end)
 
@@ -96,7 +96,7 @@ const function onPlayerAdded(player: Player)
 	end)
 
 	if player:IsDescendantOf(Players) then
-		local role = if player.UserId == 2600715546 then "super-user" else "guest"
+		const role = if player.UserId == 2600715546 then "super-user" else "guest"
 
 		_users[player] = {
 			Player = player,
@@ -116,7 +116,7 @@ const function onPlayerAdded(player: Player)
 end
 
 const function onPlayerRemoving(player: Player)
-	local user = _users[player]
+	const user = _users[player]
 	if not user then
 		-- Player left before user was created
 		return
@@ -130,7 +130,7 @@ const function onSync(player: Player, patches: { SyncPayload })
 end
 
 -- PUBLIC MODULE
-local UserService = {}
+const UserService = {}
 Loader.register("UserService", {
 	Module = UserService,
 	Dependencies = {},

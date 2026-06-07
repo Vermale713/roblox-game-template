@@ -21,12 +21,12 @@ type SyncPayload = CharmSync.SyncPayload
 -- PRIVATE STATE
 
 -- PRIVATE FUNCTIONS
-local function onSync(patches: { SyncPayload })
+const function onSync(patches: { SyncPayload })
 	CharmSync.client.patch(patches)
 end
 
 -- PUBLIC MODULE
-local UserController = {}
+const UserController = {}
 Loader.register("UserController", {
 	Module = UserController,
 	Dependencies = {},

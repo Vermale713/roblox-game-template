@@ -20,7 +20,8 @@ type Command = {
 	registerPermission: () -> (),
 }
 
-local ConchController = {}
+-- PUBLIC MODULE
+const ConchController = {}
 Loader.register("ConchController", {
 	Module = ConchController,
 	Dependencies = {},
@@ -32,7 +33,7 @@ function ConchController.onInit()
 end
 
 function ConchController.onStart()
-	local commands: { [string]: Command } = {}
+	const commands: { [string]: Command } = {}
 
 	-- Register commands
 	for _, commandModule in ReplicatedStorage.client.conch.commands:GetChildren() do

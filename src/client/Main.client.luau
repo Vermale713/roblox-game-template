@@ -9,7 +9,7 @@ const Loader = require(ReplicatedStorage.utilities.Loader)
 -- TYPES
 
 -- PRIVATE STATE
-local _startTime = os.clock()
+const _startTime = os.clock()
 
 -- PRIVATE FUNCTIONS
 

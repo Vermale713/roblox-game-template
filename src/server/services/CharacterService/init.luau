@@ -24,22 +24,22 @@ type User = UserService.User
 export type Character = Character.Character
 
 -- PRIVATE STATE
-local _characterAdded = Signal.new() :: Signal.Signal<Character>
-local _characterRemoving = Signal.new() :: Signal.Signal<Character>
-local _spawnerConnections: { [Player]: RBXScriptConnection } = {}
-local _characters: { [Player]: Character } = {}
+const _characterAdded = Signal.new() :: Signal.Signal<Character>
+const _characterRemoving = Signal.new() :: Signal.Signal<Character>
+const _spawnerConnections: { [Player]: RBXScriptConnection } = {}
+const _characters: { [Player]: Character } = {}
 
 -- PRIVATE FUNCTIONS
 const function onUserAdded(user: User)
-	local player = user.Player
+	const player = user.Player
 
 	if _spawnerConnections[player] then
 		-- Shouldn't happen but somehow double called
 		return
 	end
 
-	local connection = player.CharacterAdded:Connect(function(model)
-		local character = Character.new(model :: GlobalTypes.R15Character)
+	const connection = player.CharacterAdded:Connect(function(model)
+		const character = Character.new(model :: GlobalTypes.R15Character)
 
 		_characterAdded:Fire(character)
 
@@ -60,9 +60,9 @@ const function onUserAdded(user: User)
 end
 
 const function onUserRemoving(user: User)
-	local player = user.Player
+	const player = user.Player
 
-	local connection = _spawnerConnections[player]
+	const connection = _spawnerConnections[player]
 	if connection then
 		connection:Disconnect()
 	end
@@ -71,7 +71,7 @@ const function onUserRemoving(user: User)
 end
 
 -- PUBLIC MODULE
-local CharacterService = {}
+const CharacterService = {}
 Loader.register("CharacterService", {
 	Module = CharacterService,
 	Dependencies = { "UserService" },

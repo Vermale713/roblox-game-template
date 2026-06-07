@@ -10,7 +10,7 @@ const ReplicatedStorage = game:GetService("ReplicatedStorage")
 const Rng = require(ReplicatedStorage.libraries.Chance.Rng)
 
 -- PUBLIC MODULE
-local Chance = {}
+const Chance = {}
 
 Chance.Rng = Rng
 

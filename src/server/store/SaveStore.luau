@@ -20,12 +20,12 @@ type Saves = {
 }
 
 -- PRIVATE STATE
-local _getSaves, _setSaves = Charm.signal({} :: Saves)
+const _getSaves, _setSaves = Charm.signal({} :: Saves)
 
 -- PRIVATE FUNCTIONS
 
 -- MODULES
-local SaveStore = {}
+const SaveStore = {}
 
 SaveStore.GetSaves = _getSaves
 SaveStore.SetSaves = _setSaves

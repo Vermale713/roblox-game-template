@@ -10,7 +10,7 @@ const ReplicatedStorage = game:GetService("ReplicatedStorage")
 const Dictionary = require(ReplicatedStorage.utilities.TableUtil.Dictionary)
 
 -- PUBLIC MODULE
-local TableUtil = {}
+const TableUtil = {}
 
 TableUtil.Dictionary = Dictionary
 

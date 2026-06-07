@@ -16,12 +16,12 @@ const Charm = require(ReplicatedStorage.packages.Charm)
 -- TYPES
 
 -- PRIVATE STATE
-local _getSave, _setSave = Charm.signal(PlayerData :: PlayerData.PlayerData)
+const _getSave, _setSave = Charm.signal(PlayerData :: PlayerData.PlayerData)
 
 -- PRIVATE FUNCTIONS
 
--- MODULES
-local SaveStore = {}
+-- PUBLIC MODULES
+const SaveStore = {}
 
 SaveStore.GetSave = _getSave
 SaveStore.SetSave = _setSave

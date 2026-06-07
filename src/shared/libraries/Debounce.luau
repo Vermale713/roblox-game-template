@@ -18,7 +18,7 @@ type DebounceProto = {
 export type Debounce = setmetatable<DebounceProto, DebounceImpl>
 
 -- PUBLIC MODULE
-local Debounce = {} :: DebounceImpl
+const Debounce = {} :: DebounceImpl
 Debounce.__index = Debounce
 
 function Debounce.new(duration: number): Debounce

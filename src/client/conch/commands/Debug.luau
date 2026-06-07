@@ -6,7 +6,7 @@ const DebugStore = require(ReplicatedStorage.client.store.DebugStore)
 const Conch = require(ReplicatedStorage.packages.Conch)
 const Iris = require(ReplicatedStorage.packages.Iris)
 
-local Command = {}
+const Command = {}
 
 function Command.registerCommand()
 	Conch.register("debug", {

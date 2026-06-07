@@ -43,30 +43,30 @@ type ActionInstance = {
 type ActionPayload = NetworkTypes.Action_ActionEvent
 
 -- PRIVATE STATE
-local _actions: { [string]: ActionDefinition } = {}
-local _activePlayerActions: { [Player]: { [string]: ActionInstance } } = {}
+const _actions: { [string]: ActionDefinition } = {}
+const _activePlayerActions: { [Player]: { [string]: ActionInstance } } = {}
 
 -- PRIVATE FUNCTIONS
 const function onUserAdded(user: User)
-	local player = user.Player
+	const player = user.Player
 	_activePlayerActions[player] = {}
 end
 
 const function onUserRemoving(user: User)
-	local player = user.Player
+	const player = user.Player
 	_activePlayerActions[player] = nil
 end
 
 const function onCharacterRemoving(character: Character)
-	local model = character.Model
-	local player = Players:GetPlayerFromCharacter(model)
+	const model = character.Model
+	const player = Players:GetPlayerFromCharacter(model)
 	if not player then
 		return
 	end
-	local activeActions = _activePlayerActions[player]
+	const activeActions = _activePlayerActions[player]
 
 	for actionName, actionDefinition in activeActions do
-		local action = _actions[actionName]
+		const action = _actions[actionName]
 		action.stop(character)
 	end
 
@@ -74,11 +74,11 @@ const function onCharacterRemoving(character: Character)
 end
 
 const function onActionEventRequest(player: Player, payload: ActionPayload)
-	local actionName = payload.Action
-	local actionType = payload.Type
-	local playerActions = _activePlayerActions[player]
-	local action = _actions[actionName]
-	local character = CharacterService.Characters[player]
+	const actionName = payload.Action
+	const actionType = payload.Type
+	const playerActions = _activePlayerActions[player]
+	const action = _actions[actionName]
+	const character = CharacterService.Characters[player]
 
 	if not character then
 		-- Can't run action if no character exists
@@ -93,7 +93,7 @@ const function onActionEventRequest(player: Player, payload: ActionPayload)
 	if actionType == "Start" then
 		if action.CheckForActives then
 			for _, actionInstance in playerActions do
-				local definition = _actions[actionInstance.Name]
+				const definition = _actions[actionInstance.Name]
 				if not definition.CheckedByOthers then
 					continue
 				end
@@ -102,8 +102,8 @@ const function onActionEventRequest(player: Player, payload: ActionPayload)
 			end
 		end
 
-		local function contextStopAction()
-			local character = CharacterService.Characters[player]
+		const function contextStopAction()
+			const character = CharacterService.Characters[player]
 			if not character then
 				return
 			end
@@ -113,11 +113,11 @@ const function onActionEventRequest(player: Player, payload: ActionPayload)
 			action.stop(character)
 		end
 
-		local context: ActionContext = {
+		const context: ActionContext = {
 			stop = contextStopAction,
 		}
 
-		local actionInstance: ActionInstance = {
+		const actionInstance: ActionInstance = {
 			Name = actionName,
 			StartedAt = os.time(),
 		}
@@ -137,7 +137,7 @@ const function onActionEventRequest(player: Player, payload: ActionPayload)
 end
 
 -- PUBLIC MODULE
-local ActionService = {}
+const ActionService = {}
 Loader.register("ActionService", {
 	Module = ActionService,
 	Dependencies = { "UserService", "CharacterService" },
@@ -151,7 +151,7 @@ function ActionService.onInit()
 end
 
 function ActionService.defineAction(options: Partial<ActionDefinition>): ()
-	local opts: ActionDefinition = options :: ActionDefinition
+	const opts: ActionDefinition = options :: ActionDefinition
 		or {
 			Name = options.Name,
 			CheckForActives = options.CheckForActives or true,
