@@ -4,7 +4,6 @@
 # New tools can be added by running `rokit add <tool>` in a terminal.
 
 [tools]
-asphalt = "jacktabscode/asphalt@2.0.0"
 blink = "1axen/blink@0.18.8"
 argon = "argon-rbx/argon@2.0.28"
 StyLua = "JohnnyMorganz/StyLua@2.4.1"

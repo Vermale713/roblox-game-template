@@ -4,22 +4,25 @@
 	"tree": {
 		"$className": "DataModel",
 		"ReplicatedStorage": {
-			"$path": "src/shared",
-			"packages": {
+			"$path": "src/Shared",
+			"Packages": {
 				"$path": "roblox_packages"
 			},
-			"client": {
-				"$path": "src/client"
+			"Client": {
+				"$path": "src/Client"
 			}
 		},
+        "ReplicatedFirst": {
+            "$path": "src/Preload"
+        },
 		"ServerScriptService": {
-			"$path": "src/server",
-			"serverPackages": {
+			"$path": "src/Server",
+			"ServerPackages": {
 				"$path": "roblox_server_packages"
 			}
 		},
 		"ServerStorage": {
-			"$path": "src/storage"
+			"$path": "src/Storage"
 		}
 	}
 }
