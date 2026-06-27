@@ -3,6 +3,12 @@
 	"legacyScripts": false,
 	"tree": {
 		"$className": "DataModel",
+		"Players": {
+			"$className": "Players",
+			"$properties": {
+				"CharacterAutoLoads": false
+			}
+		},
 		"ReplicatedStorage": {
 			"$path": "src/Shared",
 			"Packages": {
