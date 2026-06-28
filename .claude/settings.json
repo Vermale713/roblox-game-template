@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "permissions": {
+    "allow": [
+      "PowerShell(stylua *)",
+      "PowerShell(stylua)",
+      "PowerShell(selene *)",
+      "PowerShell(selene)",
+      "Bash(stylua *)",
+      "Bash(stylua)",
+      "Bash(selene *)",
+      "Bash(selene)"
+    ]
+  }
+}

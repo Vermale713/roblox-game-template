@@ -85,11 +85,24 @@ Loader.Load(container)   -- requires all modules, calls OnInit in dependency ord
 
 ## Networking
 
-**blink** compiles `src/Network.blink` into typed RemoteEvent/RemoteFunction wrappers. Run `just blink` (or `just dev`) to watch for changes. The server-side generated module is used from `src/Server/network/Server.luau` and the client-side from `src/Client/network/Client.luau`.
+**blink** compiles `src/Network.blink` into typed RemoteEvent/RemoteFunction wrappers. Run `just blink` (or `just dev`) to watch for changes. The server-side generated module is used from `src/Server/Network/Server.luau` and the client-side from `src/Client/Network/Client.luau` (both gitignored). Events are namespaced by blink `scope` blocks, so a `Sync` event inside `scope Data` is reached as `Network.Data.Sync`.
 
 ## State management
 
-**Charm** provides reactive atom-based state. **CharmSync** replicates server atoms to clients. Store modules live in `src/Server/store/` and `src/Client/store/`. Shared data shape templates (e.g. `PlayerData`) live in `src/Shared/data/templates/`.
+**Charm** provides reactive state. Stores use `Charm.signal(initial)`, which returns a `(getter, setter)` pair — read with the getter (reactive when called inside an effect/Vide computed), write with the setter. The setter takes a value or an updater `(current) -> next`; always return a **new** table, since Charm only detects a change when the signal is set to a fresh value.
+
+Store modules live in `src/Server/Store/` and `src/Client/Store/`. Shared data shape templates (e.g. `PlayerData`) live in `src/Shared/Data/Templates/`.
+
+**CharmSync** replicates server state to clients (`charm-sync` exposes a flat `CharmSync.server` / `CharmSync.client` API, not a factory). State is matched across sides by string key, so a store exposes exactly the half its side uses:
+
+- **Server store** exposes its **getter** (`PlayerDataStore.Getter`) — the server only reads state to diff it.
+- **Client store** exposes its **setter** (`PlayerDataStore.Setter`) — the client only writes received patches.
+
+`DataReplicationService` (server) registers each player via `CharmSync.server.addSignalsToClient(player, { key = getter })` on `PlayerService.PlayerAdded`. The blink `Data.Sync` event models charm-sync's `SyncPayload` as a tagged enum (`init`/`patch`, each with `data: unknown`) and carries **one** payload per fire, so the service fans the charm-sync batch out (`for payload in payloads do Network.Data.Sync.Fire(player, payload) end`). `DataReplicationController` (client) registers the setter with `CharmSync.client.addSignals`, then `Network.Data.Sync.On` wraps each received payload in a list for `CharmSync.client.patch`. The `data` field stays `unknown` because the inner patch tables are dynamic; `unknown` round-trips them with full fidelity, and `config.fixArrays` (default) handles array serialization. blink also buffers events received before the client attaches its listener, so early payloads are not lost.
+
+**Synced maps must be keyed by string.** Any store replicated through CharmSync should key its map by `tostring(userId)` (not the raw numeric `userId`), and the client accessor must look up with the same `tostring`. Numeric keys can be coerced crossing the sync/remote boundary, leaving the client unable to find its own entry (the data replicates, but the lookup misses). `PlayerDataStore` on both sides follows this.
+
+`PlayerService` profiles remain the persistent source of truth; the synced store is a separate in-memory view. To push a live change to clients, write it through the store (e.g. `PlayerDataStore.Update(userId, mutator)`) — mutating `record.Data` in place persists but does not replicate. Keep sensitive fields out of the synced store, since the single map replicates to every client.
 
 ## UI
 

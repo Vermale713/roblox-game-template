@@ -10,11 +10,9 @@
 /DevPackages
 
 # Blink
-src/client/network
-src/server/network
-src/shared/types/NetworkTypes.luau
-src/client/network/Client.luau
-src/server/network/Server.luau
+src/Client/Network
+src/Server/Network
+src/Shared/Types/NetworkTypes.luau
 
 # Pesde
 *_packages
@@ -28,6 +26,9 @@ src/server/network/Server.luau
 /*.rbxlx
 /*.rbxm
 /*.rbxmx
+
+# Claude Code
+.claude/settings.local.json
 
 # Misc
 .DS_Store

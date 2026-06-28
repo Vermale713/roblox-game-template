@@ -77,7 +77,8 @@ function Loader.Load(container: Instance): typeof(Promise.new(function() end))
 				continue
 			end
 
-			if descendant.Parent.Name ~= "Services" or typeof(result) ~= "table" then
+			const parentName = descendant.Parent.Name
+			if (parentName ~= "Services" and parentName ~= "Controllers") or typeof(result) ~= "table" then
 				continue
 			end
 

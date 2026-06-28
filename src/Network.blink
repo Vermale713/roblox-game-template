@@ -1,0 +1,22 @@
+option Casing = Pascal
+option ServerOutput = "./Server/Network/Server.luau"
+option ClientOutput = "./Client/Network/Client.luau"
+
+
+scope Data {
+    enum SyncPayload = "type" {
+        init {
+            data: unknown,
+        },
+        patch {
+            data: unknown,
+        },
+    }
+
+    event Sync {
+        From: Server,
+        Type: Reliable,
+        Call: SingleAsync,
+        Data: SyncPayload
+    }
+}
