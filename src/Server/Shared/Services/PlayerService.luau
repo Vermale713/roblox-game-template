@@ -9,17 +9,21 @@ const LogService = game:GetService "LogService"
 const Signal = require(ReplicatedStorage.Packages.Signal)
 const Promise = require(ReplicatedStorage.Packages.Promise)
 const ProfileStore = require(ServerScriptService.ServerPackages.ProfileStore)
-const PlayerDataTemplate = require(ReplicatedStorage.Data.Templates.PlayerData)
+const PlayerProfileTemplate = require(ReplicatedStorage.Data.Templates.PlayerProfile)
+const PlayerMetadataTemplate = require(ReplicatedStorage.Data.Templates.PlayerMetadata)
 
 -- TYPES
-type PlayerData = PlayerDataTemplate.PlayerData
+type PlayerProfile = PlayerProfileTemplate.PlayerProfile
+type PlayerMetadata = PlayerMetadataTemplate.PlayerMetadata
 type ProfileStoreModule = ProfileStore.ProfileStoreModule
-type Store = ProfileStore.ProfileStore<PlayerData>
-type Profile = ProfileStore.Profile<PlayerData>
+type Store = ProfileStore.ProfileStore<PlayerProfile>
+type Profile = ProfileStore.Profile<PlayerProfile>
 
 export type PlayerRecord = {
 	Player: Player,
-	Data: PlayerData,
+	Data: PlayerProfile,
+	-- os.clock() when this session started; lets GetPlaytime include the live session
+	SessionStart: number,
 }
 
 -- CONSTANTS
@@ -30,7 +34,7 @@ const _records: { [Player]: PlayerRecord } = {}
 const _profiles: { [Player]: Profile } = {}
 const _playerAdded = Signal.new()
 const _playerRemoving = Signal.new()
-const _store = ProfileStore.New(KEY_PREFIX .. "PlayerData", PlayerDataTemplate :: never) :: Store
+const _store = ProfileStore.New(KEY_PREFIX .. "PlayerData", PlayerProfileTemplate :: never) :: Store
 
 -- PRIVATE FUNCTIONS
 const function loadProfile(player: Player)
@@ -52,6 +56,18 @@ const function loadProfile(player: Player)
 	end)
 end
 
+const function initialiseMetadata(profile: Profile)
+	const metadata = profile.Data.Metadata
+	const now = os.time()
+
+	-- JoinedAt is written once, on the first ever session
+	if metadata.JoinedAt == 0 then
+		metadata.JoinedAt = now
+	end
+	metadata.LastOnlineAt = now
+	metadata.SessionCount += 1
+end
+
 const function onPlayerAdded(player: Player)
 	if _records[player] then
 		LogService:Warn("[PlayerService] Record already exists for {name}, skipping", {
@@ -67,10 +83,26 @@ const function onPlayerAdded(player: Player)
 				return
 			end
 
+			initialiseMetadata(profile)
+
+			const sessionStart = os.clock()
+
+			-- bank this session's playtime into the profile right before its final
+			-- save, however the session ends (leave, shutdown, or another server
+			-- taking ownership). OnSessionEnd is cleanup-only and must not edit Data;
+			-- OnLastSave is the documented hook for last-moment edits. The closure
+			-- captures `profile`/`sessionStart` so it is independent of the records
+			-- map, which onPlayerRemoving may clear before this async save runs.
+			profile.OnLastSave:Connect(function()
+				profile.Data.Metadata.Playtime += math.floor(os.clock() - sessionStart)
+				profile.Data.Metadata.LastOnlineAt = os.time()
+			end)
+
 			_profiles[player] = profile
 			_records[player] = {
 				Player = player,
 				Data = profile.Data,
+				SessionStart = sessionStart,
 			}
 
 			_playerAdded:Fire(player)
@@ -94,6 +126,8 @@ const function onPlayerRemoving(player: Player)
 
 	_playerRemoving:Fire(player)
 
+	-- EndSession triggers the final save, whose OnLastSave handler banks this
+	-- session's playtime and updates LastOnlineAt (connected in onPlayerAdded)
 	if _profiles[player] then
 		_profiles[player]:EndSession()
 		_profiles[player] = nil
@@ -127,6 +161,33 @@ function PlayerService.GetAll(): { PlayerRecord }
 		table.insert(records, record)
 	end
 	return records
+end
+
+-- read-only view of a player's server-only metadata. Note Metadata.Playtime omits
+-- the current un-flushed session; use GetPlaytime for the live total.
+function PlayerService.GetMetadata(player: Player): PlayerMetadata?
+	const record = _records[player]
+	return if record then record.Data.Metadata else nil
+end
+
+-- total seconds played including the current session
+function PlayerService.GetPlaytime(player: Player): number?
+	const record = _records[player]
+	if not record then
+		return nil
+	end
+
+	const liveSeconds = math.floor(os.clock() - record.SessionStart)
+	return record.Data.Metadata.Playtime + liveSeconds
+end
+
+function PlayerService.AddRobuxSpent(player: Player, amount: number)
+	const record = _records[player]
+	if not record then
+		return
+	end
+
+	record.Data.Metadata.RobuxSpent += amount
 end
 
 return PlayerService

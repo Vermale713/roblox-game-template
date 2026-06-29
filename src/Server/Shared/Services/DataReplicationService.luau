@@ -15,7 +15,10 @@ const function subscribePlayer(player: Player)
 		return
 	end
 
-	PlayerDataStore.Load(player.UserId, record.Data)
+	-- project only the public fields into the synced store; the profile's
+	-- server-only Metadata must never cross to clients (the synced map broadcasts
+	-- to every player). Extend this as public fields are added to PlayerData.
+	PlayerDataStore.Load(player.UserId, { Coins = record.Data.Coins })
 	CharmSync.server.addSignalsToClient(player, { playerData = PlayerDataStore.Getter })
 end
 
