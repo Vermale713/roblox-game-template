@@ -113,7 +113,27 @@ Store modules live in `src/Server/Store/` and `src/Client/Store/`. Shared data s
 
 ## Dev console
 
-**Conch** provides an in-game command console. Server commands go in `src/Server/conch/commands/`, client commands in `src/Client/conch/commands/`. The corresponding service/controller that registers them lives alongside in a `services/` or `controllers/` subfolder.
+**Conch** provides an in-game command console. Server commands go in `src/Server/Conch/Commands/`, client commands in `src/Client/Conch/Commands/`. The registering service/controller lives alongside in a `Services/` or `Controllers/` subfolder (`ConchService`, `ConchController`).
+
+Each command module returns a **function** that registers the command via `Conch.register` — this keeps argument and callback types inferred per command (no shared rigid type). `ConchRegistrar.RegisterFolder(folder)` requires and runs every module in a `Commands` folder:
+
+```luau
+-- src/Server/Conch/Commands/Example.luau
+return function()
+    Conch.register("example", {
+        permissions = { "manage_coins" },  -- empty {} = available to everyone
+        description = "...",
+        arguments = function()
+            return Conch.args.player("player", "..."), Conch.args.number("amount", "...")
+        end,
+        callback = function(player, amount) --[[ runs on the side it was registered ]] end,
+    })
+end
+```
+
+`ConchService` (server) and `ConchController` (client) each call `Conch.initiate_default_lifecycle()` and `ConchRegistrar.RegisterFolder(...)` in `OnInit`. The controller also calls `Conch.register_default_commands()`, mounts the UI with `ConchUi.mount()`, and binds the toggle key (`F4`) with `ConchUi.bind_to` in `OnStart`.
+
+Permissions are role-based and there are two roles. `ConchService` grants every player exactly one via `Conch.give_roles` on join: the UserIds in `ADMIN_USER_IDS` (plus everyone in Studio) get `super-user`, everyone else gets `guest`. `super-user` is Conch's **built-in** role that bypasses every permission check — so admins can run any command — while `guest` only holds the permissions in `GUEST_PERMISSIONS` (empty by default). Gate a command by listing a permission string in its `Conch.register` call (`permissions = { "manage_coins" }`); an empty `{}` means anyone can run it. To make a command guest-available but still gated, add its permission to `GUEST_PERMISSIONS`.
 
 ## Code style
 
