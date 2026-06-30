@@ -1,0 +1,10 @@
+diff --git a/src/create.luau b/src/create.luau
+index 77683eb..054b098 100644
+--- a/src/create.luau
++++ b/src/create.luau
+@@ -107,4 +107,4 @@ type Create = (
+     <Name>(Name|keyof<Instances>) -> (Properties<index<Instances, Name>>) -> index<Instances, Name>
+ )
+ 
+-return (create :: any) :: Create
++return (create :: any) :: any
