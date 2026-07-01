@@ -1,15 +1,14 @@
 -- SERVICES
 const Players = game:GetService "Players"
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
 const RunService = game:GetService "RunService"
 const UserInputService = game:GetService "UserInputService"
 
 -- IMPORTED MODULES
-const Iris = require(ReplicatedStorage.Packages.Iris)
-const PlayerDataWindow = require(ReplicatedStorage.Client.Debug.Windows.PlayerDataWindow)
-const PerformanceWindow = require(ReplicatedStorage.Client.Debug.Windows.PerformanceWindow)
-const CharacterWindow = require(ReplicatedStorage.Client.Debug.Windows.CharacterWindow)
-const ServicesWindow = require(ReplicatedStorage.Client.Debug.Windows.ServicesWindow)
+const Iris = require "@game/ReplicatedStorage/Packages/Iris"
+const PlayerDataWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/PlayerDataWindow"
+const PerformanceWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/PerformanceWindow"
+const CharacterWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/CharacterWindow"
+const ServicesWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/ServicesWindow"
 
 -- ALIASES
 -- Id namespaces the window's widgets via Iris.PushId. Iris derives widget IDs from

@@ -1,9 +1,6 @@
--- SERVICES
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
-
 -- IMPORTED MODULES
-const Iris = require(ReplicatedStorage.Packages.Iris)
-const Loader = require(ReplicatedStorage.Utilities.Loader)
+const Iris = require "@game/ReplicatedStorage/Packages/Iris"
+const Loader = require "@game/ReplicatedStorage/Utilities/Loader"
 
 -- PUBLIC MODULE
 -- An Iris draw callback: every service/controller the Loader discovered, in

@@ -1,8 +1,5 @@
--- SERVICES
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
-
 -- IMPORTED MODULES
-const Conch = require(ReplicatedStorage.Packages.Conch)
+const Conch = require "@game/ReplicatedStorage/Packages/Conch"
 
 -- TYPES
 -- minimal view of the internal language type carried on each command; only the

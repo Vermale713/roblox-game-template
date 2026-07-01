@@ -1,9 +1,6 @@
--- SERVICES
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
-
 -- IMPORTED MODULES
-const PlayerData = require(ReplicatedStorage.Data.Templates.PlayerData)
-const PlayerMetadata = require(ReplicatedStorage.Data.Templates.PlayerMetadata)
+const PlayerData = require "@game/ReplicatedStorage/Data/Templates/PlayerData"
+const PlayerMetadata = require "@game/ReplicatedStorage/Data/Templates/PlayerMetadata"
 
 -- TYPES
 -- the full persisted profile: every public (replicated) field plus a server-only

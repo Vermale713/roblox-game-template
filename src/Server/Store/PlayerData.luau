@@ -1,10 +1,7 @@
--- SERVICES
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
-
 -- IMPORTED MODULES
-const Charm = require(ReplicatedStorage.Packages.Charm)
-const TableUtil = require(ReplicatedStorage.Utilities.TableUtil)
-const PlayerDataTemplate = require(ReplicatedStorage.Data.Templates.PlayerData)
+const Charm = require "@game/ReplicatedStorage/Packages/Charm"
+const TableUtil = require "@game/ReplicatedStorage/Utilities/TableUtil"
+const PlayerDataTemplate = require "@game/ReplicatedStorage/Data/Templates/PlayerData"
 
 -- TYPES
 type PlayerData = PlayerDataTemplate.PlayerData

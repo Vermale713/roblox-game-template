@@ -2,9 +2,9 @@
 const ReplicatedStorage = game:GetService "ReplicatedStorage"
 
 -- IMPORTED MODULES
-const Conch = require(ReplicatedStorage.Packages.Conch)
-const ConchUi = require(ReplicatedStorage.Packages.ConchUi)
-const ConchRegistrar = require(ReplicatedStorage.Utilities.ConchRegistrar)
+const Conch = require "@game/ReplicatedStorage/Packages/Conch"
+const ConchUi = require "@game/ReplicatedStorage/Packages/ConchUi"
+const ConchRegistrar = require "@game/ReplicatedStorage/Utilities/ConchRegistrar"
 
 -- CONSTANTS
 const TOGGLE_KEY = Enum.KeyCode.F4

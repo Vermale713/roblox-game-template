@@ -1,10 +1,9 @@
 -- SERVICES
 const Players = game:GetService "Players"
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
 
 -- IMPORTED MODULES
-const Charm = require(ReplicatedStorage.Packages.Charm)
-const PlayerDataTemplate = require(ReplicatedStorage.Data.Templates.PlayerData)
+const Charm = require "@game/ReplicatedStorage/Packages/Charm"
+const PlayerDataTemplate = require "@game/ReplicatedStorage/Data/Templates/PlayerData"
 
 -- TYPES
 type PlayerData = PlayerDataTemplate.PlayerData

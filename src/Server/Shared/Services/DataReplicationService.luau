@@ -1,12 +1,8 @@
--- SERVICES
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
-const ServerScriptService = game:GetService "ServerScriptService"
-
 -- IMPORTED MODULES
-const CharmSync = require(ReplicatedStorage.Packages.CharmSync)
-const Network = require(ServerScriptService.Network.Server)
-const PlayerDataStore = require(ServerScriptService.Store.PlayerData)
-const PlayerService = require(ServerScriptService.Shared.Services.PlayerService)
+const CharmSync = require "@game/ReplicatedStorage/Packages/CharmSync"
+const Network = require "@game/ServerScriptService/Network/Server"
+const PlayerDataStore = require "@game/ServerScriptService/Store/PlayerData"
+const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
 
 -- PRIVATE FUNCTIONS
 const function subscribePlayer(player: Player)

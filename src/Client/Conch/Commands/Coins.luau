@@ -1,9 +1,6 @@
--- SERVICES
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
-
 -- IMPORTED MODULES
-const Conch = require(ReplicatedStorage.Packages.Conch)
-const PlayerDataStore = require(ReplicatedStorage.Client.Store.PlayerData)
+const Conch = require "@game/ReplicatedStorage/Packages/Conch"
+const PlayerDataStore = require "@game/ReplicatedStorage/Client/Store/PlayerData"
 
 -- PUBLIC MODULE
 -- registers `coins`; reads the local player's replicated coin count

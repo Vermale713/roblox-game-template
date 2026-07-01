@@ -1,10 +1,9 @@
 -- SERVICES
 const Players = game:GetService "Players"
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
 const Stats = game:GetService "Stats"
 
 -- IMPORTED MODULES
-const Iris = require(ReplicatedStorage.Packages.Iris)
+const Iris = require "@game/ReplicatedStorage/Packages/Iris"
 
 -- CONSTANTS
 -- samples retained in the FPS graph (~1.5s at 60fps)

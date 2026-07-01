@@ -1,16 +1,14 @@
 -- SERVICES
 const Players = game:GetService "Players"
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
-const ServerScriptService = game:GetService "ServerScriptService"
 const RunService = game:GetService "RunService"
 const LogService = game:GetService "LogService"
 
 -- IMPORTED MODULES
-const Signal = require(ReplicatedStorage.Packages.Signal)
-const Promise = require(ReplicatedStorage.Packages.Promise)
-const ProfileStore = require(ServerScriptService.ServerPackages.ProfileStore)
-const PlayerProfileTemplate = require(ReplicatedStorage.Data.Templates.PlayerProfile)
-const PlayerMetadataTemplate = require(ReplicatedStorage.Data.Templates.PlayerMetadata)
+const Signal = require "@game/ReplicatedStorage/Packages/Signal"
+const Promise = require "@game/ReplicatedStorage/Packages/Promise"
+const ProfileStore = require "@game/ServerScriptService/ServerPackages/ProfileStore"
+const PlayerProfileTemplate = require "@game/ReplicatedStorage/Data/Templates/PlayerProfile"
+const PlayerMetadataTemplate = require "@game/ReplicatedStorage/Data/Templates/PlayerMetadata"
 
 -- TYPES
 type PlayerProfile = PlayerProfileTemplate.PlayerProfile

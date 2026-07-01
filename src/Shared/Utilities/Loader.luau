@@ -1,9 +1,8 @@
 -- SERVICES
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
 const LogService = game:GetService "LogService"
 
 -- IMPORTED MODULES
-const Promise = require(ReplicatedStorage.Packages.Promise)
+const Promise = require "@game/ReplicatedStorage/Packages/Promise"
 
 -- TYPES
 type Service = {

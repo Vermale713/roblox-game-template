@@ -1,10 +1,6 @@
--- SERVICES
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
-const ServerScriptService = game:GetService "ServerScriptService"
-
 -- IMPORTED MODULES
-const Conch = require(ReplicatedStorage.Packages.Conch)
-const PlayerDataStore = require(ServerScriptService.Store.PlayerData)
+const Conch = require "@game/ReplicatedStorage/Packages/Conch"
+const PlayerDataStore = require "@game/ServerScriptService/Store/PlayerData"
 
 -- PUBLIC MODULE
 -- registers `givecoins <player> <amount>`; gated behind the "manage_coins"

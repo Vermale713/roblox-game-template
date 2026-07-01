@@ -1,10 +1,6 @@
--- SERVICES
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
-const ServerScriptService = game:GetService "ServerScriptService"
-
 -- IMPORTED MODULES
-const Signal = require(ReplicatedStorage.Packages.Signal)
-const PlayerService = require(ServerScriptService.Shared.Services.PlayerService)
+const Signal = require "@game/ReplicatedStorage/Packages/Signal"
+const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
 
 -- TYPES
 export type CharacterRecord = {

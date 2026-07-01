@@ -1,12 +1,11 @@
 -- SERVICES
 const Players = game:GetService "Players"
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
 const RunService = game:GetService "RunService"
 const ServerScriptService = game:GetService "ServerScriptService"
 
 -- IMPORTED MODULES
-const Conch = require(ReplicatedStorage.Packages.Conch)
-const ConchRegistrar = require(ReplicatedStorage.Utilities.ConchRegistrar)
+const Conch = require "@game/ReplicatedStorage/Packages/Conch"
+const ConchRegistrar = require "@game/ReplicatedStorage/Utilities/ConchRegistrar"
 
 -- CONSTANTS
 -- "super-user" is Conch's built-in role: it bypasses every permission check, so

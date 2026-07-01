@@ -1,10 +1,9 @@
 -- SERVICES
 const Players = game:GetService "Players"
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
 const Workspace = game:GetService "Workspace"
 
 -- IMPORTED MODULES
-const Iris = require(ReplicatedStorage.Packages.Iris)
+const Iris = require "@game/ReplicatedStorage/Packages/Iris"
 
 -- PUBLIC MODULE
 -- An Iris draw callback: live humanoid and movement state for the local character.

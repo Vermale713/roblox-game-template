@@ -1,8 +1,5 @@
--- SERVICES
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
-
 -- IMPORTED MODULES
-const Conch = require(ReplicatedStorage.Packages.Conch)
+const Conch = require "@game/ReplicatedStorage/Packages/Conch"
 
 -- CONSTANTS
 -- Conch's built-in role that bypasses every permission check

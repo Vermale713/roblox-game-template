@@ -1,10 +1,7 @@
--- SERVICES
-const ReplicatedStorage = game:GetService "ReplicatedStorage"
-
 -- IMPORTED MODULES
-const CharmSync = require(ReplicatedStorage.Packages.CharmSync)
-const Network = require(ReplicatedStorage.Client.Network.Client)
-const PlayerDataStore = require(ReplicatedStorage.Client.Store.PlayerData)
+const CharmSync = require "@game/ReplicatedStorage/Packages/CharmSync"
+const Network = require "@game/ReplicatedStorage/Client/Network/Client"
+const PlayerDataStore = require "@game/ReplicatedStorage/Client/Store/PlayerData"
 
 -- PUBLIC MODULE
 const DataReplicationController = {}

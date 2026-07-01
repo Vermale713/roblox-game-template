@@ -1,11 +1,10 @@
 -- SERVICES
 const RunService = game:GetService "RunService"
 const AnalyticsService = game:GetService "AnalyticsService"
-const ServerScriptService = game:GetService "ServerScriptService"
 const LogService = game:GetService "LogService"
 
 -- IMPORTED MODULES
-const PlayerService = require(ServerScriptService.Shared.Services.PlayerService)
+const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
 
 -- TYPES
 -- optional custom dimensions accepted by every AnalyticsService event

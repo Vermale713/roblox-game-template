@@ -1,1 +1,6 @@
 std = "roblox"
+
+[lints]
+# Vide's create-syntax intentionally mixes dictionary props with array children in
+# one table, so the mixed_table lint fires on every component. Allow it project-wide.
+mixed_table = "allow"
