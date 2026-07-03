@@ -46,7 +46,7 @@ const DataReplicationService = {}
 
 DataReplicationService.Dependencies = { "PlayerService" }
 
-function DataReplicationService:OnInit()
+function DataReplicationService.OnInit()
 	-- the blink `Data.Sync` event carries one SyncPayload at a time, so fan the
 	-- charm-sync batch out into individual fires (see src/Network.blink)
 	CharmSync.server.connect(function(player, payloads)

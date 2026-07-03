@@ -135,7 +135,7 @@ const PlayerService = {}
 PlayerService.PlayerAdded = _playerAdded
 PlayerService.PlayerRemoving = _playerRemoving
 
-function PlayerService:OnInit()
+function PlayerService.OnInit()
 	for _, player in Players:GetPlayers() do
 		onPlayerAdded(player)
 	end

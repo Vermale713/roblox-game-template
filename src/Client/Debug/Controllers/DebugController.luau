@@ -44,7 +44,7 @@ end
 -- PUBLIC MODULE
 const DebugController = {}
 
-function DebugController:OnStart()
+function DebugController.OnStart()
 	-- gate before Init so the per-frame render loop never starts for normal players
 	if not isDebugAllowed() then
 		return

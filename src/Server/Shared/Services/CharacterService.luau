@@ -89,7 +89,7 @@ CharacterService.Dependencies = { "PlayerService" }
 CharacterService.CharacterAdded = _characterAdded
 CharacterService.CharacterRemoving = _characterRemoving
 
-function CharacterService:OnInit()
+function CharacterService.OnInit()
 	-- character tracking only begins once PlayerService confirms data is loaded;
 	-- a player whose data failed to load is kicked and never reaches here
 	for _, record in PlayerService.GetAll() do

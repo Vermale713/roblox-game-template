@@ -30,7 +30,7 @@ end
 -- PUBLIC MODULE
 const ConchService = {}
 
-function ConchService:OnInit()
+function ConchService.OnInit()
 	Conch.initiate_default_lifecycle()
 	Conch.set_role_permissions(GUEST_ROLE, table.unpack(GUEST_PERMISSIONS))
 

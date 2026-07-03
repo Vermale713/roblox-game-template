@@ -6,12 +6,12 @@ const PlayerDataStore = require "@game/ReplicatedStorage/Client/Store/PlayerData
 -- PUBLIC MODULE
 const DataReplicationController = {}
 
-function DataReplicationController:OnInit()
+function DataReplicationController.OnInit()
 	-- register the replica atom before any payload can arrive
 	CharmSync.client.addSignals { playerData = PlayerDataStore.Setter }
 end
 
-function DataReplicationController:OnStart()
+function DataReplicationController.OnStart()
 	-- blink buffers incoming events until a listener attaches, so payloads sent
 	-- before this point are not lost; patch expects a list, so wrap the single
 	-- payload this event delivers

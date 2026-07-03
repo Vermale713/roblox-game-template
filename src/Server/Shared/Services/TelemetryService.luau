@@ -37,7 +37,7 @@ const TelemetryService = {}
 
 TelemetryService.Dependencies = { "PlayerService" }
 
-function TelemetryService:OnInit()
+function TelemetryService.OnInit()
 	-- reference example: log a server-authoritative onboarding step on join. Copy
 	-- this pattern for future events — always called from trusted server logic. Step
 	-- 1 ("joined the game") is universal; add later, game-specific steps (tutorial,
