@@ -19,9 +19,9 @@ type Profile = ProfileStore.Profile<PlayerProfile>
 
 export type PlayerRecord = {
 	Player: Player,
-	Data: PlayerProfile,
 	-- os.clock() when this session started; lets GetPlaytime include the live session
 	SessionStart: number,
+	Profile: Profile,
 }
 
 -- CONSTANTS
@@ -29,7 +29,6 @@ const KEY_PREFIX = if RunService:IsStudio() then "Test_" else ""
 
 -- PRIVATE STATE
 const _records: { [Player]: PlayerRecord } = {}
-const _profiles: { [Player]: Profile } = {}
 const _playerAdded = Signal.new()
 const _playerRemoving = Signal.new()
 const _store = ProfileStore.New(KEY_PREFIX .. "PlayerData", PlayerProfileTemplate :: never) :: Store
@@ -96,10 +95,9 @@ const function onPlayerAdded(player: Player)
 				profile.Data.Metadata.LastOnlineAt = os.time()
 			end)
 
-			_profiles[player] = profile
 			_records[player] = {
 				Player = player,
-				Data = profile.Data,
+				Profile = profile,
 				SessionStart = sessionStart,
 			}
 
@@ -126,10 +124,7 @@ const function onPlayerRemoving(player: Player)
 
 	-- EndSession triggers the final save, whose OnLastSave handler banks this
 	-- session's playtime and updates LastOnlineAt (connected in onPlayerAdded)
-	if _profiles[player] then
-		_profiles[player]:EndSession()
-		_profiles[player] = nil
-	end
+	_records[player].Profile:EndSession()
 
 	_records[player] = nil
 end
@@ -165,7 +160,7 @@ end
 -- the current un-flushed session; use GetPlaytime for the live total.
 function PlayerService.GetMetadata(player: Player): PlayerMetadata?
 	const record = _records[player]
-	return if record then record.Data.Metadata else nil
+	return if record then record.Profile.Data.Metadata else nil
 end
 
 -- total seconds played including the current session
@@ -176,7 +171,7 @@ function PlayerService.GetPlaytime(player: Player): number?
 	end
 
 	const liveSeconds = math.floor(os.clock() - record.SessionStart)
-	return record.Data.Metadata.Playtime + liveSeconds
+	return record.Profile.Data.Metadata.Playtime + liveSeconds
 end
 
 function PlayerService.AddRobuxSpent(player: Player, amount: number)
@@ -185,7 +180,7 @@ function PlayerService.AddRobuxSpent(player: Player, amount: number)
 		return
 	end
 
-	record.Data.Metadata.RobuxSpent += amount
+	record.Profile.Data.Metadata.RobuxSpent += amount
 end
 
 return PlayerService

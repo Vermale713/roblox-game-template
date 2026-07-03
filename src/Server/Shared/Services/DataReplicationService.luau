@@ -1,8 +1,12 @@
 -- IMPORTED MODULES
+const Charm = require "@game/ReplicatedStorage/Packages/Charm"
 const CharmSync = require "@game/ReplicatedStorage/Packages/CharmSync"
 const Network = require "@game/ServerScriptService/Network/Server"
 const PlayerDataStore = require "@game/ServerScriptService/Store/PlayerData"
 const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
+
+-- PRIVATE STATE
+const _playerDataCleanups: { [Player]: () -> () } = {}
 
 -- PRIVATE FUNCTIONS
 const function subscribePlayer(player: Player)
@@ -11,14 +15,28 @@ const function subscribePlayer(player: Player)
 		return
 	end
 
+	const computed = Charm.computed(function()
+		return PlayerDataStore.Get(player.UserId)
+	end)
+	-- Have to type as any because ProfileStore types are wack
+	const dataChanged = Charm.subscribe(computed, function(data: any)
+		record.Profile.Data = data
+	end)
+
+	_playerDataCleanups[player] = dataChanged
+
 	-- project only the public fields into the synced store; the profile's
 	-- server-only Metadata must never cross to clients (the synced map broadcasts
 	-- to every player). Extend this as public fields are added to PlayerData.
-	PlayerDataStore.Load(player.UserId, { Coins = record.Data.Coins })
+	PlayerDataStore.Load(player.UserId, record.Profile.Data)
 	CharmSync.server.addSignalsToClient(player, { playerData = PlayerDataStore.Getter })
 end
 
 const function unsubscribePlayer(player: Player)
+	const cleanup = _playerDataCleanups[player]
+	if cleanup then
+		cleanup()
+	end
 	CharmSync.server.removeClient(player)
 	PlayerDataStore.Unload(player.UserId)
 end
