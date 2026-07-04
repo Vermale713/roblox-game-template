@@ -9,6 +9,7 @@ const PlayerDataWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/P
 const PerformanceWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/PerformanceWindow"
 const CharacterWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/CharacterWindow"
 const ServicesWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/ServicesWindow"
+const Input = require "@game/ReplicatedStorage/Libraries/Input"
 
 -- ALIASES
 -- Id namespaces the window's widgets via Iris.PushId. Iris derives widget IDs from
@@ -33,8 +34,8 @@ const WINDOWS: { DebugWindow } = {
 }
 
 -- PRIVATE STATE
--- reassigned by the toggle key; the draw callback early-returns while hidden
-local _isShown = true
+local _input: Input.Input
+local _isShown = false
 
 -- PRIVATE FUNCTIONS
 const function isDebugAllowed(): boolean
@@ -43,6 +44,20 @@ end
 
 -- PUBLIC MODULE
 const DebugController = {}
+
+function DebugController.OnInit()
+	-- _input = Input.new("Debug"):Bind(Enum.KeyCode.F3)
+	_input = Input.new "Debug"
+	_input
+		:SetPriority(10)
+		:SetEnabled(true)
+		:SetSink(true)
+		:Action("Toggle")
+		:OnPressed(function()
+			_isShown = not _isShown
+		end)
+		:Bind(Enum.KeyCode.F3)
+end
 
 function DebugController.OnStart()
 	-- gate before Init so the per-frame render loop never starts for normal players
@@ -62,15 +77,6 @@ function DebugController.OnStart()
 			Iris.PushId(window.Id)
 			window.Draw()
 			Iris.PopId()
-		end
-	end)
-
-	UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessed: boolean)
-		if gameProcessed then
-			return
-		end
-		if input.KeyCode == TOGGLE_KEY then
-			_isShown = not _isShown
 		end
 	end)
 end
