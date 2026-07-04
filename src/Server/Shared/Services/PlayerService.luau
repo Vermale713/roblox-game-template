@@ -4,18 +4,16 @@ const RunService = game:GetService "RunService"
 const LogService = game:GetService "LogService"
 
 -- IMPORTED MODULES
+const PlayerData = require "@game/ReplicatedStorage/Data/Templates/PlayerData"
 const Signal = require "@game/ReplicatedStorage/Packages/Signal"
 const Promise = require "@game/ReplicatedStorage/Packages/Promise"
 const ProfileStore = require "@game/ServerScriptService/ServerPackages/ProfileStore"
-const PlayerProfileTemplate = require "@game/ReplicatedStorage/Data/Templates/PlayerProfile"
-const PlayerMetadataTemplate = require "@game/ReplicatedStorage/Data/Templates/PlayerMetadata"
 
 -- TYPES
-type PlayerProfile = PlayerProfileTemplate.PlayerProfile
-type PlayerMetadata = PlayerMetadataTemplate.PlayerMetadata
+type PlayerData = PlayerData.PlayerData
 type ProfileStoreModule = ProfileStore.ProfileStoreModule
-type Store = ProfileStore.ProfileStore<PlayerProfile>
-type Profile = ProfileStore.Profile<PlayerProfile>
+type Store = ProfileStore.ProfileStore<PlayerData>
+type Profile = ProfileStore.Profile<PlayerData>
 
 export type PlayerRecord = {
 	Player: Player,
@@ -31,7 +29,7 @@ const KEY_PREFIX = if RunService:IsStudio() then "Test_" else ""
 const _records: { [Player]: PlayerRecord } = {}
 const _playerAdded = Signal.new()
 const _playerRemoving = Signal.new()
-const _store = ProfileStore.New(KEY_PREFIX .. "PlayerData", PlayerProfileTemplate :: never) :: Store
+const _store = ProfileStore.New(KEY_PREFIX .. "PlayerData", PlayerData :: never) :: Store
 
 -- PRIVATE FUNCTIONS
 const function loadProfile(player: Player)
@@ -54,15 +52,15 @@ const function loadProfile(player: Player)
 end
 
 const function initialiseMetadata(profile: Profile)
-	const metadata = profile.Data.Metadata
+	const data = profile.Data
 	const now = os.time()
 
 	-- JoinedAt is written once, on the first ever session
-	if metadata.JoinedAt == 0 then
-		metadata.JoinedAt = now
+	if data.JoinedAt == 0 then
+		data.JoinedAt = now
 	end
-	metadata.LastOnlineAt = now
-	metadata.SessionCount += 1
+	data.LastOnlineAt = now
+	data.SessionCount += 1
 end
 
 const function onPlayerAdded(player: Player)
@@ -91,8 +89,15 @@ const function onPlayerAdded(player: Player)
 			-- captures `profile`/`sessionStart` so it is independent of the records
 			-- map, which onPlayerRemoving may clear before this async save runs.
 			profile.OnLastSave:Connect(function()
-				profile.Data.Metadata.Playtime += math.floor(os.clock() - sessionStart)
-				profile.Data.Metadata.LastOnlineAt = os.time()
+				-- we do not use the TableUtil to edit data here
+				-- because ProfileStore has wack types and will give
+				-- type errors
+				const clone = table.clone(profile.Data)
+
+				clone.Playtime += math.floor(os.clock() - sessionStart)
+				clone.LastOnlineAt = os.time()
+
+				profile.Data = clone
 			end)
 
 			_records[player] = {
@@ -156,13 +161,6 @@ function PlayerService.GetAll(): { PlayerRecord }
 	return records
 end
 
--- read-only view of a player's server-only metadata. Note Metadata.Playtime omits
--- the current un-flushed session; use GetPlaytime for the live total.
-function PlayerService.GetMetadata(player: Player): PlayerMetadata?
-	const record = _records[player]
-	return if record then record.Profile.Data.Metadata else nil
-end
-
 -- total seconds played including the current session
 function PlayerService.GetPlaytime(player: Player): number?
 	const record = _records[player]
@@ -171,7 +169,7 @@ function PlayerService.GetPlaytime(player: Player): number?
 	end
 
 	const liveSeconds = math.floor(os.clock() - record.SessionStart)
-	return record.Profile.Data.Metadata.Playtime + liveSeconds
+	return record.Profile.Data.Playtime + liveSeconds
 end
 
 function PlayerService.AddRobuxSpent(player: Player, amount: number)
@@ -180,7 +178,7 @@ function PlayerService.AddRobuxSpent(player: Player, amount: number)
 		return
 	end
 
-	record.Profile.Data.Metadata.RobuxSpent += amount
+	record.Profile.Data.RobuxSpent += amount
 end
 
 return PlayerService

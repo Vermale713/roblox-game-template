@@ -55,8 +55,8 @@ Dependencies are declared by name (matching the `ModuleScript` instance name):
 const MyService = {}
 MyService.Dependencies = { "PlayerService" }  -- optional
 
-function MyService:OnInit() end  -- PascalCase because called by Loader (public contract)
-function MyService:OnStart() end  -- can yield
+function MyService.OnInit() end  -- PascalCase because called by Loader (public contract)
+function MyService.OnStart() end  -- can yield
 
 return MyService
 ```
@@ -102,7 +102,7 @@ Store modules live in `src/Server/Store/` and `src/Client/Store/`. Shared data s
 
 **Synced maps must be keyed by string.** Any store replicated through CharmSync should key its map by `tostring(userId)` (not the raw numeric `userId`), and the client accessor must look up with the same `tostring`. Numeric keys can be coerced crossing the sync/remote boundary, leaving the client unable to find its own entry (the data replicates, but the lookup misses). `PlayerDataStore` on both sides follows this.
 
-`PlayerService` profiles remain the persistent source of truth; the synced store is a separate in-memory view. To push a live change to clients, write it through the store (e.g. `PlayerDataStore.Update(userId, mutator)`) — mutating `record.Data` in place persists but does not replicate. Keep sensitive fields out of the synced store, since the single map replicates to every client.
+`PlayerService` profiles remain the persistent source of truth; the synced store is a separate in-memory view. To push a live change to clients, write it through the store (e.g. `PlayerDataStore.Update(userId, mutator)`) — mutating `record.Profile.Data` in place persists but does not replicate. Keep sensitive fields out of the synced store, since the single map replicates to every client.
 
 ## UI
 

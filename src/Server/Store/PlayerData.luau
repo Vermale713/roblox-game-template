@@ -38,7 +38,7 @@ end
 
 -- mutator should return a NEW PlayerData; mutating in place risks aliasing the
 -- profile data PlayerService still holds a reference to
-function PlayerDataStore.Update(userId: number, mutator: (PlayerData) -> PlayerData)
+function PlayerDataStore.Update(userId: number, mutator: (PlayerData) -> PlayerData?)
 	const key = tostring(userId)
 	_setData(function(state)
 		const current = state[key]

@@ -1,5 +1,6 @@
 -- IMPORTED MODULES
 const Conch = require "@game/ReplicatedStorage/Packages/Conch"
+const TableUtil = require "@game/ReplicatedStorage/Utilities/TableUtil"
 const PlayerDataStore = require "@game/ServerScriptService/Store/PlayerData"
 
 -- PUBLIC MODULE
@@ -15,9 +16,7 @@ return function()
 		end,
 		callback = function(player: Player, amount: number)
 			PlayerDataStore.Update(player.UserId, function(current)
-				return {
-					Coins = current.Coins + amount,
-				}
+				return TableUtil.Set(current, "Coins", current.Coins + amount)
 			end)
 			Conch.log("success", `Gave {amount} coins to {player.DisplayName}.`)
 		end,
