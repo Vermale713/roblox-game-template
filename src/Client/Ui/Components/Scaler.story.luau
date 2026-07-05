@@ -2,7 +2,7 @@
 const Vide = require "@game/ReplicatedStorage/Packages/Vide"
 const UiLabs = require "@game/ReplicatedStorage/Packages/UiLabs"
 const Theme = require "@game/ReplicatedStorage/Client/Ui/Theme"
-const Scaler = require "@game/ReplicatedStorage/Client/Ui/Components/Primitives/Scaler"
+const Scaler = require "@game/ReplicatedStorage/Client/Ui/Components/Scaler"
 
 -- ALIASES
 const create = Vide.create
