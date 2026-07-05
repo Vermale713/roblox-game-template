@@ -3,10 +3,10 @@ const Players = game:GetService "Players"
 
 -- IMPORTED MODULES
 const Charm = require "@game/ReplicatedStorage/Packages/Charm"
-const PlayerDataTemplate = require "@game/ReplicatedStorage/Data/Templates/PlayerData"
+const DataTemplate = require "@game/ReplicatedStorage/Data/Templates/DataTemplate"
 
 -- TYPES
-type PlayerData = PlayerDataTemplate.PlayerData
+type PlayerData = DataTemplate.PlayerData
 -- keyed by tostring(userId) to match the server store across the sync boundary
 type PlayerDataMap = { [string]: PlayerData }
 

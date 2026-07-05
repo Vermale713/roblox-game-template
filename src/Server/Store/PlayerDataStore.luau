@@ -1,10 +1,10 @@
 -- IMPORTED MODULES
 const Charm = require "@game/ReplicatedStorage/Packages/Charm"
 const TableUtil = require "@game/ReplicatedStorage/Utilities/TableUtil"
-const PlayerDataTemplate = require "@game/ReplicatedStorage/Data/Templates/PlayerData"
+const DataTemplate = require "@game/ReplicatedStorage/Data/Templates/DataTemplate"
 
 -- TYPES
-type PlayerData = PlayerDataTemplate.PlayerData
+type PlayerData = DataTemplate.PlayerData
 -- keyed by tostring(userId): a string-keyed dict survives the CharmSync/remote
 -- boundary unambiguously (number keys can be coerced, breaking client lookups)
 type PlayerDataMap = { [string]: PlayerData }
