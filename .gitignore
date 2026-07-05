@@ -15,6 +15,7 @@ src/Server/Network
 src/Shared/Types/NetworkTypes.luau
 
 # Pesde
+.pesde/
 *_packages
 
 # Blink
