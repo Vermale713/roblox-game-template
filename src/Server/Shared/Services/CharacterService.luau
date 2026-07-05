@@ -30,7 +30,7 @@ const _characterRemoving = Signal.new()
 const function spawnCharacter(player: Player)
 	-- LoadCharacter throws if the player has already left; that case is benign
 	pcall(function()
-		player:LoadCharacter()
+		player:LoadCharacterAsync()
 	end)
 end
 
