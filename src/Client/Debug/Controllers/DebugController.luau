@@ -1,7 +1,6 @@
 -- SERVICES
 const Players = game:GetService "Players"
 const RunService = game:GetService "RunService"
-const UserInputService = game:GetService "UserInputService"
 
 -- IMPORTED MODULES
 const Iris = require "@game/ReplicatedStorage/Packages/Iris"
@@ -19,12 +18,12 @@ const Input = require "@game/ReplicatedStorage/Libraries/Input"
 type DebugWindow = { Id: string, Draw: () -> () }
 
 -- CONSTANTS
--- Conch owns F4, so the debug overlay toggles on F3.
-const TOGGLE_KEY = Enum.KeyCode.F3
 -- UserIds that get the Iris overlay in live games; everyone in Studio gets it for
 -- easy testing. Mirrors ConchService's admin gating so the overlay (which draws
 -- every frame) never ships to ordinary players' clients.
-const ADMIN_USER_IDS: { number } = {}
+const ADMIN_USER_IDS: { number } = {
+	2600715546,
+}
 -- every window drawn while the overlay is shown; add new ones here
 const WINDOWS: { DebugWindow } = {
 	{ Id = "PlayerData", Draw = PlayerDataWindow },
@@ -46,7 +45,6 @@ end
 const DebugController = {}
 
 function DebugController.OnInit()
-	-- _input = Input.new("Debug"):Bind(Enum.KeyCode.F3)
 	_input = Input.new "Debug"
 	_input
 		:SetPriority(10)
