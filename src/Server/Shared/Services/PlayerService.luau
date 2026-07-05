@@ -4,16 +4,16 @@ const RunService = game:GetService "RunService"
 const LogService = game:GetService "LogService"
 
 -- IMPORTED MODULES
-const PlayerData = require "@game/ReplicatedStorage/Data/Templates/PlayerData"
+const DataTemplate = require "@game/ReplicatedStorage/Data/Templates/DataTemplate"
 const Signal = require "@game/ReplicatedStorage/Packages/Signal"
 const Promise = require "@game/ReplicatedStorage/Packages/Promise"
 const ProfileStore = require "@game/ServerScriptService/ServerPackages/ProfileStore"
 
 -- TYPES
-type PlayerData = PlayerData.PlayerData
+type DataTemplate = DataTemplate.PlayerData
 type ProfileStoreModule = ProfileStore.ProfileStoreModule
-type Store = ProfileStore.ProfileStore<PlayerData>
-type Profile = ProfileStore.Profile<PlayerData>
+type Store = ProfileStore.ProfileStore<DataTemplate>
+type Profile = ProfileStore.Profile<DataTemplate>
 
 export type PlayerRecord = {
 	Player: Player,
@@ -29,7 +29,7 @@ const KEY_PREFIX = if RunService:IsStudio() then "Test_" else ""
 const _records: { [Player]: PlayerRecord } = {}
 const _playerAdded = Signal.new()
 const _playerRemoving = Signal.new()
-const _store = ProfileStore.New(KEY_PREFIX .. "PlayerData", PlayerData :: never) :: Store
+const _store = ProfileStore.New(KEY_PREFIX .. "PlayerData", DataTemplate :: never) :: Store
 
 -- PRIVATE FUNCTIONS
 const function loadProfile(player: Player)

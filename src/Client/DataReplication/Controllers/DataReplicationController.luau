@@ -1,7 +1,7 @@
 -- IMPORTED MODULES
 const CharmSync = require "@game/ReplicatedStorage/Packages/CharmSync"
 const Network = require "@game/ReplicatedStorage/Client/Network/Client"
-const PlayerDataStore = require "@game/ReplicatedStorage/Client/Store/PlayerData"
+const PlayerDataStore = require "@game/ReplicatedStorage/Client/Store/PlayerDataStore"
 
 -- PUBLIC MODULE
 const DataReplicationController = {}

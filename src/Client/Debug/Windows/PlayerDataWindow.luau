@@ -1,6 +1,6 @@
 -- IMPORTED MODULES
 const Iris = require "@game/ReplicatedStorage/Packages/Iris"
-const PlayerDataStore = require "@game/ReplicatedStorage/Client/Store/PlayerData"
+const PlayerDataStore = require "@game/ReplicatedStorage/Client/Store/PlayerDataStore"
 
 -- PUBLIC MODULE
 -- An Iris draw callback: connected once and re-run every cycle by Iris. Watches
