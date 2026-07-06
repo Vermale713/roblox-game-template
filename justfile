@@ -15,3 +15,6 @@ sync:
     git fetch template && \
     git merge template/main && \
     git stash list | grep -q "stash@{0}" && git stash pop
+
+test:
+    lune run test
