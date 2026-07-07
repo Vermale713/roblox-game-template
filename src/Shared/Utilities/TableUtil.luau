@@ -3,7 +3,6 @@ const Types = require "@game/ReplicatedStorage/Types"
 
 -- TYPES
 type NonNilable<T> = Types.NonNilable<T>
-type Partial<T> = Types.Partial<T>
 
 -- PUBLIC MODULE
 const TableUtil = {}
@@ -27,6 +26,22 @@ function TableUtil.Update<T, K>(source: T & {}, key: K & keyof<T>, fn: (NonNilab
 		end
 	end
 	return source
+end
+
+function TableUtil.Merge<T, K>(source: T & {}, merger: K): T & K
+	if not merger then
+		return source
+	end
+	local result = source
+	for key, value in merger :: { [any]: any } do
+		if result[key] ~= value then
+			if result == source then
+				result = table.clone(source) :: never
+			end
+			result[key] = value
+		end
+	end
+	return result
 end
 
 -- returns a shallow copy of `source` with `key` removed

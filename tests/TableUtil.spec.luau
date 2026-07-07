@@ -74,6 +74,54 @@ return function()
 			end)
 		end)
 
+		Describe("Merge", function()
+			It("returns the original source when merger is nil", function()
+				local source = { Count = 1 }
+
+				local result = TableUtil.Merge(source, nil)
+
+				Expect(result).ToBe(source)
+			end)
+
+			It("returns a new table with keys overridden by merger", function()
+				local source = { Count = 1, Name = "Alice" }
+
+				local result = TableUtil.Merge(source, { Count = 2 })
+
+				Expect(result.Count).ToBe(2)
+				Expect(result.Name).ToBe "Alice"
+				Expect(source.Count).ToBe(1)
+			end)
+
+			It("adds keys from merger that don't exist on source", function()
+				local source = { Count = 1 }
+
+				local result = TableUtil.Merge(source, { Name = "Alice" })
+
+				Expect(result.Name).ToBe "Alice"
+				Expect(result.Count).ToBe(1)
+				Expect(source.Name).ToBeNil()
+			end)
+
+			It("returns the same reference when merger values match source exactly", function()
+				local source = { Count = 1 }
+
+				local result = TableUtil.Merge(source, { Count = 1 })
+
+				Expect(result).ToBe(source)
+			end)
+
+			It("applies multiple overrides from a single merger table", function()
+				local source = { Count = 1, Name = "Alice", Active = true }
+
+				local result = TableUtil.Merge(source, { Count = 2, Active = false })
+
+				Expect(result.Count).ToBe(2)
+				Expect(result.Active).ToBe(false)
+				Expect(result.Name).ToBe "Alice"
+			end)
+		end)
+
 		Describe("Remove", function()
 			It("returns a new table with the key removed", function()
 				local source = { Count = 1 }
