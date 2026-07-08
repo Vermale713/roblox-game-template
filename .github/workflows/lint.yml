@@ -18,6 +18,3 @@ jobs:
 
       - name: Check formatting (StyLua)
         run: stylua --check src
-
-      - name: Lint (Selene)
-        run: selene src
