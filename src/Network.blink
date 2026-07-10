@@ -1,11 +1,14 @@
-option Casing = Pascal
 option ServerOutput = "./Server/Network/Server.luau"
 option ClientOutput = "./Client/Network/Client.luau"
 option TypesOutput = "./Shared/Network/NetworkTypes.luau"
 
+option Casing = Pascal
+
 scope VFX {
     struct VFXPayload {
         Name: string, -- required
+        Id: string?, -- optional - used by Sustained Vfx that need manual cleanup
+        Location: CFrame[]?, -- array of locations handled by the received client
     }
     enum VFXUnion = "Type" {
         OneShot {
@@ -13,13 +16,23 @@ scope VFX {
         },
         Sustained {
             Data: VFXPayload
+        },
+        StopSustained {
+            Data: VFXPayload
         }
     }
 
-    event ReplicateVfx {
+    event ReplicateReliableVfx {
         From: Server,
         Type: Reliable,
-        Call: ManyAsync,
+        Call: SingleAsync,
+        Data: VFXUnion,
+    }
+
+    event ReplicateUnreliableVfx {
+        From: Server,
+        Type: Unreliable,
+        Call: SingleAsync,
         Data: VFXUnion,
     }
 }

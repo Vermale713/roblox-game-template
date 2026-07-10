@@ -62,7 +62,7 @@ function VfxController.Register(name: string)
 	_registeredVfx[name] = Signal.new()
 end
 
-function VfxController.GetConnection(name: string, fn: (VfxPayload, VfxState?) -> ()): Signal.Connection
+function VfxController.Connect(name: string, fn: (VfxPayload, VfxState?) -> ()): Signal.Connection
 	const vfxSignal = _registeredVfx[name]
 	if not vfxSignal then
 		LogService:Error("[VfxController] Cannot connect to nonexistent signal: {name}", { name = name })
