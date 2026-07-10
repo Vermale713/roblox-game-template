@@ -12,13 +12,14 @@
 # Blink
 src/Client/Network
 src/Server/Network
-src/Shared/Types/NetworkTypes.luau
+src/Shared/Network
 
 # Pesde
 .pesde/
 *_packages
 
 # Blink
+*Blink*.luau
 *Blink*.luau
 
 # Artifacts
