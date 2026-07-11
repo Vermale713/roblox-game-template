@@ -8,6 +8,7 @@ const Signal = require "@game/ReplicatedStorage/Packages/Signal"
 
 -- TYPES
 type VfxPayload = NetworkTypes.VFX_VFXPayload
+type VfxUnion = NetworkTypes.VFX_VFXUnion
 type VfxState = "Start" | "Stop"
 
 -- ALIASES
@@ -19,6 +20,31 @@ const _registeredVfx: { [string]: Signal.Signal<VfxPayload, VfxState?> } = {}
 const _activeVfx = {} -- for the non one shot
 
 -- PRIVATE FUNCTIONS
+const function onReplicateVfx(payload: VfxUnion)
+	const vfxType = payload.Type
+	const vfxData = payload.Data
+	const name = vfxData.Name
+	const vfx = _registeredVfx[name]
+
+	if not vfx then
+		LogService:Warn(
+			"[VfxController] Attempted to play vfx that does not exist: {Name}",
+			vfxData :: { [string]: any }
+		)
+	end
+
+	if vfxType == "Sustained" then
+		local state: VfxState = "Start"
+
+		if _activeVfx[name] then
+			state = "Stop"
+		end
+
+		vfx:Fire(vfxData, state)
+	else
+		vfx:Fire(vfxData)
+	end
+end
 
 -- PRIVATE MODULE
 
@@ -26,31 +52,8 @@ const _activeVfx = {} -- for the non one shot
 const VfxController = {}
 
 function VfxController.OnInit()
-	Client.VFX.ReplicateVfx.On(function(payload)
-		const vfxType = payload.Type
-		const vfxData = payload.Data
-		const name = vfxData.Name
-		const vfx = _registeredVfx[name]
-
-		if not vfx then
-			LogService:Warn(
-				"[VfxController] Attempted to play vfx that does not exist: {Name}",
-				vfxData :: { [string]: any }
-			)
-		end
-
-		if vfxType == "Sustained" then
-			local state: VfxState = "Start"
-
-			if _activeVfx[name] then
-				state = "Stop"
-			end
-
-			vfx:Fire(vfxData, state)
-		else
-			vfx:Fire(vfxData)
-		end
-	end)
+	Client.VFX.ReplicateReliableVfx.On(onReplicateVfx)
+	Client.VFX.ReplicateUnreliableVfx.On(onReplicateVfx)
 end
 
 function VfxController.Register(name: string)
