@@ -1,5 +1,6 @@
 -- IMPORTED MODULES
 const Signal = require "@game/ReplicatedStorage/Packages/Signal"
+const CombatService = require "@game/ServerScriptService/Shared/Services/CombatService"
 const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
 
 -- TYPES
@@ -10,21 +11,14 @@ export type CharacterRecord = {
 	HumanoidRootPart: BasePart,
 }
 
-type HumanoidModifiers = {
-	WalkSpeed: number?,
-	JumpHeight: number?,
-	MaxHealth: number?,
-	Health: number?,
-	AutoRotate: boolean?,
-}
-
 -- CONSTANTS
 const RESPAWN_DELAY = 5
 
 -- PRIVATE STATE
 const _records: { [Player]: CharacterRecord } = {}
-const _characterAdded = Signal.new()
-const _characterRemoving = Signal.new()
+const _characterAdded: Signal.Signal<CharacterRecord> = Signal.new()
+const _characterDied: Signal.Signal<CharacterRecord> = Signal.new()
+const _characterRemoving: Signal.Signal<CharacterRecord> = Signal.new()
 
 -- PRIVATE FUNCTIONS
 const function spawnCharacter(player: Player)
@@ -35,8 +29,8 @@ const function spawnCharacter(player: Player)
 end
 
 const function onCharacterAdded(player: Player, character: Model)
-	const humanoid = character:WaitForChild("Humanoid", 10) :: Humanoid?
-	const humanoidRootPart = character:WaitForChild("HumanoidRootPart", 10)
+	const humanoid = character:FindFirstChild "Humanoid" :: Humanoid?
+	const humanoidRootPart = character:FindFirstChild "HumanoidRootPart"
 
 	if not humanoid or not humanoidRootPart or not character:IsDescendantOf(workspace) then
 		return
@@ -49,19 +43,29 @@ const function onCharacterAdded(player: Player, character: Model)
 		HumanoidRootPart = humanoidRootPart :: BasePart,
 	}
 
-	humanoid.Died:Connect(function()
+	CombatService.Register(character, {
+		-- TODO
+		-- sync with player data
+		MaxHealth = 100,
+		WalkSpeed = 16,
+	})
+
+	humanoid.Died:Once(function()
+		_characterDied:Fire(_records[player])
 		task.delay(RESPAWN_DELAY, spawnCharacter, player)
 	end)
 
-	_characterAdded:Fire(player)
+	_characterAdded:Fire(_records[player])
 end
 
 const function onCharacterRemoving(player: Player)
-	if not _records[player] then
+	const record = _records[player]
+
+	if not record then
 		return
 	end
 
-	_characterRemoving:Fire(player)
+	_characterRemoving:Fire(record)
 	_records[player] = nil
 end
 
@@ -70,8 +74,8 @@ const function setupPlayer(player: Player)
 		task.spawn(onCharacterAdded, player, character)
 	end)
 
-	player.CharacterRemoving:Connect(function(_character)
-		onCharacterRemoving(player)
+	player.CharacterRemoving:Connect(function(character)
+		onCharacterRemoving(player, character)
 	end)
 
 	if player.Character then
@@ -84,10 +88,11 @@ end
 -- PUBLIC MODULE
 const CharacterService = {}
 
-CharacterService.Dependencies = { "PlayerService" }
+CharacterService.Dependencies = { "PlayerService", "CombatService" }
 
 CharacterService.CharacterAdded = _characterAdded
 CharacterService.CharacterRemoving = _characterRemoving
+CharacterService.CharacterDied = _characterDied
 
 function CharacterService.OnInit()
 	-- character tracking only begins once PlayerService confirms data is loaded;
@@ -110,39 +115,6 @@ function CharacterService.GetAll(): { CharacterRecord }
 		table.insert(records, record)
 	end
 	return records
-end
-
-function CharacterService.IsAlive(player: Player): boolean
-	const record = _records[player]
-	if not record then
-		return false
-	end
-	return record.Humanoid.Health > 0
-end
-
-function CharacterService.Modify(player: Player, modifiers: HumanoidModifiers)
-	const record = _records[player]
-	if not record then
-		return
-	end
-
-	const humanoid = record.Humanoid
-
-	if modifiers.WalkSpeed ~= nil then
-		humanoid.WalkSpeed = modifiers.WalkSpeed
-	end
-	if modifiers.JumpHeight ~= nil then
-		humanoid.JumpHeight = modifiers.JumpHeight
-	end
-	if modifiers.MaxHealth ~= nil then
-		humanoid.MaxHealth = modifiers.MaxHealth
-	end
-	if modifiers.Health ~= nil then
-		humanoid.Health = modifiers.Health
-	end
-	if modifiers.AutoRotate ~= nil then
-		humanoid.AutoRotate = modifiers.AutoRotate
-	end
 end
 
 return CharacterService
