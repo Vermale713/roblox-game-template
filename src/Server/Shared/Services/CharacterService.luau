@@ -15,6 +15,7 @@ export type CharacterRecord = {
 const RESPAWN_DELAY = 5
 
 -- PRIVATE STATE
+const _characterFolder = Instance.new "Folder"
 const _records: { [Player]: CharacterRecord } = {}
 const _characterAdded: Signal.Signal<CharacterRecord> = Signal.new()
 const _characterDied: Signal.Signal<CharacterRecord> = Signal.new()
@@ -29,6 +30,8 @@ const function spawnCharacter(player: Player)
 end
 
 const function onCharacterAdded(player: Player, character: Model)
+	character.Parent = _characterFolder
+
 	const humanoid = character:FindFirstChild "Humanoid" :: Humanoid?
 	const humanoidRootPart = character:FindFirstChild "HumanoidRootPart"
 
@@ -95,6 +98,8 @@ CharacterService.CharacterRemoving = _characterRemoving
 CharacterService.CharacterDied = _characterDied
 
 function CharacterService.OnInit()
+	_characterFolder.Name = "PlayerCharacters"
+	_characterFolder.Parent = workspace
 	-- character tracking only begins once PlayerService confirms data is loaded;
 	-- a player whose data failed to load is kicked and never reaches here
 	for _, record in PlayerService.GetAll() do
