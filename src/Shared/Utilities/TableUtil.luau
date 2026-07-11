@@ -1,8 +1,8 @@
 -- IMPORTED MODULES
-const Types = require "@game/ReplicatedStorage/Types"
+const TypeForge = require "@game/ReplicatedStorage/Packages/TypeForge"
 
 -- TYPES
-type NonNilable<T> = Types.NonNilable<T>
+type Required<T> = TypeForge.Required<T>
 
 -- PUBLIC MODULE
 const TableUtil = {}
@@ -16,7 +16,7 @@ function TableUtil.Set<T>(source: T & {}, key: string, value: any): T
 	return source
 end
 
-function TableUtil.Update<T, K>(source: T & {}, key: K & keyof<T>, fn: (NonNilable<index<T, K>>) -> index<T, K>?): T
+function TableUtil.Update<T, K>(source: T & {}, key: K & keyof<T>, fn: (Required<index<T, K>>) -> index<T, K>?): T
 	const value: unknown = source[key]
 	if value ~= nil then
 		const newValue = fn(value :: K)
