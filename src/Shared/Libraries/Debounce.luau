@@ -1,12 +1,17 @@
 -- PRIVATE STATE
-const _activeDebounces: { [any]: number } = {}
+const _activeDebounces: { [any]: number | boolean } = {}
 
 -- PUBLIC MODULE
 const Debounce = {}
 
-function Debounce.Attempt(key: any, cooldown: number): boolean
+function Debounce.Attempt(key: any, cooldown: number?): boolean
 	if _activeDebounces[key] then
 		return false
+	end
+
+	if not cooldown then
+		_activeDebounces[key] = true
+		return true
 	end
 
 	const expiry = os.clock() + cooldown
@@ -27,7 +32,7 @@ end
 
 function Debounce.GetRemaining(key: any): number
 	const expiry = _activeDebounces[key]
-	if not expiry then
+	if typeof(expiry) ~= "number" then
 		return 0
 	end
 	return math.max(0, expiry - os.clock())
