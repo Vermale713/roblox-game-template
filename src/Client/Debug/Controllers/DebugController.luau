@@ -8,6 +8,7 @@ const PlayerDataWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/P
 const PerformanceWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/PerformanceWindow"
 const CharacterWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/CharacterWindow"
 const ServicesWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/ServicesWindow"
+const Gizmo = require "@game/ReplicatedStorage/Libraries/Gizmo"
 const Input = require "@game/ReplicatedStorage/Libraries/Input"
 
 -- ALIASES
@@ -45,6 +46,7 @@ end
 const DebugController = {}
 
 function DebugController.OnInit()
+	Gizmo.Init()
 	_input = Input.new "Debug"
 	_input
 		:SetPriority(10)
