@@ -4,8 +4,6 @@ const RunService = game:GetService "RunService"
 
 -- IMPORTED MODULES
 const Iris = require "@game/ReplicatedStorage/Packages/Iris"
-const PlayerDataWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/PlayerDataWindow"
-const PerformanceWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/PerformanceWindow"
 const CharacterWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/CharacterWindow"
 const ServicesWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/ServicesWindow"
 const Gizmo = require "@game/ReplicatedStorage/Libraries/Gizmo"
@@ -27,8 +25,6 @@ const ADMIN_USER_IDS: { number } = {
 }
 -- every window drawn while the overlay is shown; add new ones here
 const WINDOWS: { DebugWindow } = {
-	{ Id = "PlayerData", Draw = PlayerDataWindow },
-	{ Id = "Performance", Draw = PerformanceWindow },
 	{ Id = "Character", Draw = CharacterWindow },
 	{ Id = "Services", Draw = ServicesWindow },
 }
