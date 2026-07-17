@@ -113,7 +113,6 @@ function CharacterService.OnInit()
 	end
 
 	PlayerService.PlayerAdded:Connect(setupPlayer)
-	PlayerService.PlayerRemoving:Connect(onCharacterRemoving)
 end
 
 function CharacterService.Get(player: Player): CharacterRecord?
