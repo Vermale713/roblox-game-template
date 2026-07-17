@@ -2,7 +2,7 @@
 const RunService = game:GetService "RunService"
 
 -- TYPES
-export type Render = {
+export type RenderInterface = {
 	Render: (self: Render, wireframe: WireframeHandleAdornment) -> (),
 }
 
@@ -16,33 +16,33 @@ export type Config = {
 	ZIndex: number?,
 }
 
-export type BoxRender = Render & {
+export type BoxRender = RenderInterface & {
 	CFrame: CFrame,
 	Size: Vector3,
 }
 
-export type LineRender = Render & {
+export type LineRender = RenderInterface & {
 	From: Vector3,
 	To: Vector3,
 }
 
-export type SphereRender = Render & {
+export type SphereRender = RenderInterface & {
 	CFrame: CFrame,
 	Radius: number,
 }
 
-export type ArrowRender = Render & {
+export type ArrowRender = RenderInterface & {
 	CFrame: CFrame,
 	Length: number,
 }
 
-export type CylinderRender = Render & {
+export type CylinderRender = RenderInterface & {
 	CFrame: CFrame,
 	Radius: number,
 	Height: number,
 }
 
-export type ConeRender = Render & {
+export type ConeRender = RenderInterface & {
 	CFrame: CFrame,
 	Radius: number,
 	Height: number,
@@ -55,7 +55,7 @@ const ARROW_HEAD_RADIUS_SCALE = 0.5
 
 -- PRIVATE STATE
 const _wireframe = Instance.new "WireframeHandleAdornment"
-const _renders: { Render } = {}
+const _renders: { RenderInterface } = {}
 local _config: Config = {
 	Color = Color3.new(0, 1, 1),
 

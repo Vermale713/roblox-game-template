@@ -2,6 +2,7 @@
 const Signal = require "@game/ReplicatedStorage/Packages/Signal"
 const CombatService = require "@game/ServerScriptService/Shared/Services/CombatService"
 const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
+const PlayerDataStore = require "@game/ServerScriptService/Store/PlayerDataStore"
 
 -- TYPES
 export type CharacterRecord = {
@@ -30,6 +31,11 @@ const function spawnCharacter(player: Player)
 end
 
 const function onCharacterAdded(player: Player, character: Model)
+	const data = PlayerDataStore.Get(player.UserId)
+	if not data then
+		return
+	end
+
 	character.Parent = _characterFolder
 
 	const humanoid = character:FindFirstChild "Humanoid" :: Humanoid?
@@ -51,7 +57,7 @@ const function onCharacterAdded(player: Player, character: Model)
 		-- sync with player data
 		MaxHealth = 100,
 		WalkSpeed = 16,
-	})
+	}, data.StatusEffects)
 
 	humanoid.Died:Once(function()
 		_characterDied:Fire(_records[player])
