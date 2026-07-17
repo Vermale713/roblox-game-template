@@ -2,7 +2,7 @@
 const Charm = require "@game/ReplicatedStorage/Packages/Charm"
 const CharmSync = require "@game/ReplicatedStorage/Packages/CharmSync"
 const Network = require "@game/ServerScriptService/Network/Server"
-const PlayerDataStore = require "@game/ServerScriptService/Store/PlayerDataStore"
+const PlayerDataStore = require "@game/ServerScriptService/Shared/Stores/PlayerDataStore"
 const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
 
 -- PRIVATE STATE

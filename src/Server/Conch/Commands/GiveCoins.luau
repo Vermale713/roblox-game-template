@@ -1,7 +1,7 @@
 -- IMPORTED MODULES
 const Conch = require "@game/ReplicatedStorage/Packages/Conch"
 const TableUtil = require "@game/ReplicatedStorage/Utilities/TableUtil"
-const PlayerDataStore = require "@game/ServerScriptService/Store/PlayerDataStore"
+const PlayerDataStore = require "@game/ServerScriptService/Shared/Stores/PlayerDataStore"
 
 -- PUBLIC MODULE
 -- registers `givecoins <player> <amount>`; gated behind the "manage_coins"

@@ -7,7 +7,7 @@ const TypeForge = require "@game/ReplicatedStorage/Packages/TypeForge"
 const TableUtil = require "@game/ReplicatedStorage/Utilities/TableUtil"
 const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
 const Example = require "@game/ServerScriptService/Shared/StatusEffects/Example"
-const PlayerDataStore = require "@game/ServerScriptService/Store/PlayerDataStore"
+const PlayerDataStore = require "@game/ServerScriptService/Shared/Stores/PlayerDataStore"
 
 -- TYPES
 type Required<T> = TypeForge.Required<T>

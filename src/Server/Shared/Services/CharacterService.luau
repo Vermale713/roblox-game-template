@@ -2,7 +2,7 @@
 const Signal = require "@game/ReplicatedStorage/Packages/Signal"
 const CombatService = require "@game/ServerScriptService/Shared/Services/CombatService"
 const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
-const PlayerDataStore = require "@game/ServerScriptService/Store/PlayerDataStore"
+const PlayerDataStore = require "@game/ServerScriptService/Shared/Stores/PlayerDataStore"
 
 -- TYPES
 export type CharacterRecord = {
