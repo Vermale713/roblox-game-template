@@ -57,7 +57,8 @@ const function onCharacterAdded(player: Player, character: Model)
 		-- sync with player data
 		MaxHealth = 100,
 		WalkSpeed = 16,
-	}, data.StatusEffects)
+		StatusEffects = data.StatusEffects :: CombatService.StatusEffects,
+	})
 
 	humanoid.Died:Once(function()
 		_characterDied:Fire(_records[player])

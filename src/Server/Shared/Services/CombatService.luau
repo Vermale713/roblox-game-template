@@ -12,7 +12,8 @@ const PlayerDataStore = require "@game/ServerScriptService/Shared/Stores/PlayerD
 
 -- TYPES
 type Required<T> = TypeForge.Required<T>
-type StatusEffects = { [string]: ActiveStatusEffect }
+
+export type StatusEffects = { [string]: ActiveStatusEffect }
 
 export type StatusEffectData = {
 	Id: string,
