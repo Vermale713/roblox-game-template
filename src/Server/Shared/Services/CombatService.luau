@@ -1,6 +1,7 @@
 -- SERVICES
 const LogService = game:GetService "LogService"
 const Players = game:GetService "Players"
+const ServerScriptService = game:GetService "ServerScriptService"
 
 -- IMPORTED MODULES
 const TypeForge = require "@game/ReplicatedStorage/Packages/TypeForge"
@@ -51,6 +52,7 @@ const STATUS_EFFECTS = {
 -- PRIVATE STATE
 const _characterStates: { [Model]: CharacterState } = {}
 const _effectThreads: { [Player | Model]: { [string]: thread } } = {}
+const _registeredStatuses = {}
 
 -- PRIVATE FUNCTIONS
 const function onPlayerAdded(player: Player)
@@ -64,6 +66,20 @@ const function onPlayerRemoving(player: Player)
 	for _, thread in playerEffectThreads do
 		task.cancel(thread)
 	end
+end
+
+const function getStatusEffectFromId(id: string): StatusEffectInterface?
+	return _registeredStatuses[id]
+end
+
+const function registerStatusEffect(status: StatusEffectInterface)
+	const id = status.Data.Id
+	if _registeredStatuses[id] then
+		LogService:Error("[CombatService] Attempted to register a status with the same id: {id}", { id = id })
+		return
+	end
+
+	_registeredStatuses[id] = status
 end
 
 const function syncHumanoidWithState(state: CharacterState)
@@ -122,12 +138,29 @@ CombatService.StatusEffects = STATUS_EFFECTS
 CombatService.Register = registerCharacterState
 CombatService.Unregister = unregisterCharacterState
 
+CombatService.RegisterStatusEffect = registerStatusEffect
+
 function CombatService.OnInit()
 	PlayerService.PlayerAdded:Connect(onPlayerAdded)
 	PlayerService.PlayerRemoving:Connect(onPlayerRemoving)
+
+	for _, statusModule in ServerScriptService.Shared.StatusEffects:GetChildren() do
+		if not statusModule:IsA "ModuleScript" then
+			continue
+		end
+
+		const requiredModule: StatusEffectInterface = (require)(statusModule)
+		registerStatusEffect(requiredModule)
+	end
 end
 
-function CombatService.ApplyStatus(rig: Model, status: StatusEffectInterface)
+function CombatService.ApplyStatus(rig: Model, statusId: string)
+	const status = getStatusEffectFromId(statusId)
+	if not status then
+		LogService:Warn("[CombatService] Attempted to apply a status that does not exist: {id}", { id = statusId })
+		return
+	end
+
 	const effectData = status.Data
 
 	const state = _characterStates[rig]
@@ -217,7 +250,13 @@ function CombatService.ApplyStatus(rig: Model, status: StatusEffectInterface)
 	syncHumanoidWithState(state)
 end
 
-function CombatService.RemoveStatusEffect(rig: Model, status: StatusEffectInterface)
+function CombatService.RemoveStatusEffect(rig: Model, statusId: string)
+	const status = getStatusEffectFromId(statusId)
+	if not status then
+		LogService:Warn("[CombatService] Attempted to remove a status that does not exist: {id}", { id = statusId })
+		return
+	end
+
 	const effectData = status.Data
 
 	const state = _characterStates[rig]
@@ -260,9 +299,7 @@ function CombatService.RemoveStatusEffect(rig: Model, status: StatusEffectInterf
 	syncHumanoidWithState(state)
 end
 
-function CombatService.HasStatusEffect(rig: Model, status: StatusEffectInterface)
-	const effectData = status.Data
-
+function CombatService.HasStatusEffect(rig: Model, statusId: string)
 	const state = _characterStates[rig]
 	if not state then
 		LogService:Warn(
@@ -272,7 +309,7 @@ function CombatService.HasStatusEffect(rig: Model, status: StatusEffectInterface
 		return false
 	end
 
-	return state.StatusEffects[effectData.Id] ~= nil
+	return state.StatusEffects[statusId] ~= nil
 end
 
 function CombatService.Damage(rig: Model, info: { Amount: number }): ()
