@@ -53,6 +53,9 @@ const function app()
 	return create "ScreenGui" {
 		Name = "MainUi",
 
+		ResetOnSpawn = false,
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+
 		layer("Hud", HUD_DISPLAY_ORDER, _huds),
 		layer("Menu", MENU_DISPLAY_ORDER, _menus),
 		layer("Modal", MODAL_DISPLAY_ORDER, _modals),
