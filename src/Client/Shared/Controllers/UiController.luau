@@ -1,5 +1,6 @@
 -- SERVICES
 const Players = game:GetService "Players"
+const ReplicatedStorage = game:GetService "ReplicatedStorage"
 
 -- IMPORTED MODULES
 const Scaler = require "@game/ReplicatedStorage/Client/Ui/Components/Scaler"
@@ -50,12 +51,19 @@ const function layer(name: string, zindex: number, children: LayerChildren)
 end
 
 const function app()
+	const designFolder = ReplicatedStorage:FindFirstChild "Design" :: Folder
+	const styleSheet = designFolder:FindFirstChild "Main"
+
 	return create "ScreenGui" {
 		Name = "MainUi",
 
 		layer("Hud", HUD_DISPLAY_ORDER, _huds),
 		layer("Menu", MENU_DISPLAY_ORDER, _menus),
 		layer("Modal", MODAL_DISPLAY_ORDER, _modals),
+
+		create "StyleLink" {
+			StyleSheet = styleSheet,
+		},
 
 		Scaler(),
 	}
