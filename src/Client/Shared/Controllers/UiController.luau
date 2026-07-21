@@ -40,7 +40,7 @@ const function layer(name: string, zindex: number, children: LayerChildren)
 		ZIndex = zindex,
 		BackgroundTransparency = 1,
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(1, 1),
+		Position = UDim2.fromScale(0.5, 0.5),
 		Size = UDim2.fromScale(1, 1),
 
 		values(children, function(component, _index)
