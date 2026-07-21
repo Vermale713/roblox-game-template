@@ -1,5 +1,5 @@
 [parallel]
-dev: blink sourcemap serve luau-lsp-bridge
+dev: blink sourcemap serve
 
 blink:
     blink src/Network.blink -w
@@ -18,6 +18,3 @@ sync:
 
 test:
     lune run test
-
-luau-lsp-bridge:
-    lune run luau-lsp-bridge
