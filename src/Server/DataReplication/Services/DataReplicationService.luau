@@ -29,7 +29,7 @@ const function subscribePlayer(player: Player)
 	-- server-only Metadata must never cross to clients (the synced map broadcasts
 	-- to every player). Extend this as public fields are added to PlayerData.
 	PlayerDataStore.Load(player.UserId, record.Profile.Data)
-	CharmSync.server.addSignalsToClient(player, { playerData = PlayerDataStore.Getter })
+	CharmSync.server.addSignalsToClient(player, { PlayerData = PlayerDataStore.Getter })
 end
 
 const function unsubscribePlayer(player: Player)

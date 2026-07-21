@@ -1,14 +1,14 @@
 -- IMPORTED MODULES
 const CharmSync = require "@game/ReplicatedStorage/Packages/CharmSync"
 const Network = require "@game/ReplicatedStorage/Client/Network/Client"
-const PlayerDataStore = require "@game/ReplicatedStorage/Client/Store/PlayerDataStore"
+const PlayerDataStore = require "@game/ReplicatedStorage/Client/Shared/Stores/PlayerDataStore"
 
 -- PUBLIC MODULE
 const DataReplicationController = {}
 
 function DataReplicationController.OnInit()
 	-- register the replica atom before any payload can arrive
-	CharmSync.client.addSignals { playerData = PlayerDataStore.Setter }
+	CharmSync.client.addSignals { PlayerData = PlayerDataStore.Setter }
 end
 
 function DataReplicationController.OnStart()

@@ -1,6 +1,6 @@
 -- IMPORTED MODULES
 const Conch = require "@game/ReplicatedStorage/Packages/Conch"
-const PlayerDataStore = require "@game/ReplicatedStorage/Client/Store/PlayerDataStore"
+const PlayerDataStore = require "@game/ReplicatedStorage/Client/Shared/Stores/PlayerDataStore"
 
 -- PUBLIC MODULE
 -- registers `coins`; reads the local player's replicated coin count

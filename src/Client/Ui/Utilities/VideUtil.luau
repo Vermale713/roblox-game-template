@@ -1,5 +1,5 @@
 -- IMPORTED MODULES
-const PlayerDataStore = require "@game/ReplicatedStorage/Client/Store/PlayerDataStore"
+const PlayerDataStore = require "@game/ReplicatedStorage/Client/Shared/Stores/PlayerDataStore"
 const DataTemplate = require "@game/ReplicatedStorage/Data/Templates/DataTemplate"
 const Charm = require "@game/ReplicatedStorage/Packages/Charm"
 const Vide = require "@game/ReplicatedStorage/Packages/Vide"
