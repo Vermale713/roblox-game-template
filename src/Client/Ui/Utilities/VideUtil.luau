@@ -30,7 +30,7 @@ end
 
 function VideUtil.GetLocalPlayerDataComputed()
 	const data = computed(function()
-		return PlayerDataStore.GetLocal() or DataTemplate
+		return PlayerDataStore.GetLocal()
 	end)
 
 	return data
