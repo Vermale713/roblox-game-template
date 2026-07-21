@@ -8,13 +8,13 @@ const Vide = require "@game/ReplicatedStorage/Packages/Vide"
 
 -- TYPES
 type Source<T> = Vide.Source<T>
-type LayerChildren = Source<{ Instance }>
+type LayerChildren = Source<{ () -> Instance }>
 
 -- ALIASES
 const create = Vide.create
 const mount = Vide.mount
 const source = Vide.source
-const indexes = Vide.indexes
+const values = Vide.values
 
 -- CONSTANTS
 const HUD_DISPLAY_ORDER = 1000
@@ -29,10 +29,8 @@ const _modals: LayerChildren = source {}
 
 -- PRIVATE FUNCTIONS
 const function mountUiToLayer(layer: LayerChildren, fn: () -> Instance)
-	const result = fn()
-
 	const currentLayer = layer()
-	table.insert(currentLayer, result)
+	table.insert(currentLayer, fn)
 	layer(currentLayer)
 end
 
@@ -45,7 +43,7 @@ const function layer(name: string, zindex: number, children: LayerChildren)
 		Position = UDim2.fromScale(1, 1),
 		Size = UDim2.fromScale(1, 1),
 
-		indexes(children, function(component, _index)
+		values(children, function(component, _index)
 			return component()
 		end),
 	}
