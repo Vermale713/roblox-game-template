@@ -24,7 +24,7 @@ function PlayerDataStore.GetAll(): PlayerDataMap
 	return _getData()
 end
 
-function PlayerDataStore.GetLocal(): PlayerData?
+function PlayerDataStore.GetLocal(): PlayerData
 	return _getData()[tostring(Players.LocalPlayer.UserId)] or DataTemplate
 end
 
