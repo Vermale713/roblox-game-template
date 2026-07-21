@@ -22,6 +22,7 @@ const MENU_DISPLAY_ORDER = 2000
 const MODAL_DISPLAY_ORDER = 3000
 
 -- PRIVATE STATE
+local _styleSheet: StyleSheet
 const _huds: LayerChildren = source {}
 const _menus: LayerChildren = source {}
 const _modals: LayerChildren = source {}
@@ -51,9 +52,6 @@ const function layer(name: string, zindex: number, children: LayerChildren)
 end
 
 const function app()
-	const designFolder = ReplicatedStorage:FindFirstChild "Design" :: Folder
-	const styleSheet = designFolder:FindFirstChild "Main"
-
 	return create "ScreenGui" {
 		Name = "MainUi",
 
@@ -62,7 +60,7 @@ const function app()
 		layer("Modal", MODAL_DISPLAY_ORDER, _modals),
 
 		create "StyleLink" {
-			StyleSheet = styleSheet,
+			StyleSheet = _styleSheet,
 		},
 
 		Scaler(),
@@ -72,7 +70,12 @@ end
 -- PUBLIC MODULE
 const UiController = {}
 
+UiController.StyleSheet = _styleSheet
+
 function UiController.OnInit()
+	const designFolder = ReplicatedStorage:FindFirstChild "Design" :: Folder
+	_styleSheet = designFolder:FindFirstChild "Main" :: StyleSheet
+
 	Vide.defaults = false
 
 	const playerGui = Players.LocalPlayer:FindFirstChild "PlayerGui" :: Instance
