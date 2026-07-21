@@ -9,7 +9,6 @@ const PlayerData = {
 	JoinedAt = 0,
 	LastOnlineAt = 0,
 	Playtime = 0,
-	SessionCount = 0,
 	RobuxSpent = 0,
 }
 

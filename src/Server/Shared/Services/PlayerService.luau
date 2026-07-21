@@ -60,7 +60,6 @@ const function initialiseMetadata(profile: Profile)
 		data.JoinedAt = now
 	end
 	data.LastOnlineAt = now
-	data.SessionCount += 1
 end
 
 const function onPlayerAdded(player: Player)
