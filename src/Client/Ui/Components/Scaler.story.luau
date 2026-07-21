@@ -1,7 +1,6 @@
 -- IMPORTED MODULES
 const Vide = require "@game/ReplicatedStorage/Packages/Vide"
 const UiLabs = require "@game/ReplicatedStorage/Packages/UiLabs"
-const Theme = require "@game/ReplicatedStorage/Client/Ui/Theme"
 const Scaler = require "@game/ReplicatedStorage/Client/Ui/Components/Scaler"
 
 -- ALIASES
@@ -18,18 +17,17 @@ return UiLabs.CreateVideStory({
 		Size = UDim2.fromOffset(320, 160),
 		Position = UDim2.fromScale(0.5, 0.5),
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundColor3 = Theme.Colors.Surface,
+		BackgroundColor3 = Color3.fromRGB(30, 30, 30),
 
 		Scaler(),
 
-		create "UICorner" { CornerRadius = Theme.CornerRadius },
+		create "UICorner" { CornerRadius = UDim.new(0, 10) },
 
 		create "TextLabel" {
 			Size = UDim2.fromScale(1, 1),
 			BackgroundTransparency = 1,
 			Text = "Scaled by Scaler",
-			TextColor3 = Theme.Colors.Text,
-			FontFace = Theme.Font,
+			TextColor3 = Color3.fromRGB(255, 255, 255),
 			TextSize = 24,
 		},
 	}

@@ -1,6 +1,5 @@
 -- IMPORTED MODULES
 const Vide = require "@game/ReplicatedStorage/Packages/Vide"
-const Theme = require "@game/ReplicatedStorage/Client/Ui/Theme"
 
 -- ALIASES
 const create = Vide.create
@@ -8,7 +7,7 @@ const source = Vide.source
 const cleanup = Vide.cleanup
 
 -- CONSTANTS
--- clamp so the UI never shrinks or grows past a usable range on extreme viewports
+const BASE_RESOLUTION = Vector2.new(1920, 1080)
 const MIN_SCALE = 0.5
 const MAX_SCALE = 1.5
 
@@ -22,7 +21,7 @@ const function getUiScale(): number
 		return 1
 	end
 
-	const ratio = camera.ViewportSize.Magnitude / Theme.Resolution.Magnitude
+	const ratio = camera.ViewportSize.Magnitude / BASE_RESOLUTION.Magnitude
 	return math.clamp(ratio, MIN_SCALE, MAX_SCALE)
 end
 

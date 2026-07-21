@@ -35,7 +35,7 @@ Conch = { wally = "alicesaidhi/conch", version = "^0.4.0-rc.9" }
 ConchUi = { wally = "alicesaidhi/conch-ui", version = "^0.4.0-rc.9" }
 Signal = { name = "molyidev/signal", version = "^1.0.3" }
 Iris = { wally = "sirmallard/iris", version = "^2.5.1" }
-Vide = { wally = "centau/vide", version = "^0.4.0" }
+Vide = { wally = "centau/vide", version = "^0.4.1" }
 TypeForge = { wally = "cameronpcampbell/typeforge", version = "^3.0.4" }
 
 [overrides]
@@ -43,4 +43,4 @@ TypeForge = { wally = "cameronpcampbell/typeforge", version = "^3.0.4" }
 "ConchUi>Vide" = "Vide"
 
 [patches]
-"wally#centau/vide" = { "0.4.0 roblox" = "patches/wally#centau+vide-0.4.0+roblox.patch" }
+"wally#centau/vide" = { "0.4.0 roblox" = "patches/wally#centau+vide-0.4.0+roblox.patch" , "0.4.1 roblox" = "patches/wally#centau+vide-0.4.1+roblox.patch" }

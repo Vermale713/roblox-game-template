@@ -3,7 +3,6 @@ const Players = game:GetService "Players"
 
 -- IMPORTED MODULES
 const Scaler = require "@game/ReplicatedStorage/Client/Ui/Components/Scaler"
-const Theme = require "@game/ReplicatedStorage/Client/Ui/Theme"
 const Vide = require "@game/ReplicatedStorage/Packages/Vide"
 
 -- TYPES
@@ -15,6 +14,11 @@ const create = Vide.create
 const mount = Vide.mount
 const source = Vide.source
 const indexes = Vide.indexes
+
+-- CONSTANTS
+const HUD_DISPLAY_ORDER = 1000
+const MENU_DISPLAY_ORDER = 2000
+const MODAL_DISPLAY_ORDER = 3000
 
 -- PRIVATE STATE
 const _huds: LayerChildren = source {}
@@ -49,9 +53,9 @@ const function app()
 	return create "ScreenGui" {
 		Name = "MainUi",
 
-		layer("Hud", Theme.DisplayOrder.Hud, _huds),
-		layer("Menu", Theme.DisplayOrder.Menu, _menus),
-		layer("Modal", Theme.DisplayOrder.Modal, _modals),
+		layer("Hud", HUD_DISPLAY_ORDER, _huds),
+		layer("Menu", MENU_DISPLAY_ORDER, _menus),
+		layer("Modal", MODAL_DISPLAY_ORDER, _modals),
 
 		Scaler(),
 	}
@@ -61,6 +65,8 @@ end
 const UiController = {}
 
 function UiController.OnInit()
+	Vide.defaults = false
+
 	const playerGui = Players.LocalPlayer:FindFirstChild "PlayerGui" :: Instance
 
 	mount(app, playerGui)
