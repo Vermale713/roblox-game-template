@@ -28,6 +28,20 @@ function TableUtil.Update<T, K>(source: T & {}, key: K & keyof<T>, fn: (Required
 	return source
 end
 
+function TableUtil.DeepClone<T>(source: T & {}): T
+	const clone = {}
+
+	for i, v in source :: { [any]: any } do
+		if typeof(v) == "table" then
+			clone[i] = TableUtil.DeepClone(v)
+		else
+			clone[i] = v
+		end
+	end
+
+	return clone
+end
+
 function TableUtil.Merge<T, K>(source: T & {}, merger: K): T & K
 	if not merger then
 		return source
