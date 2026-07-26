@@ -21,17 +21,11 @@
 				"$path": "tests/"
             }
 		},
-        "ReplicatedFirst": {
-            "$path": "src/Preload"
-        },
 		"ServerScriptService": {
 			"$path": "src/Server",
 			"ServerPackages": {
 				"$path": "roblox_server_packages"
 			}
-		},
-		"ServerStorage": {
-			"$path": "src/Storage"
 		}
 	}
 }

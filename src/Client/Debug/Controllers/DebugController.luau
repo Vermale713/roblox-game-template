@@ -6,6 +6,7 @@ const RunService = game:GetService "RunService"
 const Iris = require "@game/ReplicatedStorage/Packages/Iris"
 const CharacterWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/CharacterWindow"
 const ServicesWindow = require "@game/ReplicatedStorage/Client/Debug/Windows/ServicesWindow"
+const AdminUserIds = require "@game/ReplicatedStorage/Data/Admins/AdminUserIds"
 const Gizmo = require "@game/ReplicatedStorage/Libraries/Gizmo"
 const Input = require "@game/ReplicatedStorage/Libraries/Input"
 
@@ -17,13 +18,6 @@ const Input = require "@game/ReplicatedStorage/Libraries/Input"
 type DebugWindow = { Id: string, Draw: () -> () }
 
 -- CONSTANTS
--- UserIds that get the Iris overlay in live games; everyone in Studio gets it for
--- easy testing. Mirrors ConchService's admin gating so the overlay (which draws
--- every frame) never ships to ordinary players' clients.
-const ADMIN_USER_IDS: { number } = {
-	2600715546,
-}
--- every window drawn while the overlay is shown; add new ones here
 const WINDOWS: { DebugWindow } = {
 	{ Id = "Character", Draw = CharacterWindow },
 	{ Id = "Services", Draw = ServicesWindow },
@@ -35,7 +29,7 @@ local _isShown = false
 
 -- PRIVATE FUNCTIONS
 const function isDebugAllowed(): boolean
-	return RunService:IsStudio() or table.find(ADMIN_USER_IDS, Players.LocalPlayer.UserId) ~= nil
+	return RunService:IsStudio() or AdminUserIds.IsAdmin(Players.LocalPlayer.UserId)
 end
 
 -- PUBLIC MODULE

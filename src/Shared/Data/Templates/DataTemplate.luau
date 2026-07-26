@@ -10,6 +10,7 @@ const PlayerData = {
 	LastOnlineAt = 0,
 	Playtime = 0,
 	RobuxSpent = 0,
+	Transactions = {},
 }
 
 export type PlayerData = typeof(PlayerData)
