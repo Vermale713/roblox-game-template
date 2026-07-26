@@ -8,7 +8,7 @@ const TableUtil = require "@game/ReplicatedStorage/Utilities/TableUtil"
 const PlayerDataStore = require "@game/ServerScriptService/Shared/Stores/PlayerDataStore"
 
 -- TYPES
-type ReceiptInfo = {
+export type ReceiptInfo = {
 	PlayerId: number,
 	CurrencySpent: number,
 	PurchaseId: string,
@@ -18,9 +18,10 @@ type ReceiptInfo = {
 	CurrencyType: Enum.CurrencyType,
 	ReceiptType: Enum.CurrencyType,
 }
-type ReceiptHandlers = { [number]: Handler }
 
 export type Handler = (ReceiptInfo) -> ()
+
+type ReceiptHandlers = { [number]: Handler }
 
 -- PRIVATE STATE
 const _handlers: ReceiptHandlers = {}
