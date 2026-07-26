@@ -72,7 +72,6 @@ end
 const ProductService = {}
 
 function ProductService.OnInit()
-	LogService:Info "[ProductService] TODO"
 	MarketplaceService.ProcessReceipt = processReceipt
 end
 
