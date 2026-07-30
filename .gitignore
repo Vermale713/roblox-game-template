@@ -34,3 +34,4 @@ src/Shared/Network
 
 # Misc
 .DS_Store
+out/
