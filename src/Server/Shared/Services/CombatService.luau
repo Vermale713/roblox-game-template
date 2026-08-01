@@ -173,7 +173,7 @@ function CombatService.ApplyStatus(rig: Model, statusId: string)
 		return
 	end
 
-	const hasExistingStatus = CombatService.HasStatusEffect(rig, status)
+	const hasExistingStatus = CombatService.HasStatusEffect(rig, statusId)
 
 	-- Overrides
 	-- TODO implement more than just Ignore
