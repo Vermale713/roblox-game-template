@@ -8,7 +8,7 @@ type Required<T> = TypeForge.Required<T>
 const TableUtil = {}
 
 -- returns a shallow copy of `source` with `key` set to `value`
-function TableUtil.Set<T>(source: T & {}, key: string, value: any): T
+function TableUtil.Set<T>(source: T & {}, key: string | number, value: any): T
 	if source[key] ~= value then
 		source = table.clone(source)
 		source[key] = value
