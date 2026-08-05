@@ -346,7 +346,7 @@ function CombatService.Heal(rig: Model, info: { Amount: number }): ()
 	local heal = info.Amount
 	for statusId, _ in state.StatusEffects do
 		const statusInterface = _registeredStatuses[statusId :: keyof<typeof(STATUS_EFFECTS)>] :: StatusEffectInterface
-		if statusInterface.ModifyDamage then
+		if statusInterface.ModifyHeal then
 			heal = statusInterface.ModifyHeal(heal)
 		end
 	end
