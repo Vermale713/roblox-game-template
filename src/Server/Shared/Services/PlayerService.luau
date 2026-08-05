@@ -8,6 +8,7 @@ const DataTemplate = require "@game/ReplicatedStorage/Data/Templates/DataTemplat
 const Signal = require "@game/ReplicatedStorage/Packages/Signal"
 const Promise = require "@game/ReplicatedStorage/Packages/Promise"
 const ProfileStore = require "@game/ServerScriptService/ServerPackages/ProfileStore"
+const PlayerDataStore = require "@game/ServerScriptService/Shared/Stores/PlayerDataStore"
 
 -- TYPES
 type DataTemplate = DataTemplate.PlayerData
@@ -104,6 +105,8 @@ const function onPlayerAdded(player: Player)
 				Profile = profile,
 				SessionStart = sessionStart,
 			}
+
+			PlayerDataStore.Load(player.UserId, profile.Data)
 
 			_playerAdded:Fire(player)
 		end)
