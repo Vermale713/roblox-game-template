@@ -87,6 +87,7 @@ const function onCharacterAdded(player: Player, character: Model)
 
 	humanoid.Died:Once(function()
 		_characterDied:Fire(_records[player])
+		CombatService.Unregister(character)
 		task.delay(RESPAWN_DELAY, spawnCharacter, player)
 	end)
 
