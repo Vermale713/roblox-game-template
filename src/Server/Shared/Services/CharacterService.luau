@@ -1,4 +1,8 @@
+-- SERVICES
+const LogService = game:GetService "LogService"
+
 -- IMPORTED MODULES
+const Promise = require "@game/ReplicatedStorage/Packages/Promise"
 const Signal = require "@game/ReplicatedStorage/Packages/Signal"
 const CombatService = require "@game/ServerScriptService/Shared/Services/CombatService"
 const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
@@ -12,6 +16,8 @@ export type CharacterRecord = {
 	HumanoidRootPart: BasePart,
 }
 
+type Promise<T> = Promise.TypedPromise<T>
+
 -- CONSTANTS
 const RESPAWN_DELAY = 5
 
@@ -23,10 +29,24 @@ const _characterDied: Signal.Signal<CharacterRecord> = Signal.new()
 const _characterRemoving: Signal.Signal<CharacterRecord> = Signal.new()
 
 -- PRIVATE FUNCTIONS
-const function spawnCharacter(player: Player)
+const function spawnCharacter(player: Player): Promise<Model>
 	-- LoadCharacter throws if the player has already left; that case is benign
-	pcall(function()
-		player:LoadCharacterAsync()
+	return Promise.new(function(resolve, reject)
+		const success, res = pcall(function()
+			player:LoadCharacterAsync()
+		end)
+
+		if not success then
+			reject(res)
+		end
+
+		const character = player.Character
+
+		if not character then
+			reject "No character was found associated with the player"
+		end
+
+		resolve(character :: Model)
 	end)
 end
 
@@ -81,7 +101,7 @@ end
 
 const function setupPlayer(player: Player)
 	player.CharacterAdded:Connect(function(character)
-		task.spawn(onCharacterAdded, player, character)
+		onCharacterAdded(player, character)
 	end)
 
 	player.CharacterRemoving:Connect(function(character)
@@ -89,9 +109,15 @@ const function setupPlayer(player: Player)
 	end)
 
 	if player.Character then
-		task.spawn(onCharacterAdded, player, player.Character)
+		onCharacterAdded(player, player.Character)
 	else
-		task.spawn(spawnCharacter, player)
+		spawnCharacter(player)
+			:andThen(function(character)
+				onCharacterAdded(player, character)
+			end)
+			:catch(function(err)
+				LogService:Warn("[CharacterService] Failed to spawn character: {err}", { err = err })
+			end)
 	end
 end
 
