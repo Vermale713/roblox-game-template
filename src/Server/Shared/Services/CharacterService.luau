@@ -62,6 +62,10 @@ const function onCharacterAdded(player: Player, character: Model)
 	const humanoidRootPart = character:FindFirstChild "HumanoidRootPart"
 
 	if not humanoid or not humanoidRootPart or not character:IsDescendantOf(workspace) then
+		LogService:Warn(
+			"[CharacterService] (Humanoid or HumanoidRootPart) not found or (Character: {character}) is not a descendant of workspace",
+			{ player = player, character = character }
+		)
 		return
 	end
 
@@ -101,14 +105,17 @@ end
 
 const function setupPlayer(player: Player)
 	player.CharacterAdded:Connect(function(character)
+		LogService:Info "[CharacterService] Handling CharacterAdded"
 		onCharacterAdded(player, character)
 	end)
 
 	player.CharacterRemoving:Connect(function(character)
+		LogService:Info "[CharacterService] Handling CharacterRemoving"
 		onCharacterRemoving(player, character)
 	end)
 
 	if player.Character then
+		LogService:Info "[CharacterService] Handling preexisting character"
 		onCharacterAdded(player, player.Character)
 	else
 		spawnCharacter(player)
