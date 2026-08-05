@@ -53,6 +53,7 @@ end
 const function onCharacterAdded(player: Player, character: Model)
 	const data = PlayerDataStore.Get(player.UserId)
 	if not data then
+		LogService:Warn("[CharacterService] {player}'s data does not exist", { player = player, character = character })
 		return
 	end
 
