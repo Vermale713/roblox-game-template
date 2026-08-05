@@ -238,7 +238,7 @@ function CombatService.ApplyStatus(rig: Model, statusId: string)
 		end
 	end
 
-	TableUtil.Set(
+	state.StatusEffects = TableUtil.Set(
 		state.StatusEffects,
 		effectData.Id,
 		{
@@ -324,7 +324,7 @@ function CombatService.Damage(rig: Model, info: { Amount: number }): ()
 	-- TODO
 	local damage = info.Amount
 	for statusId, _ in state.StatusEffects do
-		const statusInterface = STATUS_EFFECTS[statusId :: keyof<typeof(STATUS_EFFECTS)>] :: StatusEffectInterface
+		const statusInterface = _registeredStatuses[statusId :: keyof<typeof(STATUS_EFFECTS)>] :: StatusEffectInterface
 		if statusInterface.ModifyDamage then
 			damage = statusInterface.ModifyDamage(damage)
 		end
@@ -345,7 +345,7 @@ function CombatService.Heal(rig: Model, info: { Amount: number }): ()
 	-- TODO
 	local heal = info.Amount
 	for statusId, _ in state.StatusEffects do
-		const statusInterface = STATUS_EFFECTS[statusId :: keyof<typeof(STATUS_EFFECTS)>] :: StatusEffectInterface
+		const statusInterface = _registeredStatuses[statusId :: keyof<typeof(STATUS_EFFECTS)>] :: StatusEffectInterface
 		if statusInterface.ModifyDamage then
 			heal = statusInterface.ModifyHeal(heal)
 		end
