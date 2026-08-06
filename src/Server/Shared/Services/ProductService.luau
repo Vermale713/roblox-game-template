@@ -39,6 +39,15 @@ const function processReceipt(info: ReceiptInfo): Enum.ProductPurchaseDecision
 		return Enum.ProductPurchaseDecision.NotProcessedYet
 	end
 
+	const playerData = PlayerDataStore.Get(player.UserId)
+	if not playerData then
+		return Enum.ProductPurchaseDecision.NotProcessedYet
+	end
+
+	if (playerData.Transactions :: { [string]: boolean })[transactionId] then
+		return Enum.ProductPurchaseDecision.PurchaseGranted
+	end
+
 	const handler = _handlers[productId]
 	if not handler then
 		LogService:Warn("[ProductService] No product handler associated with {ProductId}", info :: { [string]: any })
@@ -55,10 +64,6 @@ const function processReceipt(info: ReceiptInfo): Enum.ProductPurchaseDecision
 	end
 
 	PlayerDataStore.Update(userId, function(data)
-		if (data.Transactions :: { [string]: boolean })[transactionId] then
-			return data
-		end
-
 		return TableUtil.Merge(data, {
 			RobuxSpent = data.RobuxSpent + robuxSpent,
 			Transactions = TableUtil.Set(data.Transactions, transactionId, true),
