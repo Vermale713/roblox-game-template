@@ -51,6 +51,11 @@ const function spawnCharacter(player: Player): Promise<Model>
 end
 
 const function onCharacterAdded(player: Player, character: Model)
+	if _records[player] then
+		-- already handled foo
+		return
+	end
+
 	const data = PlayerDataStore.Get(player.UserId)
 	if not data then
 		LogService:Warn("[CharacterService] {player}'s data does not exist", { player = player, character = character })
