@@ -128,6 +128,18 @@ end
 const function onCharacterRemoving(player: Player)
 	const record = _records[player]
 
+	PlayerDataStore.Update(player.UserId, function(data)
+		const newStatusEffects = {}
+		const now = os.time()
+
+		for id, status in data.StatusEffects :: StatusEffects do
+			status.LastActiveSession = now
+			newStatusEffects[id] = status
+		end
+
+		return TableUtil.Set(data, "StatusEffects", newStatusEffects)
+	end)
+
 	if not record then
 		return
 	end

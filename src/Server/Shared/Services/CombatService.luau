@@ -65,24 +65,6 @@ end
 const function onPlayerRemoving(player: Player)
 	const playerEffectThreads = _effectThreads[player]
 
-	PlayerDataStore.Update(player.UserId, function(data)
-		const currentTime = os.time()
-
-		for key, status in data.StatusEffects :: StatusEffects do
-			if status.EndTime <= currentTime then
-				data = TableUtil.Set(data, "StatusEffects", TableUtil.Remove(data.StatusEffects, key))
-			else
-				data = TableUtil.Set(
-					data,
-					"StatusEffects",
-					TableUtil.Set((data.StatusEffects :: StatusEffects)[key], "LastActiveSession", currentTime)
-				)
-			end
-		end
-
-		return data
-	end)
-
 	for _, thread in playerEffectThreads do
 		task.cancel(thread)
 	end
