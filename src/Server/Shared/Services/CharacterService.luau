@@ -97,7 +97,14 @@ const function onCharacterAdded(player: Player, character: Model)
 	for statusId, status in data.StatusEffects :: StatusEffects do
 		const currentTime = os.time()
 
-		const durationLeft = status.EndTime - status.LastActiveSession
+		local durationLeft
+
+		if status.LastActiveSession == 0 then
+			durationLeft = status.EndTime - status.StartTime
+		else
+			durationLeft = status.EndTime - status.LastActiveSession
+		end
+
 		if durationLeft <= 0 then
 			continue
 		end
@@ -133,8 +140,8 @@ const function onCharacterRemoving(player: Player)
 		const now = os.time()
 
 		for id, status in data.StatusEffects :: StatusEffects do
-			status.LastActiveSession = now
-			newStatusEffects[id] = status
+			const newStatus = TableUtil.Set(status, "LastActiveSession", now)
+			newStatusEffects[id] = newStatus
 		end
 
 		return TableUtil.Set(data, "StatusEffects", newStatusEffects)
