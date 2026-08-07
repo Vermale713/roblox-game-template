@@ -174,6 +174,28 @@ function CombatService.OnInit()
 	end
 end
 
+--[=[
+    Should only be used in CharacterService to reapply
+    persistent status effects from data
+]=]
+function CombatService.ReapplyStatusEffect(rig: Model, id: string, duration: number)
+	const state = _characterStates[rig]
+	if not state then
+		LogService:Warn(
+			"[CombatService] Attempted to reapply a status to a non existent character state: {id}",
+			{ id = rig.Name }
+		)
+		return
+	end
+
+	const effectThread = task.delay(duration, function()
+		state.StatusEffects[id] = nil
+		_effectThreads[rig][id] = nil
+	end)
+
+	_effectThreads[rig][id] = effectThread
+end
+
 function CombatService.ApplyStatus(rig: Model, statusId: string)
 	const status = getStatusEffectFromId(statusId)
 	if not status then

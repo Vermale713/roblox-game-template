@@ -4,6 +4,7 @@ const LogService = game:GetService "LogService"
 -- IMPORTED MODULES
 const Promise = require "@game/ReplicatedStorage/Packages/Promise"
 const Signal = require "@game/ReplicatedStorage/Packages/Signal"
+const TableUtil = require "@game/ReplicatedStorage/Utilities/TableUtil"
 const CombatService = require "@game/ServerScriptService/Shared/Services/CombatService"
 const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
 const PlayerDataStore = require "@game/ServerScriptService/Shared/Stores/PlayerDataStore"
@@ -17,6 +18,8 @@ export type CharacterRecord = {
 }
 
 type Promise<T> = Promise.TypedPromise<T>
+type ActiveStatusEffect = CombatService.ActiveStatusEffect
+type StatusEffects = CombatService.StatusEffects
 
 -- CONSTANTS
 const RESPAWN_DELAY = 5
@@ -89,6 +92,29 @@ const function onCharacterAdded(player: Player, character: Model)
 		WalkSpeed = 16,
 		StatusEffects = data.StatusEffects :: CombatService.StatusEffects,
 	})
+
+	const updatedStatuses = {}
+	for statusId, status in data.StatusEffects :: StatusEffects do
+		const currentTime = os.time()
+
+		const durationLeft = status.EndTime - status.LastActiveSession
+		if durationLeft <= 0 then
+			continue
+		end
+
+		const newEndTime = currentTime + durationLeft
+		updatedStatuses[statusId] = {
+			StartTime = currentTime,
+			EndTime = newEndTime,
+			LastActiveSession = 0,
+		} :: ActiveStatusEffect
+
+		CombatService.ReapplyStatusEffect(character, statusId, durationLeft)
+	end
+
+	PlayerDataStore.Update(player.UserId, function(data)
+		return TableUtil.Set(data, "StatusEffects", updatedStatuses)
+	end)
 
 	humanoid.Died:Once(function()
 		_characterDied:Fire(_records[player])
