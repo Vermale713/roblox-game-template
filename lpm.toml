@@ -15,13 +15,14 @@ Iris = { name = "sirmallard/iris", version = "^", index = "wally" }
 TypeForge = { name = "cameronpcampbell/typeforge", version = "^", index = "wally" }
 Scythe = { name = "synttx/scythe", version = "^", index = "wally" }
 Signal = { name = "molyidev/signal", version = "^", index = "pesde" }
+Vow = { name = "synttx/vow", version = "^", index = "wally" }
 
 [indices]
 wally = "https://github.com/UpliftGames/wally-index"
 pesde = "https://github.com/pesde-pkg/index"
 
 [overrides]
-"CharmSync.charm" = "Charm"
+"CharmSync.Charm" = "Charm"
 "ConchUi.vide" = "Vide"
 
 [tools]
@@ -32,3 +33,5 @@ selene = "kampfkarren/selene@0.31.0"
 
 [patches]
 "centau/vide@0.4.1" = "patches/centau_vide@0.4.1.patch"
+"synttx/scythe@1.2.1" = "patches/synttx_scythe@1.2.1.patch"
+"synttx/vow@1.0.1" = "patches/synttx_vow@1.0.1.patch"
