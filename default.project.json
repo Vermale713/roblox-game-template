@@ -12,7 +12,7 @@
 		"ReplicatedStorage": {
 			"$path": "src/Shared",
 			"Packages": {
-				"$path": "roblox_packages"
+				"$path": "packages/roblox"
 			},
 			"Client": {
 				"$path": "src/Client"
@@ -24,7 +24,7 @@
 		"ServerScriptService": {
 			"$path": "src/Server",
 			"ServerPackages": {
-				"$path": "roblox_server_packages"
+				"$path": "packages/server"
 			}
 		}
 	}

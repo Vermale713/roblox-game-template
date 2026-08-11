@@ -1,0 +1,34 @@
+# Manifest for this project. See https://luaupm.com/docs
+# Add dependencies with `lpm add <scope/name>`, then run `lpm install`.
+
+[dependencies]
+Promise = { name = "howmanysmall/typed-promise", version = "^", index = "wally" }
+ProfileStore = { name = "lm-loleris/profilestore", version = "^", index = "wally" }
+Charm = { name = "littensy/charm", version = "^", index = "wally" }
+CharmSync = { name = "littensy/charm-sync", version = "^", index = "wally" }
+Vide = { name = "centau/vide", version = "^", index = "wally" }
+VideCharm = { name = "littensy/vide-charm", version = "^", index = "wally" }
+UiLabs = { name = "pepeeltoro41/ui-labs", version = "^", index = "wally" }
+Conch = { name = "alicesaidhi/conch", version = "^", index = "wally" }
+ConchUi = { name = "alicesaidhi/conch-ui", version = "^", index = "wally" }
+Iris = { name = "sirmallard/iris", version = "^", index = "wally" }
+TypeForge = { name = "cameronpcampbell/typeforge", version = "^", index = "wally" }
+Scythe = { name = "synttx/scythe", version = "^", index = "wally" }
+Signal = { name = "molyidev/signal", version = "^", index = "pesde" }
+
+[indices]
+wally = "https://github.com/UpliftGames/wally-index"
+pesde = "https://github.com/pesde-pkg/index"
+
+[overrides]
+"CharmSync.charm" = "Charm"
+"ConchUi.vide" = "Vide"
+
+[tools]
+blink = "1axen/blink@0.18.8"
+argon = "argon-rbx/argon@2.0.29"
+stylua = "johnnymorganz/stylua@2.5.2"
+selene = "kampfkarren/selene@0.31.0"
+
+[patches]
+"centau/vide@0.4.1" = "patches/centau_vide@0.4.1.patch"

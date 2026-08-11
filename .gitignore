@@ -14,10 +14,6 @@ src/Client/Network
 src/Server/Network
 src/Shared/Network
 
-# Pesde
-.pesde/
-*_packages
-
 # Blink
 *Blink*.luau
 *Blink*.luau
@@ -35,3 +31,5 @@ src/Shared/Network
 # Misc
 .DS_Store
 out/
+packages/
+.lpm-patch/
