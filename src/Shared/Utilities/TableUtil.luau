@@ -7,6 +7,16 @@ type Required<T> = TypeForge.Required<T>
 -- PUBLIC MODULE
 const TableUtil = {}
 
+function TableUtil.Equals<T, K>(source: T & {}, comp: K & {}): boolean
+	for k, v in source :: { [any]: any } do
+		if comp[k] ~= v then
+			return false
+		end
+	end
+
+	return true
+end
+
 -- returns a shallow copy of `source` with `key` set to `value`
 function TableUtil.Set<T>(source: T & {}, key: string | number, value: any): T
 	if source[key] ~= value then

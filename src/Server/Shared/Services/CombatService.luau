@@ -17,7 +17,7 @@ export type StatusEffects = { [string]: ActiveStatusEffect }
 
 export type StatusEffectData = {
 	Id: string,
-	OverrideRule: "Ignore" | "Override",
+	OverrideRule: "Ignore" | "Override" | "Add",
 	ApplyType: "PersistOnDeath" | "ClearOnDeath",
 	Duration: number, -- seconds
 }
@@ -32,12 +32,17 @@ export type ActiveStatusEffect = {
 	StartTime: number,
 	EndTime: number,
 	LastActiveSession: number,
+	Metadata: { [any]: any },
 }
 
 export type DefaultCharacterProps = {
 	MaxHealth: number?,
 	WalkSpeed: number?,
 	StatusEffects: StatusEffects?,
+}
+
+export type StatusOverrides = {
+	Duration: number,
 }
 
 export type CharacterState = Required<DefaultCharacterProps> & {
@@ -178,7 +183,33 @@ function CombatService.ReapplyStatusEffect(rig: Model, id: string, duration: num
 	_effectThreads[rig][id] = effectThread
 end
 
-function CombatService.ApplyStatus(rig: Model, statusId: string)
+function CombatService.GetMetadata(rig: Model, statusId: string): { [any]: any }?
+	if not CombatService.HasStatusEffect(rig, statusId) then
+		LogService:Warn(
+			"[CombatService] Attempted to get metadata from a status that is not applied: {id}",
+			{ id = statusId }
+		)
+		return nil
+	end
+
+	const state = _characterStates[rig]
+	if not state then
+		LogService:Warn(
+			"[CombatService] Attempted to get status metadata from non existing character: {name}",
+			{ name = rig.Name }
+		)
+		return nil
+	end
+
+	const status = state.StatusEffects[statusId]
+	if not status then
+		return nil
+	end
+
+	return if status.Metadata then status.Metadata else nil
+end
+
+function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: StatusOverrides?, metadata: {}?)
 	const status = getStatusEffectFromId(statusId)
 	if not status then
 		LogService:Warn("[CombatService] Attempted to apply a status that does not exist: {id}", { id = statusId })
@@ -198,16 +229,35 @@ function CombatService.ApplyStatus(rig: Model, statusId: string)
 
 	const hasExistingStatus = CombatService.HasStatusEffect(rig, statusId)
 
-	-- Overrides
-	-- TODO implement more than just Ignore
-	if effectData.OverrideRule == "Ignore" and hasExistingStatus then
-		return
-	end
-
-	const isIndefinite = effectData.Duration <= -1
-
+	local isIndefinite
 	const startTime = os.time()
-	const endTime = if isIndefinite then math.huge else startTime + effectData.Duration
+	local endTime
+
+	isIndefinite = if overrides and overrides.Duration then overrides.Duration <= -1 else effectData.Duration
+	endTime = if isIndefinite
+		then math.huge
+		else startTime + (if overrides and overrides.Duration then overrides.Duration else effectData.Duration)
+
+	-- Overrides
+	if hasExistingStatus then
+		const existingStatus = state.StatusEffects[statusId]
+		if not (existingStatus.Metadata and metadata) then
+			return
+		end
+
+		if not TableUtil.Equals(existingStatus.Metadata, metadata) then
+			return
+		end
+
+		if effectData.OverrideRule == "Ignore" then
+			return
+		elseif effectData.OverrideRule == "Add" then
+			endTime = existingStatus.EndTime
+				+ (if overrides and overrides.Duration then overrides.Duration else effectData.Duration)
+			-- elseif effectData.OverrideRule == "Override" then
+			-- 	endTime = (if overrides and overrides.Duration then overrides.Duration else effectData.Duration)
+		end
+	end
 
 	if effectData.ApplyType == "PersistOnDeath" then
 		-- save to player data
@@ -233,6 +283,7 @@ function CombatService.ApplyStatus(rig: Model, statusId: string)
 						StartTime = startTime,
 						EndTime = endTime,
 						LastActiveSession = 0,
+						Metadata = metadata,
 					} :: ActiveStatusEffect
 				)
 			)
@@ -249,6 +300,11 @@ function CombatService.ApplyStatus(rig: Model, statusId: string)
 				_effectThreads[player][effectData.Id] = nil
 			end)
 
+			if _effectThreads[player][effectData.Id] then
+				task.cancel(_effectThreads[player][effectData.Id])
+				_effectThreads[player][effectData.Id] = nil
+			end
+
 			_effectThreads[player][effectData.Id] = effectThread
 		end
 	else
@@ -257,6 +313,11 @@ function CombatService.ApplyStatus(rig: Model, statusId: string)
 				state.StatusEffects[effectData.Id] = nil
 				_effectThreads[rig][effectData.Id] = nil
 			end)
+
+			if _effectThreads[rig][effectData.Id] then
+				task.cancel(_effectThreads[rig][effectData.Id])
+				_effectThreads[rig][effectData.Id] = nil
+			end
 
 			_effectThreads[rig][effectData.Id] = effectThread
 		end
@@ -269,6 +330,7 @@ function CombatService.ApplyStatus(rig: Model, statusId: string)
 			StartTime = startTime,
 			EndTime = endTime,
 			LastActiveSession = 0,
+			Metadata = metadata,
 		} :: ActiveStatusEffect
 	)
 

@@ -114,6 +114,7 @@ const function onCharacterAdded(player: Player, character: Model)
 			StartTime = currentTime,
 			EndTime = newEndTime,
 			LastActiveSession = 0,
+			Metadata = status.Metadata,
 		} :: ActiveStatusEffect
 
 		CombatService.ReapplyStatusEffect(character, statusId, durationLeft)
