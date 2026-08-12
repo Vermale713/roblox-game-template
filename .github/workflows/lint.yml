@@ -8,13 +8,13 @@ on:
 
 jobs:
   lint:
-    name: StyLua & Selene
+    name: StyLua
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rokit
-        uses: CompeyDev/setup-rokit@v0.1.0
-
       - name: Check formatting (StyLua)
-        run: stylua --check src
+        uses: JohnnyMorganz/stylua-action@v4
+        with:
+          version: latest
+          args: --check src
