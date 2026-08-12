@@ -233,7 +233,7 @@ function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: Stat
 	const startTime = os.time()
 	local endTime
 
-	isIndefinite = if overrides and overrides.Duration then overrides.Duration <= -1 else effectData.Duration
+	isIndefinite = if overrides and overrides.Duration then overrides.Duration <= -1 else effectData.Duration <= -1
 	endTime = if isIndefinite
 		then math.huge
 		else startTime + (if overrides and overrides.Duration then overrides.Duration else effectData.Duration)
