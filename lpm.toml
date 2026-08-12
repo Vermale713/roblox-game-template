@@ -30,6 +30,7 @@ blink = "1axen/blink@0.18.8"
 argon = "argon-rbx/argon@2.0.29"
 stylua = "johnnymorganz/stylua@2.5.2"
 selene = "kampfkarren/selene@0.31.0"
+luau-lsp = "johnnymorganz/luau-lsp@1.69.0"
 
 [patches]
 "centau/vide@0.4.1" = "patches/centau_vide@0.4.1.patch"
