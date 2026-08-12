@@ -9,8 +9,8 @@ CharmSync = { name = "littensy/charm-sync", version = "^", index = "wally" }
 Vide = { name = "centau/vide", version = "^", index = "wally" }
 VideCharm = { name = "littensy/vide-charm", version = "^", index = "wally" }
 UiLabs = { name = "pepeeltoro41/ui-labs", version = "^", index = "wally" }
-Conch = { name = "alicesaidhi/conch", version = "^", index = "wally" }
-ConchUi = { name = "alicesaidhi/conch-ui", version = "^", index = "wally" }
+Conch = { name = "alicesaidhi/conch", version = "0.4.0-rc.9", index = "wally" }
+ConchUi = { name = "alicesaidhi/conch-ui", version = "0.4.0-rc.9", index = "wally" }
 Iris = { name = "sirmallard/iris", version = "^", index = "wally" }
 TypeForge = { name = "cameronpcampbell/typeforge", version = "^", index = "wally" }
 Scythe = { name = "synttx/scythe", version = "^", index = "wally" }
