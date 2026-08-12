@@ -3,6 +3,7 @@ const LogService = game:GetService "LogService"
 
 -- IMPORTED MODULES
 const Promise = require "@game/ReplicatedStorage/Packages/Promise"
+const Scythe = require "@game/ReplicatedStorage/Packages/Scythe"
 const Signal = require "@game/ReplicatedStorage/Packages/Signal"
 const TableUtil = require "@game/ReplicatedStorage/Utilities/TableUtil"
 const CombatService = require "@game/ServerScriptService/Shared/Services/CombatService"
@@ -10,6 +11,11 @@ const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerS
 const PlayerDataStore = require "@game/ServerScriptService/Shared/Stores/PlayerDataStore"
 
 -- TYPES
+type Promise<T> = Promise.TypedPromise<T>
+type Scope = Scythe.Scope
+type ActiveStatusEffect = CombatService.ActiveStatusEffect
+type StatusEffects = CombatService.StatusEffects
+
 export type CharacterRecord = {
 	Player: Player,
 	Character: Model,
@@ -17,15 +23,12 @@ export type CharacterRecord = {
 	HumanoidRootPart: BasePart,
 }
 
-type Promise<T> = Promise.TypedPromise<T>
-type ActiveStatusEffect = CombatService.ActiveStatusEffect
-type StatusEffects = CombatService.StatusEffects
-
 -- CONSTANTS
 const RESPAWN_DELAY = 5
 
 -- PRIVATE STATE
 const _characterFolder = Instance.new "Folder"
+const _cleanupScopes: { [Player]: Scope } = {}
 const _records: { [Player]: CharacterRecord } = {}
 const _characterAdded: Signal.Signal<CharacterRecord> = Signal.new()
 const _characterDied: Signal.Signal<CharacterRecord> = Signal.new()
@@ -93,6 +96,8 @@ const function onCharacterAdded(player: Player, character: Model)
 		StatusEffects = data.StatusEffects :: CombatService.StatusEffects,
 	})
 
+	const scope = _cleanupScopes[player]
+
 	const updatedStatuses = {}
 	for statusId, status in data.StatusEffects :: StatusEffects do
 		const currentTime = os.time()
@@ -124,11 +129,17 @@ const function onCharacterAdded(player: Player, character: Model)
 		return TableUtil.Set(data, "StatusEffects", updatedStatuses)
 	end)
 
-	humanoid.Died:Once(function()
+	local diedConn
+	diedConn = humanoid.Died:Once(function()
 		_characterDied:Fire(_records[player])
+
+		Scythe.remove(scope, diedConn)
 		CombatService.Unregister(character)
+
 		task.delay(RESPAWN_DELAY, spawnCharacter, player)
 	end)
+
+	Scythe.add(scope, diedConn)
 
 	_characterAdded:Fire(_records[player])
 end
@@ -157,15 +168,22 @@ const function onCharacterRemoving(player: Player)
 end
 
 const function setupPlayer(player: Player)
-	player.CharacterAdded:Connect(function(character)
+	const scope = Scythe.scope()
+
+	_cleanupScopes[player] = scope
+
+	const addedConn = player.CharacterAdded:Connect(function(character)
 		LogService:Info "[CharacterService] Handling CharacterAdded"
 		onCharacterAdded(player, character)
 	end)
 
-	player.CharacterRemoving:Connect(function(character)
+	const removeConn = player.CharacterRemoving:Connect(function(character)
 		LogService:Info "[CharacterService] Handling CharacterRemoving"
 		onCharacterRemoving(player, character)
 	end)
+
+	Scythe.add(scope, addedConn)
+	Scythe.add(scope, removeConn)
 
 	if player.Character then
 		LogService:Info "[CharacterService] Handling preexisting character"
@@ -179,6 +197,15 @@ const function setupPlayer(player: Player)
 				LogService:Warn("[CharacterService] Failed to spawn character: {err}", { err = err })
 			end)
 	end
+end
+
+const function cleanupPlayer(player: Player)
+	const scope = _cleanupScopes[player]
+	if not scope then
+		return
+	end
+	Scythe.destroy(scope)
+	_cleanupScopes[player] = nil
 end
 
 -- PUBLIC MODULE
@@ -200,6 +227,7 @@ function CharacterService.OnInit()
 	end
 
 	PlayerService.PlayerAdded:Connect(setupPlayer)
+	PlayerService.PlayerRemoving:Connect(cleanupPlayer)
 end
 
 function CharacterService.Get(player: Player): CharacterRecord?
