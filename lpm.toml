@@ -13,9 +13,9 @@ Conch = { name = "alicesaidhi/conch", version = "0.4.0-rc.9", index = "wally" }
 ConchUi = { name = "alicesaidhi/conch-ui", version = "0.4.0-rc.9", index = "wally" }
 Iris = { name = "sirmallard/iris", version = "^", index = "wally" }
 TypeForge = { name = "cameronpcampbell/typeforge", version = "^", index = "wally" }
-Scythe = { name = "synttx/scythe", version = "^", index = "wally" }
 Signal = { name = "molyidev/signal", version = "^", index = "pesde" }
-Vow = { name = "synttx/vow", version = "^", index = "wally" }
+Scythe = { name = "synttx/scythe", version = "^", index = "wally", entry = "scythe" }
+Vow = { name = "synttx/vow", version = "^", index = "wally", entry = "vow" }
 
 [indices]
 wally = "https://github.com/UpliftGames/wally-index"
@@ -34,5 +34,3 @@ luau-lsp = "johnnymorganz/luau-lsp@1.69.0"
 
 [patches]
 "centau/vide@0.4.1" = "patches/centau_vide@0.4.1.patch"
-"synttx/scythe@1.2.1" = "patches/synttx_scythe@1.2.1.patch"
-"synttx/vow@1.0.1" = "patches/synttx_vow@1.0.1.patch"
