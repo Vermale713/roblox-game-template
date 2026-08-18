@@ -185,10 +185,10 @@ end
 
 function CombatService.GetMetadata(rig: Model, statusId: string): { [any]: any }?
 	if not CombatService.HasStatusEffect(rig, statusId) then
-		LogService:Warn(
-			"[CombatService] Attempted to get metadata from a status that is not applied: {id}",
-			{ id = statusId }
-		)
+		-- LogService:Warn(
+		-- 	"[CombatService] Attempted to get metadata from a status that is not applied: {id}",
+		-- 	{ id = statusId }
+		-- )
 		return nil
 	end
 
