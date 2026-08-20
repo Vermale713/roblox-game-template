@@ -1,4 +1,4 @@
-name: Lint
+name: Check
 
 on:
   push:
@@ -7,15 +7,24 @@ on:
     branches: [main]
 
 jobs:
-  lint:
-    name: StyLua
+  check:
+    name: Format, lint, generate, and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check formatting (StyLua)
-        uses: JohnnyMorganz/stylua-action@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          version: latest
-          args: --check src
+      - name: Install command runner and LPM
+        run: |
+          cargo install just --version 1.57.0 --locked
+          cargo install luaupm --version 0.5.4 --locked
+
+      - name: Configure LPM
+        run: |
+          lpm self install
+          echo "$HOME/.lpm/bin" >> "$GITHUB_PATH"
+
+      - name: Install dependencies and tools
+        run: lpm install --locked
+
+      - name: Run checks
+        run: just check

@@ -4,16 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Toolchain is managed by **rokit** (`rokit install`). Packages are managed by **pesde** (`pesde install`).
+Dependencies and Roblox tooling are managed by **LPM** (`lpm install --locked`). Recipes use **Just**.
 
 ```sh
 just dev          # parallel: blink watcher + argon sourcemap watcher + argon serve (main dev loop)
-stylua src        # format all source files
-stylua --check src  # check formatting (used in CI)
-selene src        # lint
+just format       # format all source files
+just lint         # lint handwritten source (generated Blink files are excluded)
+just build        # generate Blink modules and build out/Game.rbxl
+just check        # formatting, lint, Blink generation, and Argon build (used in CI)
 ```
 
-CI runs `stylua --check src` and `selene src` on push/PR to main.
+CI installs the locked LPM dependencies and runs `just check` on push/PR to main. The template intentionally has no automated test suite; use the manual smoke-test checklist in `README.md` for runtime changes.
 
 ## Project structure
 
@@ -24,10 +25,8 @@ Argon syncs `src/` to the Roblox DataModel via `default.project.json`:
 | `src/Server/` | ServerScriptService |
 | `src/Shared/` | ReplicatedStorage |
 | `src/Client/` | ReplicatedStorage/Client |
-| `src/Preload/` | ReplicatedFirst |
-| `src/Storage/` | ServerStorage |
-| `roblox_packages/` | ReplicatedStorage/Packages |
-| `roblox_server_packages/` | ServerScriptService/ServerPackages |
+| `packages/roblox/` | ReplicatedStorage/Packages |
+| `packages/server/` | ServerScriptService/ServerPackages |
 
 ### `src/Shared/` layout
 

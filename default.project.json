@@ -16,10 +16,7 @@
 			},
 			"Client": {
 				"$path": "src/Client"
-			},
-            "Tests": {
-				"$path": "tests/"
-            }
+			}
 		},
 		"ServerScriptService": {
 			"$path": "src/Server",

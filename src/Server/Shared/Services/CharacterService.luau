@@ -125,8 +125,8 @@ const function onCharacterAdded(player: Player, character: Model)
 		CombatService.ReapplyStatusEffect(character, statusId, durationLeft)
 	end
 
-	PlayerDataStore.Update(player.UserId, function(data)
-		return TableUtil.Set(data, "StatusEffects", updatedStatuses)
+	PlayerDataStore.Update(player.UserId, function(currentData)
+		return TableUtil.Set(currentData, "StatusEffects", updatedStatuses)
 	end)
 
 	local diedConn

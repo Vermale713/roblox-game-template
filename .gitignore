@@ -19,7 +19,6 @@ src/Shared/Network
 *Blink*.luau
 
 # Artifacts
-/*.lock
 /*.rbxl
 /*.rbxlx
 /*.rbxm
