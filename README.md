@@ -1,6 +1,8 @@
 # Roblox Game Template
 
-A Roblox game starter built around Argon, Blink, ProfileStore, Charm, Vide, and a service/controller lifecycle.
+A Roblox game starter built around Argon, Blink, ProfileStore, Charm, and Vide, with a
+service/controller lifecycle, CharmSync data replication, a combat and status-effect
+system, a Conch dev console, and an Iris debug overlay.
 
 ## Setup
 
@@ -9,6 +11,9 @@ Install [Just](https://github.com/casey/just) and [LPM](https://luaupm.com/docs)
 ```sh
 lpm install --locked
 ```
+
+This installs the Luau packages *and* the pinned toolchain declared in `lpm.toml`
+(`blink`, `argon`, `stylua`, `selene`, `luau-lsp`) — there is no separate toolchain step.
 
 Start the development loop, which watches Blink networking and the Argon project:
 
@@ -20,10 +25,26 @@ just dev
 
 ```sh
 just format        # format handwritten and generated Luau
+just format-check  # check formatting without writing
 just lint          # lint handwritten Luau
 just network       # generate Blink networking modules
 just build         # generate networking and build out/Game.rbxl
 just check         # check formatting, lint, generate networking, and build
+```
+
+Individual watchers, if you'd rather not run the whole `just dev` loop:
+
+```sh
+just blink         # watch src/Network.blink and regenerate on change
+just sourcemap     # watch and write sourcemap.json (powers luau-lsp)
+just serve         # argon serve, for syncing into Studio
+```
+
+There is also `just sync`, which merges upstream template changes. It expects a git
+remote named `template`, which you add yourself:
+
+```sh
+git remote add template <template-repo-url>
 ```
 
 This template intentionally does not include an automated test suite. Run `just check` before committing and use the smoke test below for runtime changes.
@@ -39,6 +60,8 @@ Open the generated place or connect Studio with `just dev`, then verify the area
 - Open the main UI at common desktop and mobile viewport sizes.
 - Trigger reliable, unreliable, sustained, and stopped VFX.
 - Process a developer-product receipt twice and confirm its reward is granted once.
+- Toggle the Iris debug overlay with `F3` in Studio, or as a UserId listed in `src/Shared/Data/Admins/AdminUserIds.luau`.
+- Apply a `PersistOnDeath` status effect, then die and rejoin, and confirm it is restored with the remaining duration.
 
 ## Structure
 
