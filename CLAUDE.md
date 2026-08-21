@@ -78,6 +78,44 @@ LogService:Warn("[Loader] Failed to require {name}: {error}", { name = descendan
 
 Prefix the message with the `[ModuleName]` scope. `LogService:Error` **throws** after logging — the Loader relies on that to unwind a failed thread, so only use it where raising is intended.
 
+## Asynchrony
+
+**Vow** is the async primitive — a data-oriented Promise replacement. There are no
+objects or methods: a Vow is an opaque integer handle and every operation is a plain
+function call.
+
+```luau
+const Vow = require "@game/ReplicatedStorage/Packages/Vow"
+
+const vow = Vow.new(function(id)
+    -- settle with exactly one value
+    Vow.resolve(id, result)   -- or Vow.reject(id, err)
+end)
+
+const ok, value = Vow.await(vow)
+Vow.destroy(vow)
+```
+
+Three rules that differ from a conventional Promise library, and that the code here
+depends on:
+
+1. **The executor runs on the calling thread.** `Vow.new` does not spawn. If the
+   executor yields, `Vow.new` yields with it, so any producer that wraps a yielding
+   call (`StartSessionAsync`, `LoadCharacterAsync`) must only be called from a thread
+   that is safe to block. `PlayerService` and `CharacterService` both wrap their call
+   sites in `task.spawn` for this reason.
+2. **Handles must be destroyed.** Vows are integers, so the garbage collector cannot
+   reclaim them. Call `Vow.destroy(vow)` once you are finished, or the pool leaks.
+   Every chaining call (`Vow.andThen`, `Vow.catch`) allocates *another* handle that
+   also needs destroying — which is why this codebase prefers a single
+   `Vow.await` + `Vow.destroy` pair over chains.
+3. **A Vow settles with exactly one value**, and `Vow.resolve` *adopts* another live
+   Vow passed as its value. Never resolve with a bare number that came from somewhere
+   untrusted, or it may be mistaken for a handle.
+
+`Vow.andThen`, `Vow.catch`, `Vow.all`, `Vow.race`, and `Vow.cancel` exist and behave
+as expected; `Vow.await` returns `(ok, value)` rather than throwing.
+
 ## Service/controller architecture
 
 `src/Shared/Utilities/Loader.luau` bootstraps all services and controllers. Any `ModuleScript` that returns a table and whose parent folder is named `Services` **or `Controllers`** is automatically registered — no boilerplate needed. Lifecycle:
@@ -117,14 +155,20 @@ src/Server/
 
 `PlayerService` lives in `Shared/Services/` because it is a reliable foundation. A feature service (e.g. `src/Server/Round/Services/RoundService.luau`) may declare `Dependencies = { "PlayerService" }`, but a service in `Misc/Services/` must never depend on a service in `Round/Services/` or vice versa.
 
-The loader API returns Promises:
+The loader API returns **Vows** (see Asynchrony below), so callers await and destroy:
 
 ```luau
-Loader.Load(container)   -- requires all modules, calls OnInit in dependency order; resolves with the services list
-    :andThen(Loader.Start)  -- spawns OnStart on each service; safe to yield
-    :catch(function(err)
-        LogService:Warn("[Main] Loader failed: {error}", { error = tostring(err) })
-    end)
+const loadVow = Loader.Load(container)   -- requires all modules, calls OnInit in dependency order
+const loaded, result = Vow.await(loadVow)  -- resolves with the services list
+Vow.destroy(loadVow)
+
+if loaded then
+    const startVow = Loader.Start(result :: Loader.Services)  -- spawns OnStart on each service
+    Vow.await(startVow)
+    Vow.destroy(startVow)
+else
+    LogService:Warn("[Main] Loader failed: {error}", { error = tostring(result) })
+end
 ```
 
 `Loader.GetStatus(): { ServiceStatus }` returns lifecycle info in load order, for debug tooling (`src/Client/Debug/Windows/ServicesWindow.luau` renders it). A `ServiceStatus` is `{ Name, HasInit, HasStart, Phase, InitSeconds }`, where `ServicePhase` is `"Discovered" | "Initialized" | "Running" | "Completed" | "Failed"`. Note `"Completed"` only means the spawned `OnStart` thread returned — a deliberately long-lived `OnStart` stays `"Running"`.
@@ -263,7 +307,6 @@ Shared libraries (`src/Shared/Libraries/`):
 Notable third-party packages, beyond the Charm/Vide/Conch/Iris stack described above:
 
 - **ProfileStore** — data persistence; server-only, so it lives in `ServerPackages`.
-- **Promise** (`howmanysmall/typed-promise`) — the Promise flavour the Loader returns.
 - **Scythe** — cleanup scopes; `CharacterService` uses one per player to tear down connections.
 - **Signal** — the cross-service event primitive (`PlayerService.PlayerAdded`, `CharacterService.CharacterDied`, …).
 - **TypeForge** — type-level helpers such as `Required<T>`, used by `CombatService` and `TableUtil`.

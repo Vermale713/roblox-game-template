@@ -2,16 +2,15 @@
 const LogService = game:GetService "LogService"
 
 -- IMPORTED MODULES
-const Promise = require "@game/ReplicatedStorage/Packages/Promise"
 const Scythe = require "@game/ReplicatedStorage/Packages/Scythe"
 const Signal = require "@game/ReplicatedStorage/Packages/Signal"
+const Vow = require "@game/ReplicatedStorage/Packages/Vow"
 const TableUtil = require "@game/ReplicatedStorage/Utilities/TableUtil"
 const CombatService = require "@game/ServerScriptService/Shared/Services/CombatService"
 const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
 const PlayerDataStore = require "@game/ServerScriptService/Shared/Stores/PlayerDataStore"
 
 -- TYPES
-type Promise<T> = Promise.TypedPromise<T>
 type Scope = Scythe.Scope
 type ActiveStatusEffect = CombatService.ActiveStatusEffect
 type StatusEffects = CombatService.StatusEffects
@@ -35,24 +34,32 @@ const _characterDied: Signal.Signal<CharacterRecord> = Signal.new()
 const _characterRemoving: Signal.Signal<CharacterRecord> = Signal.new()
 
 -- PRIVATE FUNCTIONS
-const function spawnCharacter(player: Player): Promise<Model>
-	-- LoadCharacter throws if the player has already left; that case is benign
-	return Promise.new(function(resolve, reject)
+-- forward declared: onCharacterAdded schedules a respawn through this, and it
+-- calls back into onCharacterAdded once the character exists
+local spawnCharacterAsync: (player: Player) -> ()
+
+-- LoadCharacterAsync throws if the player has already left; that case is benign.
+-- It also yields, and Vow runs its executor on the calling thread, so callers must
+-- invoke this from a thread that is safe to block — use spawnCharacterAsync.
+const function spawnCharacter(player: Player): Vow.Vow
+	return Vow.new(function(id)
 		const success, res = pcall(function()
 			player:LoadCharacterAsync()
 		end)
 
 		if not success then
-			reject(res)
+			Vow.reject(id, res)
+			return
 		end
 
 		const character = player.Character
 
 		if not character then
-			reject "No character was found associated with the player"
+			Vow.reject(id, "No character was found associated with the player")
+			return
 		end
 
-		resolve(character :: Model)
+		Vow.resolve(id, character)
 	end)
 end
 
@@ -136,12 +143,28 @@ const function onCharacterAdded(player: Player, character: Model)
 		Scythe.remove(scope, diedConn)
 		CombatService.Unregister(character)
 
-		task.delay(RESPAWN_DELAY, spawnCharacter, player)
+		task.delay(RESPAWN_DELAY, spawnCharacterAsync, player)
 	end)
 
 	Scythe.add(scope, diedConn)
 
 	_characterAdded:Fire(_records[player])
+end
+
+-- spawns on its own thread, then awaits and destroys the Vow so no handle leaks
+spawnCharacterAsync = function(player: Player)
+	task.spawn(function()
+		const vow = spawnCharacter(player)
+		const spawned, result = Vow.await(vow)
+		Vow.destroy(vow)
+
+		if not spawned then
+			LogService:Warn("[CharacterService] Failed to spawn character: {error}", { error = tostring(result) })
+			return
+		end
+
+		onCharacterAdded(player, result :: Model)
+	end)
 end
 
 const function onCharacterRemoving(player: Player)
@@ -177,9 +200,9 @@ const function setupPlayer(player: Player)
 		onCharacterAdded(player, character)
 	end)
 
-	const removeConn = player.CharacterRemoving:Connect(function(character)
+	const removeConn = player.CharacterRemoving:Connect(function()
 		LogService:Info "[CharacterService] Handling CharacterRemoving"
-		onCharacterRemoving(player, character)
+		onCharacterRemoving(player)
 	end)
 
 	Scythe.add(scope, addedConn)
@@ -189,13 +212,7 @@ const function setupPlayer(player: Player)
 		LogService:Info "[CharacterService] Handling preexisting character"
 		onCharacterAdded(player, player.Character)
 	else
-		spawnCharacter(player)
-			:andThen(function(character)
-				onCharacterAdded(player, character)
-			end)
-			:catch(function(err)
-				LogService:Warn("[CharacterService] Failed to spawn character: {err}", { err = err })
-			end)
+		spawnCharacterAsync(player)
 	end
 end
 

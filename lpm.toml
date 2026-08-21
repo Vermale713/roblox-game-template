@@ -2,7 +2,6 @@
 # Add dependencies with `lpm add <scope/name>`, then run `lpm install`.
 
 [dependencies]
-Promise = { name = "howmanysmall/typed-promise", version = "^", index = "wally" }
 ProfileStore = { name = "lm-loleris/profilestore", version = "^", index = "wally" }
 Charm = { name = "littensy/charm", version = "^", index = "wally" }
 CharmSync = { name = "littensy/charm-sync", version = "^", index = "wally" }

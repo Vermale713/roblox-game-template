@@ -3,29 +3,29 @@ version = 2
 
 [[package]]
 name = "alicesaidhi/conch"
-version = "0.4.0-rc.9"
+version = "0.4.0"
 environment = "roblox"
 link = "Conch"
 index = "https://github.com/UpliftGames/wally-index"
 type = "zip"
-url = "https://api.wally.run/v1/package-contents/alicesaidhi/conch/0.4.0-rc.9"
+url = "https://api.wally.run/v1/package-contents/alicesaidhi/conch/0.4.0"
 
 [[package]]
 name = "alicesaidhi/conch-language"
-version = "0.4.0-rc.9"
+version = "0.4.0"
 environment = "roblox"
 index = "https://github.com/UpliftGames/wally-index"
 type = "zip"
-url = "https://api.wally.run/v1/package-contents/alicesaidhi/conch-language/0.4.0-rc.9"
+url = "https://api.wally.run/v1/package-contents/alicesaidhi/conch-language/0.4.0"
 
 [[package]]
 name = "alicesaidhi/conch-ui"
-version = "0.4.0-rc.9"
+version = "0.4.0"
 environment = "roblox"
 link = "ConchUi"
 index = "https://github.com/UpliftGames/wally-index"
 type = "zip"
-url = "https://api.wally.run/v1/package-contents/alicesaidhi/conch-ui/0.4.0-rc.9"
+url = "https://api.wally.run/v1/package-contents/alicesaidhi/conch-ui/0.4.0"
 
 [package.redirects]
 vide = "centau/vide"
@@ -51,23 +51,6 @@ url = "https://api.wally.run/v1/package-contents/centau/vide/0.4.1"
 [package.patch]
 path = "patches/centau_vide@0.4.1.patch"
 hash = "c247ad14795ffc49"
-
-[[package]]
-name = "evaera/promise"
-version = "4.0.0"
-environment = "roblox"
-index = "https://github.com/UpliftGames/wally-index"
-type = "zip"
-url = "https://api.wally.run/v1/package-contents/evaera/promise/4.0.0"
-
-[[package]]
-name = "howmanysmall/typed-promise"
-version = "4.0.6"
-environment = "roblox"
-link = "Promise"
-index = "https://github.com/UpliftGames/wally-index"
-type = "zip"
-url = "https://api.wally.run/v1/package-contents/howmanysmall/typed-promise/4.0.6"
 
 [[package]]
 name = "littensy/charm"

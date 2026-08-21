@@ -1,8 +1,8 @@
 # Roblox Game Template
 
-A Roblox game starter built around Argon, Blink, ProfileStore, Charm, and Vide, with a
-service/controller lifecycle, CharmSync data replication, a combat and status-effect
-system, a Conch dev console, and an Iris debug overlay.
+A Roblox game starter built around Argon, Blink, ProfileStore, Charm, Vide, and Vow,
+with a service/controller lifecycle, CharmSync data replication, a combat and
+status-effect system, a Conch dev console, and an Iris debug overlay.
 
 ## Setup
 

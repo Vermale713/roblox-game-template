@@ -69,13 +69,16 @@ const function app()
 end
 
 -- PUBLIC MODULE
-const UiController = {}
-
-UiController.StyleSheet = _styleSheet
+const UiController = {
+	-- resolved in OnInit; nil before the controller has started
+	StyleSheet = nil :: StyleSheet?,
+}
 
 function UiController.OnInit()
 	const designFolder = ReplicatedStorage:FindFirstChild "Design" :: Folder
 	_styleSheet = designFolder:FindFirstChild "Main" :: StyleSheet
+	-- published here, not at module load, where _styleSheet is still nil
+	UiController.StyleSheet = _styleSheet
 
 	Vide.defaults = false
 

@@ -17,7 +17,8 @@ type VfxState = "Start" | "Stop"
 
 -- PRIVATE STATE
 const _registeredVfx: { [string]: Signal.Signal<VfxPayload, VfxState?> } = {}
-const _activeVfx = {} -- for the non one shot
+-- sustained effects currently playing, keyed by Id when the payload carries one
+const _activeVfx: { [string]: true } = {}
 
 -- PRIVATE FUNCTIONS
 const function onReplicateVfx(payload: VfxUnion)
@@ -31,16 +32,22 @@ const function onReplicateVfx(payload: VfxUnion)
 			"[VfxController] Attempted to play vfx that does not exist: {Name}",
 			vfxData :: { [string]: any }
 		)
+		return
 	end
 
-	if vfxType == "Sustained" then
-		local state: VfxState = "Start"
+	-- an Id lets several instances of the same named effect be tracked separately
+	const key = vfxData.Id or name
 
-		if _activeVfx[name] then
-			state = "Stop"
+	if vfxType == "Sustained" then
+		_activeVfx[key] = true
+		vfx:Fire(vfxData, "Start")
+	elseif vfxType == "StopSustained" then
+		if not _activeVfx[key] then
+			return
 		end
 
-		vfx:Fire(vfxData, state)
+		_activeVfx[key] = nil
+		vfx:Fire(vfxData, "Stop")
 	else
 		vfx:Fire(vfxData)
 	end

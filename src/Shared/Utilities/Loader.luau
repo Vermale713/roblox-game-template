@@ -2,7 +2,7 @@
 const LogService = game:GetService "LogService"
 
 -- IMPORTED MODULES
-const Promise = require "@game/ReplicatedStorage/Packages/Promise"
+const Vow = require "@game/ReplicatedStorage/Packages/Vow"
 
 -- TYPES
 type Service = {
@@ -76,8 +76,8 @@ end
 -- PUBLIC MODULE
 const Loader = {}
 
-function Loader.Load(container: Instance): typeof(Promise.new(function() end))
-	return Promise.new(function(resolve, reject)
+function Loader.Load(container: Instance): Vow.Vow
+	return Vow.new(function(id)
 		const registry: { [string]: Service } = {}
 
 		for _, descendant in container:GetDescendants() do
@@ -112,7 +112,7 @@ function Loader.Load(container: Instance): typeof(Promise.new(function() end))
 
 		const ok, order = pcall(getLoadOrder, registry)
 		if not ok then
-			reject(order)
+			Vow.reject(id, order)
 			return
 		end
 
@@ -136,7 +136,7 @@ function Loader.Load(container: Instance): typeof(Promise.new(function() end))
 					_status[name].Phase = if initOk then "Initialized" else "Failed"
 				end
 				if not initOk then
-					reject(err)
+					Vow.reject(id, err)
 					return
 				end
 			elseif name then
@@ -144,12 +144,12 @@ function Loader.Load(container: Instance): typeof(Promise.new(function() end))
 			end
 		end
 
-		resolve(order)
+		Vow.resolve(id, order)
 	end)
 end
 
-function Loader.Start(services: Services): typeof(Promise.new(function() end))
-	return Promise.new(function(resolve)
+function Loader.Start(services: Services): Vow.Vow
+	return Vow.new(function(id)
 		for _, service in services do
 			const name = _nameByService[service]
 			if service.OnStart then
@@ -176,7 +176,7 @@ function Loader.Start(services: Services): typeof(Promise.new(function() end))
 			end
 		end
 
-		resolve()
+		Vow.resolve(id, nil)
 	end)
 end
 
