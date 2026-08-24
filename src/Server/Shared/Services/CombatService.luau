@@ -89,6 +89,34 @@ const function registerStatusEffect(status: StatusEffectInterface)
 	_registeredStatuses[id] = status
 end
 
+-- Whether a fresh application should be allowed over an effect that is already
+-- active, per that effect's own `OverrideRule`.
+--
+-- This is the whole refusal policy in one place, so `ApplyStatus` and
+-- `CanApplyStatus` cannot drift apart.
+const function canReapply(
+	effectData: StatusEffectData,
+	existingStatus: ActiveStatusEffect,
+	metadata: { [any]: any }?
+): boolean
+	-- The active effect wins outright
+	if effectData.OverrideRule == "Ignore" then
+		return false
+	end
+
+	-- The new application replaces both timer and payload, so a differing
+	-- payload is precisely the point
+	if effectData.OverrideRule == "Override" then
+		return true
+	end
+
+	-- "Add" sums the durations into a single effect, which is only meaningful
+	-- when both applications carry the same payload: there is no defined way to
+	-- stack a x2 and a x3 into one. Two payload-less applications compare equal
+	-- and stack normally.
+	return TableUtil.Equals(existingStatus.Metadata or {}, metadata or {})
+end
+
 const function syncHumanoidWithState(state: CharacterState)
 	state.Humanoid.MaxHealth = state.MaxHealth
 	state.Humanoid.Health = state.Health
@@ -209,11 +237,18 @@ function CombatService.GetMetadata(rig: Model, statusId: string): { [any]: any }
 	return if status.Metadata then status.Metadata else nil
 end
 
-function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: StatusOverrides?, metadata: {}?)
+-- Returns whether the status actually landed. A refusal is a normal outcome, not
+-- an error: see `CanApplyStatus` for checking ahead of paying a cost.
+function CombatService.ApplyStatus(
+	rig: Model,
+	statusId: string,
+	overrides: StatusOverrides?,
+	metadata: { [any]: any }?
+): boolean
 	const status = getStatusEffectFromId(statusId)
 	if not status then
 		LogService:Warn("[CombatService] Attempted to apply a status that does not exist: {id}", { id = statusId })
-		return
+		return false
 	end
 
 	const effectData = status.Data
@@ -224,10 +259,10 @@ function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: Stat
 			"[CombatService] Attempted to apply status effect to a non existing character: {name}",
 			{ name = rig.Name }
 		)
-		return
+		return false
 	end
 
-	const hasExistingStatus = CombatService.HasStatusEffect(rig, statusId)
+	const existingStatus = state.StatusEffects[statusId]
 
 	local isIndefinite
 	const startTime = os.time()
@@ -238,28 +273,28 @@ function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: Stat
 		then math.huge
 		else startTime + (if overrides and overrides.Duration then overrides.Duration else effectData.Duration)
 
-	-- Overrides
-	if hasExistingStatus then
-		const existingStatus = state.StatusEffects[statusId]
-		if not (existingStatus.Metadata and metadata) then
-			return
+	if existingStatus then
+		-- Decided before anything is mutated, so a refusal leaves the active effect
+		-- exactly as it was
+		if not canReapply(effectData, existingStatus, metadata) then
+			return false
 		end
 
-		if not TableUtil.Equals(existingStatus.Metadata, metadata) then
-			return
-		end
-
-		if effectData.OverrideRule == "Ignore" then
-			return
-		elseif effectData.OverrideRule == "Add" then
+		-- "Add" stacks onto whatever is left of the active effect. "Override"
+		-- deliberately does nothing here: leaving `endTime` as computed from now is
+		-- what restarting the timer means.
+		if effectData.OverrideRule == "Add" then
 			endTime = existingStatus.EndTime
 				+ (if overrides and overrides.Duration then overrides.Duration else effectData.Duration)
-			-- elseif effectData.OverrideRule == "Override" then
-			-- 	endTime = (if overrides and overrides.Duration then overrides.Duration else effectData.Duration)
 		end
 	end
 
 	const activeDuration = endTime - startTime
+	-- An "Add" onto an already-indefinite effect arrives here with `endTime` still
+	-- infinite even though this application was finite, so the teardown is keyed
+	-- off `endTime` rather than off `isIndefinite`. Otherwise it would schedule a
+	-- `task.delay(math.huge)`.
+	const expires = endTime ~= math.huge
 
 	if effectData.ApplyType == "PersistOnDeath" then
 		-- save to player data
@@ -269,7 +304,7 @@ function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: Stat
 				"[CombatService] Attempted to apply a PersistOnDeath status effect to a non player: {name}",
 				{ name = rig.Name }
 			)
-			return
+			return false
 		end
 
 		PlayerDataStore.Update(player.UserId, function(data)
@@ -291,7 +326,7 @@ function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: Stat
 			)
 		end)
 
-		if not isIndefinite then
+		if expires then
 			const effectThread = task.delay(activeDuration, function()
 				PlayerDataStore.Update(player.UserId, function(data)
 					const effects = data.StatusEffects
@@ -310,7 +345,7 @@ function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: Stat
 			_effectThreads[player][effectData.Id] = effectThread
 		end
 	else
-		if not isIndefinite then
+		if expires then
 			const effectThread = task.delay(activeDuration, function()
 				state.StatusEffects[effectData.Id] = nil
 				_effectThreads[rig][effectData.Id] = nil
@@ -338,6 +373,34 @@ function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: Stat
 
 	-- Sync humanoid state
 	syncHumanoidWithState(state)
+
+	return true
+end
+
+--[=[
+	Whether applying `statusId` right now would actually change anything.
+
+	Mirrors the refusal rules in `ApplyStatus` without mutating anything, for
+	callers that spend something before the effect lands -- consuming a pill
+	removes the item first, so a refusal afterwards would eat it for nothing.
+]=]
+function CombatService.CanApplyStatus(rig: Model, statusId: string, metadata: { [any]: any }?): boolean
+	const status = getStatusEffectFromId(statusId)
+	if not status then
+		return false
+	end
+
+	const state = _characterStates[rig]
+	if not state then
+		return false
+	end
+
+	const existingStatus = state.StatusEffects[statusId]
+	if not existingStatus then
+		return true
+	end
+
+	return canReapply(status.Data, existingStatus, metadata)
 end
 
 function CombatService.RemoveStatusEffect(rig: Model, statusId: string)

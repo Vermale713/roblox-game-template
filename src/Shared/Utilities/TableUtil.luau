@@ -7,9 +7,18 @@ type Required<T> = TypeForge.Required<T>
 -- PUBLIC MODULE
 const TableUtil = {}
 
+-- Shallow equality: true when both tables hold the same keys with the same
+-- values. Both directions are checked -- iterating only `source` reports a
+-- subset as equal, which made `Equals({}, { A = 1 })` true.
 function TableUtil.Equals<T, K>(source: T & {}, comp: K & {}): boolean
-	for k, v in source :: { [any]: any } do
-		if comp[k] ~= v then
+	for key, value in source :: { [any]: any } do
+		if comp[key] ~= value then
+			return false
+		end
+	end
+
+	for key, value in comp :: { [any]: any } do
+		if source[key] ~= value then
 			return false
 		end
 	end
