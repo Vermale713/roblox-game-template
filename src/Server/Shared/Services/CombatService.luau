@@ -259,6 +259,8 @@ function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: Stat
 		end
 	end
 
+	const activeDuration = endTime - startTime
+
 	if effectData.ApplyType == "PersistOnDeath" then
 		-- save to player data
 		const player = Players:GetPlayerFromCharacter(rig)
@@ -290,7 +292,7 @@ function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: Stat
 		end)
 
 		if not isIndefinite then
-			const effectThread = task.delay(effectData.Duration, function()
+			const effectThread = task.delay(activeDuration, function()
 				PlayerDataStore.Update(player.UserId, function(data)
 					const effects = data.StatusEffects
 
@@ -309,7 +311,7 @@ function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: Stat
 		end
 	else
 		if not isIndefinite then
-			const effectThread = task.delay(effectData.Duration, function()
+			const effectThread = task.delay(activeDuration, function()
 				state.StatusEffects[effectData.Id] = nil
 				_effectThreads[rig][effectData.Id] = nil
 			end)
