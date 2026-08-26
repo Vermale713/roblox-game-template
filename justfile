@@ -20,7 +20,7 @@ build: network
 check: format-check lint build
 
 blink:
-    blink src/Network.blink -w
+    blink dist/Network.blink -w
 
 process:
     larvae process -w

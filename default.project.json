@@ -1,28 +1,28 @@
 {
-	"name": "Game",
-	"legacyScripts": false,
-	"tree": {
-		"$className": "DataModel",
-		"Players": {
-			"$className": "Players",
-			"$properties": {
-				"CharacterAutoLoads": false
-			}
-		},
-		"ReplicatedStorage": {
-			"$path": "src/Shared",
-			"Packages": {
-				"$path": "packages/roblox"
-			},
-			"Client": {
-				"$path": "src/Client"
-			}
-		},
-		"ServerScriptService": {
-			"$path": "src/Server",
-			"ServerPackages": {
-				"$path": "packages/server"
-			}
-		}
-	}
+    "name": "Game",
+    "legacyScripts": false,
+    "tree": {
+        "$className": "DataModel",
+        "Players": {
+            "$className": "Players",
+            "$properties": {
+                "CharacterAutoLoads": false
+            }
+        },
+        "ReplicatedStorage": {
+            "$path": "src/Shared",
+            "Packages": {
+                "$path": "packages/roblox"
+            },
+            "Client": {
+                "$path": "src/Client"
+            }
+        },
+        "ServerScriptService": {
+            "$path": "src/Server",
+            "ServerPackages": {
+                "$path": "packages/server"
+            }
+        }
+    }
 }
