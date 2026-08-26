@@ -1,5 +1,7 @@
 {
-    "lint": { "*": false },
+    "lint": {
+        "*": false
+    },
     "languageMode": "strict",
     "aliases": {}
 }
