@@ -4,10 +4,7 @@ const Conch = require "@game/ReplicatedStorage/Packages/Conch"
 -- TYPES
 -- minimal view of the internal language type carried on each command; only the
 -- fields needed to render a usage string are described here
-type CommandArgument = {
-	name: string,
-	varargs: boolean?,
-}
+type CommandArgument = { name: string, varargs: boolean? }
 type CommandType = {
 	kind: string,
 	name: string?,
@@ -46,7 +43,8 @@ return function()
 	Conch.register("help", {
 		permissions = {},
 		description = "Lists the commands you can run and how to use them.",
-		arguments = function() end,
+		arguments = function()
+		end,
 		callback = function()
 			const commands = Conch.console.commands
 

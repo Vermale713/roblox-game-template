@@ -16,37 +16,17 @@ export type Config = {
 	ZIndex: number?,
 }
 
-export type BoxRender = RenderInterface & {
-	CFrame: CFrame,
-	Size: Vector3,
-}
+export type BoxRender = RenderInterface & { CFrame: CFrame, Size: Vector3 }
 
-export type LineRender = RenderInterface & {
-	From: Vector3,
-	To: Vector3,
-}
+export type LineRender = RenderInterface & { From: Vector3, To: Vector3 }
 
-export type SphereRender = RenderInterface & {
-	CFrame: CFrame,
-	Radius: number,
-}
+export type SphereRender = RenderInterface & { CFrame: CFrame, Radius: number }
 
-export type ArrowRender = RenderInterface & {
-	CFrame: CFrame,
-	Length: number,
-}
+export type ArrowRender = RenderInterface & { CFrame: CFrame, Length: number }
 
-export type CylinderRender = RenderInterface & {
-	CFrame: CFrame,
-	Radius: number,
-	Height: number,
-}
+export type CylinderRender = RenderInterface & { CFrame: CFrame, Radius: number, Height: number }
 
-export type ConeRender = RenderInterface & {
-	CFrame: CFrame,
-	Radius: number,
-	Height: number,
-}
+export type ConeRender = RenderInterface & { CFrame: CFrame, Radius: number, Height: number }
 
 -- CONSTANTS
 const CURVE_SEGMENTS = 16
@@ -58,7 +38,6 @@ const _wireframe = Instance.new "WireframeHandleAdornment"
 const _renders: { RenderInterface } = {}
 local _config: Config = {
 	Color = Color3.new(0, 1, 1),
-
 	Thickness = 0.05,
 	Transparency = 0,
 	AlwaysOnTop = true,
@@ -101,25 +80,28 @@ const function renderBox(self: BoxRender, wireframe: WireframeHandleAdornment)
 	const frontTopRight = cframe * Vector3.new(halfSize.X, halfSize.Y, halfSize.Z)
 	const frontTopLeft = cframe * Vector3.new(-halfSize.X, halfSize.Y, halfSize.Z)
 
-	wireframe:AddPath({
-		backBottomLeft,
-		backBottomRight,
-		backTopRight,
-		backTopLeft,
-		backBottomLeft,
-		frontBottomLeft,
-		frontBottomRight,
-		frontTopRight,
-		frontTopLeft,
-		frontBottomLeft,
-		backBottomLeft,
-		backBottomRight,
-		frontBottomRight,
-		frontTopRight,
-		backTopRight,
-		backTopLeft,
-		frontTopLeft,
-	}, false)
+	wireframe:AddPath(
+		{
+			backBottomLeft,
+			backBottomRight,
+			backTopRight,
+			backTopLeft,
+			backBottomLeft,
+			frontBottomLeft,
+			frontBottomRight,
+			frontTopRight,
+			frontTopLeft,
+			frontBottomLeft,
+			backBottomLeft,
+			backBottomRight,
+			frontBottomRight,
+			frontTopRight,
+			backTopRight,
+			backTopLeft,
+			frontTopLeft,
+		},
+		false
+	)
 end
 
 const function renderLine(self: LineRender, wireframe: WireframeHandleAdornment)
@@ -167,23 +149,26 @@ const function renderArrow(self: ArrowRender, wireframe: WireframeHandleAdornmen
 	const left = self.CFrame * Vector3.new(-headRadius, headBaseHeight, 0)
 	const back = self.CFrame * Vector3.new(0, headBaseHeight, -headRadius)
 
-	wireframe:AddPath({
-		self.CFrame.Position,
-		tip,
-		right,
-		tip,
-		forward,
-		tip,
-		left,
-		tip,
-		back,
-		tip,
-		right,
-		forward,
-		left,
-		back,
-		right,
-	}, false)
+	wireframe:AddPath(
+		{
+			self.CFrame.Position,
+			tip,
+			right,
+			tip,
+			forward,
+			tip,
+			left,
+			tip,
+			back,
+			tip,
+			right,
+			forward,
+			left,
+			back,
+			right,
+		},
+		false
+	)
 end
 
 const function renderCylinder(self: CylinderRender, wireframe: WireframeHandleAdornment)

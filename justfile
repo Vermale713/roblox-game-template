@@ -1,14 +1,14 @@
 [parallel]
-dev: blink sourcemap serve
+dev: blink process sourcemap serve
 
 format:
-    stylua src
+    larvae fmt
 
 format-check:
-    stylua --check src
+    larvae fmt --check
 
 lint:
-    selene src
+    larvae lint
 
 network:
     blink src/Network.blink -y
@@ -22,11 +22,14 @@ check: format-check lint build
 blink:
     blink src/Network.blink -w
 
+process:
+    larvae process -w
+
 sourcemap:
     argon sourcemap -o sourcemap.json -w
 
 serve:
-    argon serve
+    argon serve .larvae/build.project.json
 
 sync:
     git diff --quiet && git diff --cached --quiet || git stash && \

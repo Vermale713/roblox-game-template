@@ -11,10 +11,7 @@ type InputImpl = {
 	SetEnabled: (Input, boolean) -> Input,
 	Action: (Input, string) -> Action,
 }
-type InputData = {
-	_context: InputContext,
-	_actions: { [string]: Action },
-}
+type InputData = { _context: InputContext, _actions: { [string]: Action } }
 type ActionImpl = {
 	__index: ActionImpl,
 	new: (Input, string) -> Action,
@@ -23,20 +20,14 @@ type ActionImpl = {
 	OnStateChanged: (Action, (any) -> ()) -> Action,
 	Bind: (Action, Enum.KeyCode) -> Bind,
 }
-type ActionData = {
-	_input: Input,
-	_action: InputAction,
-}
+type ActionData = { _input: Input, _action: InputAction }
 type BindImpl = {
 	__index: BindImpl,
 	new: (Action, Enum.KeyCode) -> Bind,
 	SetType: (Bind, Enum.InputBindingType) -> Bind,
 	SetModifier: (Bind, Enum.KeyCode, Enum.KeyCode?) -> Bind,
 }
-type BindData = {
-	_action: Action,
-	_bind: InputBinding,
-}
+type BindData = { _action: Action, _bind: InputBinding }
 
 export type Input = setmetatable<InputData, InputImpl>
 export type Action = setmetatable<ActionData, ActionImpl>

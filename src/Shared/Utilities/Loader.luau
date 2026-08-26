@@ -149,35 +149,39 @@ function Loader.Load(container: Instance): Vow.Vow
 end
 
 function Loader.Start(services: Services): Vow.Vow
-	return Vow.new(function(id)
-		for _, service in services do
-			const name = _nameByService[service]
-			if service.OnStart then
-				if name then
-					_status[name].Phase = "Running"
-				end
-				task.spawn(function()
-					-- track completion vs. a still-yielding OnStart; report a failed
-					-- OnStart through LogService:Error so it stays visible (it logs the
-					-- structured error and re-raises to unwind the spawned thread)
-					const ok, err = pcall(service.OnStart, service)
+	return Vow.new(
+		function(id)
+			for _, service in services do
+				const name = _nameByService[service]
+				if service.OnStart then
 					if name then
-						_status[name].Phase = if ok then "Completed" else "Failed"
+						_status[name].Phase = "Running"
 					end
-					if not ok then
-						LogService:Error("[Loader] OnStart failed for {service}: {error}", {
-							service = name or "unknown",
-							error = tostring(err),
-						})
-					end
-				end)
-			elseif name then
-				_status[name].Phase = "Completed"
+					task.spawn(
+						function()
+							-- track completion vs. a still-yielding OnStart; report a failed
+							-- OnStart through LogService:Error so it stays visible (it logs the
+							-- structured error and re-raises to unwind the spawned thread)
+							const ok, err = pcall(service.OnStart, service)
+							if name then
+								_status[name].Phase = if ok then "Completed" else "Failed"
+							end
+							if not ok then
+								LogService:Error("[Loader] OnStart failed for {service}: {error}", {
+									service = name or "unknown",
+									error = tostring(err),
+								})
+							end
+						end
+					)
+				elseif name then
+					_status[name].Phase = "Completed"
+				end
 			end
-		end
 
-		Vow.resolve(id, nil)
-	end)
+			Vow.resolve(id, nil)
+		end
+	)
 end
 
 function Loader.GetStatus(): { ServiceStatus }

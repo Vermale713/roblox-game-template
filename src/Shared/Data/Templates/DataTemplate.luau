@@ -1,10 +1,8 @@
 -- PUBLIC MODULE
 const PlayerData = {
 	Coins = 0,
-
 	-- Combat
 	StatusEffects = {}, -- Persistent status effects
-
 	-- Metadata
 	JoinedAt = 0,
 	LastOnlineAt = 0,

@@ -12,7 +12,8 @@ return function()
 	Conch.register("permissions", {
 		permissions = {},
 		description = "Shows your permission level: your roles and what you can run.",
-		arguments = function() end,
+		arguments = function()
+		end,
 		callback = function()
 			const context = Conch.get_command_context()
 			if not context then

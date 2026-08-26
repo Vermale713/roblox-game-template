@@ -42,7 +42,6 @@ const function layer(name: string, zindex: number, children: LayerChildren)
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.fromScale(0.5, 0.5),
 		Size = UDim2.fromScale(1, 1),
-
 		values(children, function(component, _index)
 			return component()
 		end),
@@ -52,18 +51,14 @@ end
 const function app()
 	return create "ScreenGui" {
 		Name = "MainUi",
-
 		ResetOnSpawn = false,
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-
 		layer("Hud", HUD_DISPLAY_ORDER, _huds),
 		layer("Menu", MENU_DISPLAY_ORDER, _menus),
 		layer("Modal", MODAL_DISPLAY_ORDER, _modals),
-
 		create "StyleLink" {
 			StyleSheet = _styleSheet,
 		},
-
 		Scaler(),
 	}
 end

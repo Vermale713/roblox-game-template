@@ -81,10 +81,10 @@ const function onCharacterAdded(player: Player, character: Model)
 	const humanoidRootPart = character:FindFirstChild "HumanoidRootPart"
 
 	if not humanoid or not humanoidRootPart or not character:IsDescendantOf(workspace) then
-		LogService:Warn(
-			"[CharacterService] (Humanoid or HumanoidRootPart) not found or (Character: {character}) is not a descendant of workspace",
-			{ player = player, character = character }
-		)
+		LogService:Warn("[CharacterService] (Humanoid or HumanoidRootPart) not found or (Character: {character}) is not a descendant of workspace", {
+			player = player,
+			character = character,
+		})
 		return
 	end
 
@@ -95,13 +95,16 @@ const function onCharacterAdded(player: Player, character: Model)
 		HumanoidRootPart = humanoidRootPart :: BasePart,
 	}
 
-	CombatService.Register(character, {
-		-- TODO
-		-- sync with player data
-		MaxHealth = 100,
-		WalkSpeed = 16,
-		StatusEffects = data.StatusEffects :: CombatService.StatusEffects,
-	})
+	CombatService.Register(
+		character,
+		{
+			-- TODO
+			-- sync with player data
+			MaxHealth = 100,
+			WalkSpeed = 16,
+			StatusEffects = data.StatusEffects :: CombatService.StatusEffects,
+		}
+	)
 
 	const scope = _cleanupScopes[player]
 
@@ -109,7 +112,7 @@ const function onCharacterAdded(player: Player, character: Model)
 	for statusId, status in data.StatusEffects :: StatusEffects do
 		const currentTime = os.time()
 
-		local durationLeft
+		local durationLeft: number
 
 		if status.LastActiveSession == 0 then
 			durationLeft = status.EndTime - status.StartTime
@@ -136,7 +139,7 @@ const function onCharacterAdded(player: Player, character: Model)
 		return TableUtil.Set(currentData, "StatusEffects", updatedStatuses)
 	end)
 
-	local diedConn
+	local diedConn: RBXScriptConnection
 	diedConn = humanoid.Died:Once(function()
 		_characterDied:Fire(_records[player])
 

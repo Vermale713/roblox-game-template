@@ -39,7 +39,7 @@ const function Scaler()
 			viewportConnection:Disconnect()
 		end
 		scale(getUiScale())
-		viewportConnection = camera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
+		viewportConnection = camera:GetPropertyChangedSignal "ViewportSize":Connect(function()
 			scale(getUiScale())
 		end)
 	end
@@ -48,7 +48,7 @@ const function Scaler()
 		bindCamera(workspace.CurrentCamera)
 	end
 
-	const cameraConnection = workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	const cameraConnection = workspace:GetPropertyChangedSignal "CurrentCamera":Connect(function()
 		if workspace.CurrentCamera then
 			bindCamera(workspace.CurrentCamera)
 		end

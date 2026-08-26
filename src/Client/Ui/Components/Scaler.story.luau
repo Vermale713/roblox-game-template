@@ -18,11 +18,8 @@ return UiLabs.CreateVideStory({
 		Position = UDim2.fromScale(0.5, 0.5),
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundColor3 = Color3.fromRGB(30, 30, 30),
-
 		Scaler(),
-
 		create "UICorner" { CornerRadius = UDim.new(0, 10) },
-
 		create "TextLabel" {
 			Size = UDim2.fromScale(1, 1),
 			BackgroundTransparency = 1,

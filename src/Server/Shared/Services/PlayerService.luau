@@ -74,60 +74,64 @@ const function onPlayerAdded(player: Player)
 	end
 
 	-- loading yields, so it runs on its own thread; OnInit must not block on it
-	task.spawn(function()
-		const vow = loadProfile(player)
-		const loaded, result = Vow.await(vow)
-		Vow.destroy(vow)
+	task.spawn(
+		function()
+			const vow = loadProfile(player)
+			const loaded, result = Vow.await(vow)
+			Vow.destroy(vow)
 
-		if not loaded then
-			-- kick before logging, because LogService:Error raises
-			player:Kick "Failed to load your data. Please rejoin."
-			LogService:Error("[PlayerService] Failed to load data for {name}: {error}", {
-				name = player.Name,
-				error = tostring(result),
-			})
-			return
+			if not loaded then
+				-- kick before logging, because LogService:Error raises
+				player:Kick "Failed to load your data. Please rejoin."
+				LogService:Error("[PlayerService] Failed to load data for {name}: {error}", {
+					name = player.Name,
+					error = tostring(result),
+				})
+				return
+			end
+
+			const profile = result :: Profile
+
+			if not player:IsDescendantOf(Players) then
+				profile:EndSession()
+				return
+			end
+
+			initialiseMetadata(profile)
+
+			const sessionStart = os.clock()
+
+			-- bank this session's playtime into the profile right before its final
+			-- save, however the session ends (leave, shutdown, or another server
+			-- taking ownership). OnSessionEnd is cleanup-only and must not edit Data;
+			-- OnLastSave is the documented hook for last-moment edits. The closure
+			-- captures `profile`/`sessionStart` so it is independent of the records
+			-- map, which onPlayerRemoving may clear before this async save runs.
+			profile.OnLastSave:Connect(
+				function()
+					-- we do not use the TableUtil to edit data here
+					-- because ProfileStore has wack types and will give
+					-- type errors
+					const clone = table.clone(profile.Data)
+
+					clone.Playtime += math.floor(os.clock() - sessionStart)
+					clone.LastOnlineAt = os.time()
+
+					profile.Data = clone
+				end
+			)
+
+			_records[player] = {
+				Player = player,
+				Profile = profile,
+				SessionStart = sessionStart,
+			}
+
+			PlayerDataStore.Load(player.UserId, profile.Data)
+
+			_playerAdded:Fire(player)
 		end
-
-		const profile = result :: Profile
-
-		if not player:IsDescendantOf(Players) then
-			profile:EndSession()
-			return
-		end
-
-		initialiseMetadata(profile)
-
-		const sessionStart = os.clock()
-
-		-- bank this session's playtime into the profile right before its final
-		-- save, however the session ends (leave, shutdown, or another server
-		-- taking ownership). OnSessionEnd is cleanup-only and must not edit Data;
-		-- OnLastSave is the documented hook for last-moment edits. The closure
-		-- captures `profile`/`sessionStart` so it is independent of the records
-		-- map, which onPlayerRemoving may clear before this async save runs.
-		profile.OnLastSave:Connect(function()
-			-- we do not use the TableUtil to edit data here
-			-- because ProfileStore has wack types and will give
-			-- type errors
-			const clone = table.clone(profile.Data)
-
-			clone.Playtime += math.floor(os.clock() - sessionStart)
-			clone.LastOnlineAt = os.time()
-
-			profile.Data = clone
-		end)
-
-		_records[player] = {
-			Player = player,
-			Profile = profile,
-			SessionStart = sessionStart,
-		}
-
-		PlayerDataStore.Load(player.UserId, profile.Data)
-
-		_playerAdded:Fire(player)
-	end)
+	)
 end
 
 const function onPlayerRemoving(player: Player)

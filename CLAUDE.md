@@ -7,15 +7,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Dependencies and Roblox tooling are managed by **LPM** (`lpm install --locked`, which also installs the pinned toolchain from `[tools]`). Recipes use **Just**.
 
 ```sh
-just dev          # parallel: blink watcher + argon sourcemap watcher + argon serve (main dev loop)
-just format       # format all source files
-just format-check # check formatting without writing
-just lint         # lint handwritten source (generated Blink files are excluded)
+just dev          # parallel: blink watcher + larvae process watcher + argon sourcemap watcher + argon serve (main dev loop)
+just format       # format handwritten source (larvae fmt; generated Blink files are excluded)
+just format-check # check formatting without writing (larvae fmt --check)
+just lint         # lint handwritten source with larvae (generated Blink files are excluded)
 just network      # generate the Blink modules once
 just build        # generate Blink modules and build out/Game.rbxl
 just check        # formatting, lint, Blink generation, and Argon build (used in CI)
 
 just blink        # watch src/Network.blink and regenerate on change
+just process      # watch src/ and rewrite requires into dist/
 just sourcemap    # watch and write sourcemap.json (powers luau-lsp)
 just serve        # argon serve, for syncing into Studio
 just sync         # merge upstream template changes (needs a `template` git remote you add yourself)
@@ -193,7 +194,7 @@ end
 
 ## Networking
 
-**blink** compiles `src/Network.blink` into typed RemoteEvent/RemoteFunction wrappers. Run `just network` once, or `just blink` (or `just dev`) to watch for changes. Three modules are generated, all gitignored and excluded from Selene:
+**blink** compiles `src/Network.blink` into typed RemoteEvent/RemoteFunction wrappers. Run `just network` once, or `just blink` (or `just dev`) to watch for changes. Three modules are generated, all gitignored and excluded from larvae's formatter and linter:
 
 | Output | Used from |
 |---|---|
@@ -314,8 +315,9 @@ Notable third-party packages, beyond the Charm/Vide/Conch/Iris stack described a
 ## Code style
 
 - Luau **strict mode** is enforced project-wide (`.luaurc`)
-- StyLua is configured with `call_parentheses = "None"` — omit parentheses on single-string and single-table calls
-- Selene uses `std = "roblox"`, allows `mixed_table` project-wide (Vide's create-syntax intentionally mixes props and children), and excludes the three generated `Network/` directories
+- **larvae** is both the formatter and the linter; everything it does is configured in `larvae.toml` (there is no `stylua.toml` or `selene.toml`). It also serves formatting and lint diagnostics to an editor over stdio with `larvae lsp`
+- `[fmt]` sets tabs, `column_width = 120`, and `call_parentheses = "none"` — omit parentheses on single-string and single-table calls. `sort_requires` is deliberately **off**: sorting moves requires above the `-- IMPORTED MODULES` header and breaks the section layout below
+- `[lint]` uses `std = "roblox"` and allows `mixed_table` project-wide (Vide's create-syntax intentionally mixes props and children). Both `[fmt]` and `[lint]` exclude the three generated `Network/` directories; `process` still reads them
 
 ### Module layout
 
@@ -349,4 +351,4 @@ Do not abbreviate identifiers. Write the full word (`humanoidRootPart`, not `hrp
 
 Use `const` for any binding that is never reassigned — top-level variables, inner functions, and locals inside function bodies. Only use `local` when the variable is actually reassigned later. Mutating a table does not count as reassignment; the binding is still `const`.
 
-This applies to handwritten code. The generated Blink modules under `src/*/Network/` use `local` throughout; they are gitignored and excluded from Selene, so leave them alone.
+This applies to handwritten code. The generated Blink modules under `src/*/Network/` use `local` throughout; they are gitignored and excluded from larvae's formatter and linter, so leave them alone.

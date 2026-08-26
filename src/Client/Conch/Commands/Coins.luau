@@ -8,7 +8,8 @@ return function()
 	Conch.register("coins", {
 		permissions = {},
 		description = "Shows your current coin count.",
-		arguments = function() end,
+		arguments = function()
+		end,
 		callback = function()
 			const data = PlayerDataStore.GetLocal()
 			const coins = if data then data.Coins else 0

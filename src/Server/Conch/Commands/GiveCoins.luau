@@ -11,7 +11,8 @@ return function()
 		permissions = { "manage_coins" },
 		description = "Gives coins to a player.",
 		arguments = function()
-			return Conch.args.player("player", "Player to receive the coins"),
+			return
+				Conch.args.player("player", "Player to receive the coins"),
 				Conch.args.number("amount", "Number of coins to give")
 		end,
 		callback = function(player: Player, amount: number)

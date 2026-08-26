@@ -38,15 +38,9 @@ const DebugController = {}
 function DebugController.OnInit()
 	Gizmo.Init()
 	_input = Input.new "Debug"
-	_input
-		:SetPriority(10)
-		:SetEnabled(true)
-		:SetSink(true)
-		:Action("Toggle")
-		:OnPressed(function()
-			_isShown = not _isShown
-		end)
-		:Bind(Enum.KeyCode.F3)
+	_input:SetPriority(10):SetEnabled(true):SetSink(true):Action "Toggle":OnPressed(function()
+		_isShown = not _isShown
+	end):Bind(Enum.KeyCode.F3)
 end
 
 function DebugController.OnStart()
@@ -57,18 +51,20 @@ function DebugController.OnStart()
 
 	-- Iris.Init yields on PlayerGui, so it lives here (OnStart) rather than OnInit
 	Iris.Init(nil, nil, false)
-	Iris:Connect(function()
-		if not _isShown then
-			return
+	Iris:Connect(
+		function()
+			if not _isShown then
+				return
+			end
+			for _, window in WINDOWS do
+				-- namespace each window's widget IDs so equal line numbers across
+				-- modules don't collide (see DebugWindow above)
+				Iris.PushId(window.Id)
+				window.Draw()
+				Iris.PopId()
+			end
 		end
-		for _, window in WINDOWS do
-			-- namespace each window's widget IDs so equal line numbers across
-			-- modules don't collide (see DebugWindow above)
-			Iris.PushId(window.Id)
-			window.Draw()
-			Iris.PopId()
-		end
-	end)
+	)
 end
 
 return DebugController

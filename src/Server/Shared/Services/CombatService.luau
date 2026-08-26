@@ -41,9 +41,7 @@ export type DefaultCharacterProps = {
 	StatusEffects: StatusEffects?,
 }
 
-export type StatusOverrides = {
-	Duration: number,
-}
+export type StatusOverrides = { Duration: number }
 
 export type CharacterState = Required<DefaultCharacterProps> & {
 	Health: number,
@@ -94,11 +92,7 @@ end
 --
 -- This is the whole refusal policy in one place, so `ApplyStatus` and
 -- `CanApplyStatus` cannot drift apart.
-const function canReapply(
-	effectData: StatusEffectData,
-	existingStatus: ActiveStatusEffect,
-	metadata: { [any]: any }?
-): boolean
+const function canReapply(effectData: StatusEffectData, existingStatus: ActiveStatusEffect, metadata: { [any]: any }?): boolean
 	-- The active effect wins outright
 	if effectData.OverrideRule == "Ignore" then
 		return false
@@ -196,10 +190,9 @@ end
 function CombatService.ReapplyStatusEffect(rig: Model, id: string, duration: number)
 	const state = _characterStates[rig]
 	if not state then
-		LogService:Warn(
-			"[CombatService] Attempted to reapply a status to a non existent character state: {id}",
-			{ id = rig.Name }
-		)
+		LogService:Warn("[CombatService] Attempted to reapply a status to a non existent character state: {id}", {
+			id = rig.Name,
+		})
 		return
 	end
 
@@ -222,10 +215,9 @@ function CombatService.GetMetadata(rig: Model, statusId: string): { [any]: any }
 
 	const state = _characterStates[rig]
 	if not state then
-		LogService:Warn(
-			"[CombatService] Attempted to get status metadata from non existing character: {name}",
-			{ name = rig.Name }
-		)
+		LogService:Warn("[CombatService] Attempted to get status metadata from non existing character: {name}", {
+			name = rig.Name,
+		})
 		return nil
 	end
 
@@ -239,12 +231,7 @@ end
 
 -- Returns whether the status actually landed. A refusal is a normal outcome, not
 -- an error: see `CanApplyStatus` for checking ahead of paying a cost.
-function CombatService.ApplyStatus(
-	rig: Model,
-	statusId: string,
-	overrides: StatusOverrides?,
-	metadata: { [any]: any }?
-): boolean
+function CombatService.ApplyStatus(rig: Model, statusId: string, overrides: StatusOverrides?, metadata: { [any]: any }?): boolean
 	const status = getStatusEffectFromId(statusId)
 	if not status then
 		LogService:Warn("[CombatService] Attempted to apply a status that does not exist: {id}", { id = statusId })
@@ -255,22 +242,20 @@ function CombatService.ApplyStatus(
 
 	const state = _characterStates[rig]
 	if not state then
-		LogService:Warn(
-			"[CombatService] Attempted to apply status effect to a non existing character: {name}",
-			{ name = rig.Name }
-		)
+		LogService:Warn("[CombatService] Attempted to apply status effect to a non existing character: {name}", {
+			name = rig.Name,
+		})
 		return false
 	end
 
 	const existingStatus = state.StatusEffects[statusId]
 
-	local isIndefinite
 	const startTime = os.time()
-	local endTime
+	local endTime: number
 
-	isIndefinite = if overrides and overrides.Duration then overrides.Duration <= -1 else effectData.Duration <= -1
-	endTime = if isIndefinite
-		then math.huge
+	const isIndefinite = if overrides and overrides.Duration then overrides.Duration <= -1
+		else effectData.Duration <= -1
+	endTime = if isIndefinite then math.huge
 		else startTime + (if overrides and overrides.Duration then overrides.Duration else effectData.Duration)
 
 	if existingStatus then
@@ -300,10 +285,9 @@ function CombatService.ApplyStatus(
 		-- save to player data
 		const player = Players:GetPlayerFromCharacter(rig)
 		if not player then
-			LogService:Warn(
-				"[CombatService] Attempted to apply a PersistOnDeath status effect to a non player: {name}",
-				{ name = rig.Name }
-			)
+			LogService:Warn("[CombatService] Attempted to apply a PersistOnDeath status effect to a non player: {name}", {
+				name = rig.Name,
+			})
 			return false
 		end
 
@@ -414,10 +398,9 @@ function CombatService.RemoveStatusEffect(rig: Model, statusId: string)
 
 	const state = _characterStates[rig]
 	if not state then
-		LogService:Warn(
-			"[CombatService] Attempted to remove a status effect on a non existing character: {name}",
-			{ name = rig.Name }
-		)
+		LogService:Warn("[CombatService] Attempted to remove a status effect on a non existing character: {name}", {
+			name = rig.Name,
+		})
 		return
 	end
 
@@ -430,10 +413,9 @@ function CombatService.RemoveStatusEffect(rig: Model, statusId: string)
 	if effectData.ApplyType == "PersistOnDeath" then
 		const player = Players:GetPlayerFromCharacter(rig)
 		if not player then
-			LogService:Warn(
-				"[CombatService] Attempted to remove a PersistOnDeath status effect from a non player: {name}",
-				{ name = rig.Name }
-			)
+			LogService:Warn("[CombatService] Attempted to remove a PersistOnDeath status effect from a non player: {name}", {
+				name = rig.Name,
+			})
 			return
 		end
 
@@ -455,10 +437,9 @@ end
 function CombatService.HasStatusEffect(rig: Model, statusId: string)
 	const state = _characterStates[rig]
 	if not state then
-		LogService:Warn(
-			"[CombatService] Attempted to check the existence of a status effect on a non existing character: {name}",
-			{ name = rig.Name }
-		)
+		LogService:Warn("[CombatService] Attempted to check the existence of a status effect on a non existing character: {name}", {
+			name = rig.Name,
+		})
 		return false
 	end
 

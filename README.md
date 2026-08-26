@@ -13,7 +13,7 @@ lpm install --locked
 ```
 
 This installs the Luau packages *and* the pinned toolchain declared in `lpm.toml`
-(`blink`, `argon`, `stylua`, `selene`, `luau-lsp`) — there is no separate toolchain step.
+(`blink`, `argon`, `larvae`, `luau-lsp`) — there is no separate toolchain step.
 
 Start the development loop, which watches Blink networking and the Argon project:
 
@@ -24,9 +24,9 @@ just dev
 ## Commands
 
 ```sh
-just format        # format handwritten and generated Luau
+just format        # format handwritten Luau (larvae fmt)
 just format-check  # check formatting without writing
-just lint          # lint handwritten Luau
+just lint          # lint handwritten Luau (larvae lint)
 just network       # generate Blink networking modules
 just build         # generate networking and build out/Game.rbxl
 just check         # check formatting, lint, generate networking, and build
@@ -36,9 +36,13 @@ Individual watchers, if you'd rather not run the whole `just dev` loop:
 
 ```sh
 just blink         # watch src/Network.blink and regenerate on change
+just process       # watch src/ and rewrite requires into dist/
 just sourcemap     # watch and write sourcemap.json (powers luau-lsp)
 just serve         # argon serve, for syncing into Studio
 ```
+
+Formatting and linting are both `larvae`, configured in `larvae.toml`. It also serves
+those to an editor over stdio with `larvae lsp`, alongside `luau-lsp` for types.
 
 There is also `just sync`, which merges upstream template changes. It expects a git
 remote named `template`, which you add yourself:
