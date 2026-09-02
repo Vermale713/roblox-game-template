@@ -22,7 +22,7 @@ const function fetchAssetFromDirectory(directory: Folder, path: ResolvedPath): I
 		end
 	end
 
-	return asset
+	return if asset then asset:Clone() else nil
 end
 
 -- PUBLIC MODULE
@@ -56,8 +56,9 @@ function Asset.Request(path: Path): Instance?
 				return nil
 			end
 
+			asset.Parent = replicatedAssetFolder
+
 			const clone = asset:Clone()
-			clone.Parent = replicatedAssetFolder
 
 			return clone
 		end)
