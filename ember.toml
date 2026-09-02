@@ -28,7 +28,7 @@ pesde = "https://github.com/pesde-pkg/index"
 blink = "1axen/blink@0.18.8"
 argon = "argon-rbx/argon@2.0.29"
 luau-lsp = "johnnymorganz/luau-lsp@1.69.0"
-larvae = "larvae-luau/larvae@0.6.0"
+larvae = "larvae-luau/larvae@0.7.5"
 
 [patches]
 "centau/vide@0.4.1" = "patches/centau_vide@0.4.1.patch"
