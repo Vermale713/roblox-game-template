@@ -3,5 +3,10 @@
         "*": false
     },
     "languageMode": "strict",
-    "aliases": {}
+    "aliases": {
+        "pkg": "packages/roblox",
+        "client": "src/Client",
+        "shared": "src/Shared",
+        "server": "src/Server"
+    }
 }
