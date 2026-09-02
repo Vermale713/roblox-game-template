@@ -1,6 +1,6 @@
 -- IMPORTED MODULES
 const CharmSync = require "@game/ReplicatedStorage/Packages/CharmSync"
-const Network = require "@game/ReplicatedStorage/Network/Client"
+const Client = require "@game/ReplicatedStorage/Network/Client"
 const PlayerDataStore = require "@game/ReplicatedStorage/Client/Shared/Stores/PlayerDataStore"
 
 -- PUBLIC MODULE
@@ -15,7 +15,7 @@ function DataReplicationController.OnStart()
 	-- blink buffers incoming events until a listener attaches, so payloads sent
 	-- before this point are not lost; patch expects a list, so wrap the single
 	-- payload this event delivers
-	Network.Data.Sync.On(function(payload)
+	Client.Data.Sync.On(function(payload)
 		CharmSync.client.patch { payload }
 	end)
 end

@@ -1,7 +1,7 @@
 -- IMPORTED MODULES
 const Charm = require "@game/ReplicatedStorage/Packages/Charm"
 const CharmSync = require "@game/ReplicatedStorage/Packages/CharmSync"
-const Network = require "@game/ReplicatedStorage/Network/Server"
+const Server = require "@game/ReplicatedStorage/Network/Server"
 const PlayerDataStore = require "@game/ServerScriptService/Shared/Stores/PlayerDataStore"
 const PlayerService = require "@game/ServerScriptService/Shared/Services/PlayerService"
 
@@ -50,7 +50,7 @@ function DataReplicationService.OnInit()
 	-- charm-sync batch out into individual fires (see src/Network.blink)
 	CharmSync.server.connect(function(player, payloads)
 		for _, payload in payloads do
-			Network.Data.Sync.Fire(player, payload)
+			Server.Data.Sync.Fire(player, payload)
 		end
 	end)
 

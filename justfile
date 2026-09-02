@@ -26,7 +26,7 @@ process:
     larvae process -w
 
 sourcemap:
-    argon sourcemap -o sourcemap.json -w
+    argon sourcemap .larvae/build.project.json -o sourcemap.json -w
 
 serve:
     argon serve .larvae/build.project.json

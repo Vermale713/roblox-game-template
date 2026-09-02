@@ -2,7 +2,7 @@
 const LogService = game:GetService "LogService"
 
 -- IMPORTED MODULES
-const Network = require "@game/ReplicatedStorage/Network/Client"
+const Client = require "@game/ReplicatedStorage/Network/Client"
 const NetworkTypes = require "@game/ReplicatedStorage/Network/NetworkTypes"
 const Signal = require "@game/ReplicatedStorage/Packages/Signal"
 
