@@ -2,15 +2,7 @@
 input = "src"
 output = "dist"
 target = "roblox-string"
-exclude = [
-  "packages/**",
-  "src/Client/Network/*",
-  "src/Server/Network/*",
-  "src/Shared/Network/*",
-  "dist/Client/Network/*",
-  "dist/Server/Network/*",
-  "dist/Shared/Network/*",
-]
+exclude = ["packages/**"]
 
 [aliases]
 pkg = "@game/ReplicatedStorage/Packages"
@@ -27,11 +19,21 @@ quote_style = "auto-prefer-double"
 call_parentheses = "none"
 function_call = { style = "hug-last" }
 sort_requires = { enabled = false }
-exclude = ["src/Shared/Libraries/*", "dist/Shared/Libraries/*"]
+exclude = [
+  "src/Shared/Libraries/*",
+  "dist/Shared/Libraries/*",
+  "src/Shared/Network/*",
+  "dist/Shared/Network/*",
+]
 
 [lint]
 std = "roblox"
-exclude = ["src/Shared/Libraries/*", "dist/Shared/Libraries/*"]
+exclude = [
+  "src/Shared/Libraries/*",
+  "dist/Shared/Libraries/*",
+  "src/Shared/Network/*",
+  "dist/Shared/Network/*",
+]
 
 [lint.rules]
 # Vide's create-syntax intentionally mixes dictionary props with array children in
