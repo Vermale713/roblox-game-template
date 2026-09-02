@@ -9,6 +9,8 @@ pkg = "@game/ReplicatedStorage/Packages"
 client = "@game/ReplicatedStorage/Client"
 shared = "@game/ReplicatedStorage"
 server = "@game/ServerScriptService"
+util = "@game/ReplicatedStorage/Utilities"
+lib = "@game/ReplicatedStorage/Libraries"
 network = "@game/ReplicatedStorage/Network"
 
 [fmt]
