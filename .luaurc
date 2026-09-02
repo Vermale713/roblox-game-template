@@ -7,6 +7,7 @@
         "pkg": "packages/roblox",
         "client": "src/Client",
         "shared": "src/Shared",
-        "server": "src/Server"
+        "server": "src/Server",
+        "network": "dist/Shared/Network"
     }
 }

@@ -1,8 +1,16 @@
-option ServerOutput = "./Server/Network/Server.luau"
-option ClientOutput = "./Client/Network/Client.luau"
+option ServerOutput = "./Shared/Network/Server.luau"
+option ClientOutput = "./Shared/Network/Client.luau"
 option TypesOutput = "./Shared/Network/NetworkTypes.luau"
 
 option Casing = Pascal
+
+scope Asset {
+    function RequestAsset {
+        Yield: Coroutine,
+        Data: string[],
+        Return: Instance?,
+    }
+}
 
 scope VFX {
     struct VFXPayload {

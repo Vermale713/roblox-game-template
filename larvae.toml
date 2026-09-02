@@ -7,6 +7,9 @@ exclude = [
   "src/Client/Network/*",
   "src/Server/Network/*",
   "src/Shared/Network/*",
+  "dist/Client/Network/*",
+  "dist/Server/Network/*",
+  "dist/Shared/Network/*",
 ]
 
 [aliases]
@@ -14,6 +17,7 @@ pkg = "@game/ReplicatedStorage/Packages"
 client = "@game/ReplicatedStorage/Client"
 shared = "@game/ReplicatedStorage"
 server = "@game/ServerScriptService"
+network = "@game/ReplicatedStorage/Network"
 
 [fmt]
 column_width = 120
@@ -23,11 +27,11 @@ quote_style = "auto-prefer-double"
 call_parentheses = "none"
 function_call = { style = "hug-last" }
 sort_requires = { enabled = false }
-exclude = ["src/Shared/Libraries/*"]
+exclude = ["src/Shared/Libraries/*", "dist/Shared/Libraries/*"]
 
 [lint]
 std = "roblox"
-exclude = ["src/Shared/Libraries/*"]
+exclude = ["src/Shared/Libraries/*", "dist/Shared/Libraries/*"]
 
 [lint.rules]
 # Vide's create-syntax intentionally mixes dictionary props with array children in
