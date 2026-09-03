@@ -12,6 +12,7 @@ server = "@game/ServerScriptService"
 util = "@game/ReplicatedStorage/Utilities"
 lib = "@game/ReplicatedStorage/Libraries"
 network = "@game/ReplicatedStorage/Network"
+types = "@game/ReplicatedStorage/Types"
 
 [fmt]
 column_width = 120

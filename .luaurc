@@ -8,8 +8,9 @@
         "client": "src/Client",
         "shared": "src/Shared",
         "server": "src/Server",
-        "network": "dist/Shared/Network",
-        "util": "dist/Shared/Utilities",
-        "lib": "dist/Shared/Libraries"
+        "types": "src/Shared/Types",
+        "util": "src/Shared/Utilities",
+        "lib": "src/Shared/Libraries",
+        "network": "dist/Shared/Network"
     }
 }
