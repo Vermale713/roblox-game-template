@@ -11,6 +11,7 @@
         "types": "src/Shared/Types",
         "util": "src/Shared/Utilities",
         "lib": "src/Shared/Libraries",
+        "data": "src/Shared/Data",
         "network": "dist/Shared/Network"
     }
 }

@@ -9,10 +9,11 @@ pkg = "@game/ReplicatedStorage/Packages"
 client = "@game/ReplicatedStorage/Client"
 shared = "@game/ReplicatedStorage"
 server = "@game/ServerScriptService"
+types = "@game/ReplicatedStorage/Types"
 util = "@game/ReplicatedStorage/Utilities"
 lib = "@game/ReplicatedStorage/Libraries"
+data = "@game/ReplicatedStorage/Data"
 network = "@game/ReplicatedStorage/Network"
-types = "@game/ReplicatedStorage/Types"
 
 [fmt]
 column_width = 120
