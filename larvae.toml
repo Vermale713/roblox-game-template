@@ -1,0 +1,44 @@
+#:schema https://raw.githubusercontent.com/larvae-luau/larvae/master/crates/larvae/larvae.schema.json
+# larvae configuration, run `larvae self code` for editor completion.
+# Mounts come from default.project.json, nothing to repeat here.
+
+input = "src"
+output = "dist"
+target = "roblox-string"
+exclude = ["packages/**"]
+
+[aliases]
+pkg = "@game/ReplicatedStorage/Packages"
+client = "@game/ReplicatedStorage/Client"
+server = "@game/ServerScriptService"
+types = "@game/ReplicatedStorage/Types"
+util = "@game/ReplicatedStorage/Util"
+lib = "@game/ReplicatedStorage/Lib"
+data = "@game/ReplicatedStorage/Data"
+network = "@game/ReplicatedStorage/Network"
+
+[fmt]
+recommended = true
+column_width = 120
+indent_type = "spaces"
+indent_width = 4
+quote_style = "auto-prefer-double"
+call_parentheses = "none"
+collapse_simple_statement = "always"
+prefer_const.enabled = true
+leading_zero = "add"
+require_binding = "const"
+sort_requires.enabled = true
+sort_requires.grouping = "by-kind"
+unused_imports = "remove"
+block_newline_gaps = "never"
+if_expression.style = "leading"
+function_declaration.expand = "when-needed"
+function_style = "const"
+
+
+[lint]
+recommended = true
+std = "roblox"
+# Set a level for one lint under [lint.rules], or for a whole kind
+# under [lint.groups]. `larvae lint --explain <name>` describes one.

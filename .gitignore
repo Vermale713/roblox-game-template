@@ -34,3 +34,4 @@ packages/
 .lpm-patch/
 .larvae/
 dist/
+.ember-patch/

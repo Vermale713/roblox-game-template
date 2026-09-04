@@ -1,0 +1,16 @@
+# Manifest for this project. See https://luaupm.com/docs
+# Add dependencies with `embr add <scope/name>`, then run `embr install`.
+
+[dependencies]
+vow = { name = "synttx/vow", version = "^", index = "wally" }
+scythe = { name = "synttx/scythe", version = "^", index = "wally" }
+
+[indices]
+wally = "https://github.com/UpliftGames/wally-index"
+pesde = "https://github.com/pesde-pkg/index"
+
+[tools]
+argon = "argon-rbx/argon@2.0.29"
+larvae = "larvae-luau/larvae@0.8.1"
+luau-lsp = "johnnymorganz/luau-lsp@1.69.0"
+blink = "1axen/blink@0.18.8"
