@@ -5,12 +5,23 @@
 input = "src"
 output = "dist"
 target = "roblox-string"
-exclude = ["packages/**"]
+
+
+[lsp]
+enabled = true
+analyzer = true
+sourcemap_command = "argon"
+roblox_security_level = "plugin-security"
+fflags.enable_new_solver = true
+sourcemap_autogenerate = false
+completion.imports.require_style = "nearest_absolute"
 
 [aliases]
 pkg = "@game/ReplicatedStorage/Packages"
+spkg = "@game/ServerStorage/ServerPackages"
 client = "@game/ReplicatedStorage/Client"
 server = "@game/ServerScriptService"
+storage = "@game/ServerStorage"
 types = "@game/ReplicatedStorage/Types"
 util = "@game/ReplicatedStorage/Util"
 lib = "@game/ReplicatedStorage/Lib"
@@ -36,9 +47,17 @@ if_expression.style = "leading"
 function_declaration.expand = "when-needed"
 function_style = "const"
 
-
 [lint]
 recommended = true
 std = "roblox"
+
+[lint.rules]
+unused_variable = "warn"
+unused_function = "warn"
+unused_import = "warn"
+almost_swapped = "deny"
+and_or_conditional = "deny"
+
+# rules.unused_variable = "warn"
 # Set a level for one lint under [lint.rules], or for a whole kind
 # under [lint.groups]. `larvae lint --explain <name>` describes one.

@@ -7,13 +7,17 @@ format:
 format-check:
     larvae fmt --check
 
+analyze:
+    larvae analyze
+
 lint:
     larvae lint
 
 network:
     blink src/Network.blink -y
 
-check: format-check lint
+[parallel]
+check: format-check lint analyze
 
 blink:
     blink dist/Network.blink -w
@@ -22,7 +26,7 @@ process:
     larvae process -w
 
 sourcemap:
-    argon sourcemap .larvae/build.project.json -o sourcemap.json -w
+    argon sourcemap default.project.json -o sourcemap.json -w
 
 serve:
     argon serve .larvae/build.project.json

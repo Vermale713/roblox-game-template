@@ -2,19 +2,19 @@
 version = 2
 
 [[package]]
-name = "synttx/scythe"
-version = "1.2.2"
-environment = "roblox"
-link = "scythe"
+name = "lm-loleris/profilestore"
+version = "1.0.3"
+environment = "server"
+link = "ProfileStore"
 index = "https://github.com/UpliftGames/wally-index"
 type = "zip"
-url = "https://api.wally.run/v1/package-contents/synttx/scythe/1.2.2"
+url = "https://api.wally.run/v1/package-contents/lm-loleris/profilestore/1.0.3"
 
 [[package]]
-name = "synttx/vow"
-version = "1.0.2"
+name = "molyidev/signal"
+version = "1.0.3"
 environment = "roblox"
-link = "vow"
-index = "https://github.com/UpliftGames/wally-index"
-type = "zip"
-url = "https://api.wally.run/v1/package-contents/synttx/vow/1.0.2"
+link = "Signal"
+index = "https://github.com/pesde-pkg/index"
+type = "tar-gz"
+url = "https://registry.pesde.daimond113.com/v1/packages/molyidev%2Fsignal/1.0.3/roblox/archive"

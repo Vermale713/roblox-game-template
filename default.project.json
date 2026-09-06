@@ -20,6 +20,12 @@
         },
         "ServerScriptService": {
             "$path": "src/Server"
+        },
+        "ServerStorage": {
+            "$path": "src/Storage",
+            "ServerPackages": {
+                "$path": "packages/server"
+            }
         }
     }
 }
