@@ -6,6 +6,15 @@ input = "src"
 output = "dist"
 target = "roblox-string"
 
+[requires]
+strict = true
+
+[requires.mounts]
+"packages/roblox" = "@game/ReplicatedStorage/Packages"
+"packages/server" = "@game/ServerStorage/ServerPackages"
+
+[process]
+generator = "readable"
 
 [lsp]
 enabled = true
@@ -13,7 +22,7 @@ analyzer = true
 sourcemap_command = "argon"
 roblox_security_level = "plugin-security"
 fflags.enable_new_solver = true
-sourcemap_autogenerate = false
+sourcemap_autogenerate = true
 completion.imports.require_style = "nearest_absolute"
 
 [aliases]

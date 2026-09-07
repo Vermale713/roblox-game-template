@@ -1,3 +1,4 @@
+--!strict
 -- CONSTANTS
 const SECONDS_PER_MINUTE = 60
 const SECONDS_PER_HOUR = 3600

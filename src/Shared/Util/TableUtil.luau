@@ -1,3 +1,4 @@
+--!strict
 -- TYPES
 type AnyTable = { [any]: any }
 

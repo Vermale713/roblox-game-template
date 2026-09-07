@@ -1,3 +1,4 @@
+--!strict
 -- SERVICES
 const LogService = game:GetService "LogService"
 const Players = game:GetService "Players"
@@ -21,23 +22,30 @@ const _sessionEnded: Signal<Player> = Signal.new()
 
 -- PRIVATE FUNCTIONS
 const function startSessionForPlayer(player: Player)
-    -- errorable
-    const success, result = DataService.Load(player)
+    const status = DataService.Load(player)
 
-    if not success then
-        LogService:Info("[PlayerService] Data load failed. {reason}", { reason = result })
-        player:Kick "Failed to load data please rejoin."
-        return
+    if status ~= "Ok" then
+        if status == "Failed" then
+            player:Kick "Failed to load data please rejoin."
+            LogService:Info(
+                "[PlayerService] Player '{player}' failed to load and was kicked.",
+                {
+                    player = player,
+                }
+            )
+        end
+        return false
     end
 
     _playersInSession[player] = true
     _sessionStarted:Fire(player)
+
+    return true
 end
 
 const function endSessionForPlayer(player: Player)
     _sessionEnded:Fire(player)
 
-    -- unerrorable
     DataService.Unload(player)
 
     _playersInSession[player] = nil
@@ -49,7 +57,8 @@ const function onPlayerJoined(player: Player)
         return
     end
 
-    startSessionForPlayer(player)
+    const success = startSessionForPlayer(player)
+    if not success then return end
 
     _playerJoined:Fire(player)
 end
@@ -79,12 +88,6 @@ PlayerService.SessionStarted = _sessionStarted
 PlayerService.SessionEnded = _sessionEnded
 
 function PlayerService.GetPlayers(): ReadonlySet<Player> return table.clone(_playersInSession) end
-
-function PlayerService.StartSession(player: Player)
-    if _playersInSession[player] then endSessionForPlayer(player) end
-
-    startSessionForPlayer(player)
-end
 
 function PlayerService.OnInit()
     Players.PlayerAdded:Connect(onPlayerJoined)

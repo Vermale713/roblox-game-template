@@ -1,3 +1,4 @@
+--!strict
 -- PUBLIC MODULE
 const NumberUtil = {}
 

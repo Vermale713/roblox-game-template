@@ -1,3 +1,4 @@
+--!strict
 -- SERVICES
 const LogService = game:GetService "LogService"
 

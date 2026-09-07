@@ -1,3 +1,6 @@
+--!strict
+export type LoadStatus = "Ok" | "Already-Loaded" | "Pending" | "Left" | "Failed"
+
 export type Session<T> = { Get: () -> T, Update: ((T) -> T) -> (), Unload: () -> () }
 
 export type DataProviderInterface<T> = { Load: (string, number) -> (Session<T>?, string?) }

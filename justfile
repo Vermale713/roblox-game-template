@@ -13,11 +13,14 @@ analyze:
 lint:
     larvae lint
 
+analyze-check:
+    larvae check
+
 network:
     blink src/Network.blink -y
 
 [parallel]
-check: format-check lint analyze
+check: format-check lint analyze analyze-check
 
 blink:
     blink dist/Network.blink -w

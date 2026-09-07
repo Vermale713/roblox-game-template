@@ -1,3 +1,4 @@
+--!strict
 -- SERVICES
 const LogService = game:GetService "LogService"
 const Players = game:GetService "Players"
@@ -11,6 +12,7 @@ const TableTypes = require "@types/TableTypes"
 type Set<T> = TableTypes.Set<T>
 type DataProviderInterface<T> = DataTypes.DataProviderInterface<T>
 type DataProviderModuleInterface = DataTypes.DataProviderModuleInterface
+type LoadStatus = DataTypes.LoadStatus
 type PlayerData = {} -- replace with real data
 type DataProviderModule = DataProviderModuleInterface
 type Session = DataTypes.Session<PlayerData>
@@ -31,34 +33,48 @@ const DataService = {}
 
 function DataService.OnInit() _dataProvider = _dataProviderModule.CreateStore(DATASTORE_KEY, DATA_TEMPLATE) end
 
-function DataService.Load(player: Player)
+function DataService.Load(player: Player): LoadStatus
     if _loadedPlayers[player] then
         LogService:Warn("[DataService] Player '{player}' has already loaded their data.", { player = player })
-        return
+        return "Already-Loaded"
     end
     if _pendingPlayers[player] then
         LogService:Warn("[DataService] Player '{player}' is already pending to be loaded.", { player = player })
-        return
+        return "Pending"
     end
     _pendingPlayers[player] = true
 
-    const session, err = _dataProvider.Load(`{player.UserId}`, player.UserId)
+    const ok, session, err = pcall(_dataProvider.Load, `{player.UserId}`, player.UserId)
+
+    if not ok then
+        LogService:Warn(
+            "[DataService] Provider errored for Player '{player}'. '{err}'",
+            { err = session, player = player }
+        )
+        _pendingPlayers[player] = nil
+        return "Failed"
+    end
 
     if not session then
-        LogService:Warn("[DataService] Data failed to retrieve. '{err}'", { err = err })
+        LogService:Warn(
+            "[DataService] Data failed to retrieve for Player '{player}'. '{err}'",
+            { err = err, player = player }
+        )
         _pendingPlayers[player] = nil
-        return
+        return "Failed"
     end
 
     if not player:IsDescendantOf(Players) then
         session.Unload()
-        LogService:Warn "[DataService] Player '{player}' left while loading data."
+        LogService:Warn("[DataService] Player '{player}' left while loading data.", { player = player })
         _pendingPlayers[player] = nil
-        return
+        return "Left"
     end
 
     _loadedPlayers[player] = session
     _pendingPlayers[player] = nil
+
+    return "Ok"
 end
 
 function DataService.Unload(player: Player)

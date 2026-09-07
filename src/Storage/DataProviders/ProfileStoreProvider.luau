@@ -1,3 +1,4 @@
+--!strict
 -- IMPORTED MODULES
 const ProfileStore = require "@spkg/ProfileStore"
 const DataTypes = require "@types/DataTypes"

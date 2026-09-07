@@ -1,3 +1,4 @@
+--!strict
 -- SERVICES
 const ServerScriptService = game:GetService "ServerScriptService"
 
