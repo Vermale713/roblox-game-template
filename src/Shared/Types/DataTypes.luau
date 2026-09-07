@@ -1,8 +1,7 @@
-export type DataProviderInterface<T> = {
-    Load: (string, number) -> (boolean, T),
-    Unload: (T) -> (boolean, string),
-}
+export type Session<T> = { Get: () -> T, Update: ((T) -> T) -> (), Unload: () -> () }
 
-export type DataProviderModuleInterface<T> = { CreateStore: (string) -> DataProviderInterface<T> }
+export type DataProviderInterface<T> = { Load: (string, number) -> (Session<T>?, string?) }
+
+export type DataProviderModuleInterface = { CreateStore: <T>(string, T) -> DataProviderInterface<T> }
 
 return nil
