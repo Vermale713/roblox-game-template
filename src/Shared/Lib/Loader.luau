@@ -121,7 +121,15 @@ function Loader.Start(opts: StartOpts)
 
         -- wrap in parentheses to remove type error
         -- regarding unsupported path
-        const requiredModule = (require)(descendant)
+        const success, requiredModule = pcall(require, descendant)
+
+        if not success then
+            LogService:Error(
+                "[Loader] Loader failed to require module '{module}'. {err}.",
+                { err = requiredModule, module = descendant:GetFullName() }
+            )
+            return
+        end
 
         _singletons[descendant.Name] = requiredModule
         _singletonModules[descendant.Name] = descendant
