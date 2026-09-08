@@ -92,7 +92,9 @@ function PlayerService.GetPlayers(): ReadonlySet<Player> return table.clone(_pla
 function PlayerService.OnInit()
     Players.PlayerAdded:Connect(onPlayerJoined)
     Players.PlayerRemoving:Connect(onPlayerRemoving)
+end
 
+function PlayerService.OnStart()
     for _, player in Players:GetPlayers() do
         -- i think its ok to spawn the task?
         task.spawn(onPlayerJoined, player)
