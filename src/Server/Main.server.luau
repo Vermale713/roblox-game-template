@@ -8,7 +8,7 @@ const Loader = require "@lib/Loader"
 -- MAIN
 Loader.Start {
     Root = ServerScriptService,
-    SingletonMatcher = { "Service" },
+    SingletonMatcher = { "Service$" },
     Lifecycles = {
         { Method = "OnInit" },
         { Method = "OnStart", Async = true },
