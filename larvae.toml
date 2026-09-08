@@ -53,7 +53,6 @@ sort_requires.grouping = "by-kind"
 unused_imports = "remove"
 block_newline_gaps = "never"
 if_expression.style = "leading"
-function_declaration.expand = "when-needed"
 function_style = "const"
 
 [lint]
