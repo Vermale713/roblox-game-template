@@ -3,9 +3,11 @@
 const Players = game:GetService "Players"
 
 -- IMPORTED MODULES
+const AvatarAbilities = require "@lib/AvatarAbilities"
 const Scythe = require "@pkg/Scythe"
 const Signal = require "@pkg/Signal"
 const PlayerService = require "@server/Player/PlayerService"
+const BaseAbilities = require "@storage/Abilities/BaseAbilities"
 
 -- TYPES
 type Signal<T...> = Signal.Signal<T...>
@@ -20,6 +22,13 @@ const _characterRemoving: Signal<Player, Model> = Signal.new()
 const function onCharacterAdded(player: Player, rig: Model)
     const humanoid = rig:FindFirstChildOfClass "Humanoid"
     if not humanoid then return end
+
+    const actor = rig:FindFirstChild "AbilityManagerActor"
+    if not actor then return end
+
+    for _, ability in BaseAbilities do
+        AvatarAbilities.addAbilityForCharacter(rig, ability)
+    end
 
     humanoid.Died:Once(function()
         _characterRemoving:Fire(player, rig)

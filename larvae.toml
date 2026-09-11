@@ -36,6 +36,7 @@ util = "@game/ReplicatedStorage/Util"
 lib = "@game/ReplicatedStorage/Lib"
 data = "@game/ReplicatedStorage/Data"
 templates = "@game/ReplicatedStorage/Templates"
+abilities = "@game/ReplicatedStorage/CustomAbilities"
 network = "@game/ReplicatedStorage/Network"
 
 [fmt]
