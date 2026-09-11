@@ -23,13 +23,13 @@ network:
 check: format-check lint analyze analyze-check
 
 blink:
-    blink dist/Network.blink -w
+    blink src/Network.blink -w -y
 
 process:
     larvae process -w
 
 sourcemap:
-    argon sourcemap default.project.json -o sourcemap.json -w
+    argon sourcemap .larvae/build.project.json -o sourcemap.json -w
 
 serve:
     argon serve .larvae/build.project.json

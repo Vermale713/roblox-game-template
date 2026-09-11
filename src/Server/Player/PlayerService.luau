@@ -17,8 +17,6 @@ type ReadonlySet<T> = TableTypes.ReadonlySet<T>
 const _playersInSession: Set<Player> = {}
 const _playerJoined: Signal<Player> = Signal.new()
 const _playerRemoving: Signal<Player> = Signal.new()
-const _sessionStarted: Signal<Player> = Signal.new()
-const _sessionEnded: Signal<Player> = Signal.new()
 
 -- PRIVATE FUNCTIONS
 const function startSessionForPlayer(player: Player)
@@ -38,14 +36,11 @@ const function startSessionForPlayer(player: Player)
     end
 
     _playersInSession[player] = true
-    _sessionStarted:Fire(player)
 
     return true
 end
 
 const function endSessionForPlayer(player: Player)
-    _sessionEnded:Fire(player)
-
     DataService.Unload(player)
 
     _playersInSession[player] = nil
@@ -72,9 +67,9 @@ const function onPlayerRemoving(player: Player)
         return
     end
 
-    endSessionForPlayer(player)
-
     _playerRemoving:Fire(player)
+
+    endSessionForPlayer(player)
 end
 
 -- PUBLIC MODULE
@@ -84,8 +79,6 @@ PlayerService.Dependencies = { "DataService" }
 
 PlayerService.PlayerJoined = _playerJoined
 PlayerService.PlayerRemoving = _playerRemoving
-PlayerService.SessionStarted = _sessionStarted
-PlayerService.SessionEnded = _sessionEnded
 
 function PlayerService.GetPlayers(): ReadonlySet<Player> return table.clone(_playersInSession) end
 

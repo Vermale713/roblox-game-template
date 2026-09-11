@@ -2,6 +2,15 @@
 version = 2
 
 [[package]]
+name = "darkgamerroblox/pancakes"
+version = "1.0.0"
+environment = "roblox"
+link = "Pancakes"
+index = "https://github.com/UpliftGames/wally-index"
+type = "zip"
+url = "https://api.wally.run/v1/package-contents/darkgamerroblox/pancakes/1.0.0"
+
+[[package]]
 name = "lm-loleris/profilestore"
 version = "1.0.3"
 environment = "server"

@@ -22,7 +22,7 @@ analyzer = true
 sourcemap_command = "argon"
 roblox_security_level = "plugin-security"
 fflags.enable_new_solver = true
-sourcemap_autogenerate = true
+sourcemap_autogenerate = false
 completion.imports.require_style = "nearest_absolute"
 
 [aliases]
@@ -35,9 +35,12 @@ types = "@game/ReplicatedStorage/Types"
 util = "@game/ReplicatedStorage/Util"
 lib = "@game/ReplicatedStorage/Lib"
 data = "@game/ReplicatedStorage/Data"
+templates = "@game/ReplicatedStorage/Templates"
 network = "@game/ReplicatedStorage/Network"
 
 [fmt]
+# Blink codegen output; regenerate with `just network` instead of formatting it.
+exclude = ["src/Shared/Network/**"]
 recommended = true
 column_width = 120
 indent_type = "spaces"
@@ -56,6 +59,8 @@ if_expression.style = "leading"
 function_style = "const"
 
 [lint]
+# Blink codegen output; not ours to fix.
+exclude = ["src/Shared/Network/**"]
 recommended = true
 std = "roblox"
 

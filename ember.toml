@@ -5,6 +5,7 @@
 Signal = { name = "molyidev/signal", version = "^", index = "pesde" }
 ProfileStore = { name = "lm-loleris/profilestore", version = "^", index = "wally" }
 Scythe = { name = "synttx/scythe", version = "^", index = "wally" }
+Pancakes = { name = "darkgamerroblox/pancakes", version = "^", index = "wally" }    # For the sync library
 
 [indices]
 wally = "https://github.com/UpliftGames/wally-index"

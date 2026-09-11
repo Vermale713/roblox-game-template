@@ -1,0 +1,14 @@
+option TypesOutput = "./Shared/Network/Types.luau"
+option ServerOutput = "./Shared/Network/Server.luau"
+option ClientOutput = "./Shared/Network/Client.luau"
+
+option Casing = Pascal
+
+scope Replication {
+    event SyncData {
+        From: Server,
+        Type: Reliable,
+        Call: SingleAsync,
+        Data: buffer
+    }
+}

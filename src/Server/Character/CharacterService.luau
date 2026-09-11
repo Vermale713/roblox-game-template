@@ -11,10 +11,6 @@ const PlayerService = require "@server/Player/PlayerService"
 type Signal<T...> = Signal.Signal<T...>
 type ScytheScope = Scythe.Scope
 
--- ALIASES
-
--- CONSTANTS
-
 -- PRIVATE STATE
 const _playerCleaners: { [Player]: ScytheScope } = {}
 const _characterAdded: Signal<Player, Model> = Signal.new()

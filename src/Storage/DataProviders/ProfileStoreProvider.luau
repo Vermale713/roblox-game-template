@@ -11,14 +11,21 @@ type Profile<T> = ProfileStore.Profile<T>
 
 -- PRIVATE FUNCTIONS
 const function loadProfile<T>(store: Store<T>, key: string, userId: number): (Profile<T>?, string?)
-    const profile = store:StartSessionAsync(key, {})
+    const ok, result = pcall(function(): Profile<T>?
+        const profile = store:StartSessionAsync(key, {})
 
-    if profile == nil then return nil, "Profile returned nil for player" end
+        if profile == nil then return nil end
 
-    profile:AddUserId(userId)
-    profile:Reconcile()
+        profile:AddUserId(userId)
+        profile:Reconcile()
 
-    return profile, nil
+        return profile
+    end)
+
+    if not ok then return nil, tostring(result) end
+    if result == nil then return nil, "Profile returned nil for player" end
+
+    return result, nil
 end
 
 const function unloadProfile<T>(profile: Profile<T>) profile:EndSession() end
@@ -41,7 +48,10 @@ function ProfileStoreProvider.CreateStore<T>(name: string, data: T): DataProvide
                 return
                     {
                         Get = function() return profile.Data end,
-                        Update = function(callback: (T) -> T) profile.Data = callback(profile.Data) end,
+                        Update = function(callback: (T) -> ()) callback(profile.Data) end,
+                        IsActive = function() return profile:IsActive() end,
+                        OnEnd = function(callback: () -> ()) profile.OnSessionEnd:Connect(callback) end,
+                        Save = function() profile:Save() end,
                         Unload = function() unloadProfile(profile :: Profile<T>) end,
                     },
                     nil
