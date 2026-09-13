@@ -6,6 +6,8 @@ input = "src"
 output = "dist"
 target = "roblox-string"
 
+rojo.project = "build.project.json"
+
 [requires]
 strict = true
 

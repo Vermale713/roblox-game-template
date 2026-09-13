@@ -1,0 +1,22 @@
+{
+    "source": [
+        "src"
+    ],
+    "casing": "PascalCase",
+    "aliases": {
+        "Controller": "ReplicatedStorage",
+        "Service": "ServerScriptService"
+    },
+    "unwrap": true,
+    "luau": {
+        "output": "default.project.json",
+        "build": "dist"
+    },
+    "project": {
+        "name": "roblox_game_template",
+        "emitLegacyScripts": false,
+        "tree": {
+            "$className": "DataModel"
+        }
+    }
+}

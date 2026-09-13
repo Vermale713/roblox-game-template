@@ -1,5 +1,5 @@
 [parallel]
-dev: blink process sourcemap serve
+dev: blink process rogen sourcemap serve
 
 format:
     larvae fmt
@@ -27,6 +27,9 @@ blink:
 
 process:
     larvae process -w
+
+rogen:
+    rogen watch
 
 sourcemap:
     argon sourcemap .larvae/build.project.json -o sourcemap.json -w

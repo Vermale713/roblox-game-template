@@ -1,31 +1,83 @@
 {
-    "name": "roblox_game_template",
-    "legacyScripts": false,
-    "tree": {
-        "$className": "DataModel",
-        "Players": {
-            "$className": "Players",
-            "$properties": {
-                "CharacterAutoLoads": false
-            }
-        },
-        "ReplicatedStorage": {
-            "$path": "src/Shared",
-            "Packages": {
-                "$path": "packages/roblox"
-            },
-            "Client": {
-                "$path": "src/Client"
-            }
-        },
-        "ServerScriptService": {
-            "$path": "src/Server"
-        },
-        "ServerStorage": {
-            "$path": "src/Storage",
-            "ServerPackages": {
-                "$path": "packages/server"
-            }
-        }
-    }
+	"emitLegacyScripts": false,
+	"name": "roblox_game_template",
+	"tree": {
+		"$className": "DataModel",
+		"Lighting": {},
+		"ReplicatedFirst": {},
+		"ReplicatedStorage": {
+			"Core": {
+				"$className": "Folder",
+				"$ignoreUnknownInstances": false
+			},
+			"CustomAbilities": {
+				"$className": "Folder",
+				"$ignoreUnknownInstances": false
+			},
+			"Data": {
+				"$className": "Folder",
+				"$ignoreUnknownInstances": false
+			},
+			"Lib": {
+				"$className": "Folder",
+				"$ignoreUnknownInstances": false
+			},
+			"Network": {
+				"$className": "Folder",
+				"$ignoreUnknownInstances": false
+			},
+			"Storage": {
+				"$className": "Folder",
+				"$ignoreUnknownInstances": false,
+				"Abilities": {
+					"$className": "Folder",
+					"$ignoreUnknownInstances": false
+				},
+				"DataProviders": {
+					"$className": "Folder",
+					"$ignoreUnknownInstances": false
+				}
+			},
+			"Templates": {
+				"$className": "Folder",
+				"$ignoreUnknownInstances": false
+			},
+			"Types": {
+				"$className": "Folder",
+				"$ignoreUnknownInstances": false
+			},
+			"Util": {
+				"$className": "Folder",
+				"$ignoreUnknownInstances": false
+			}
+		},
+		"RobloxPluginGuiService": {},
+		"ServerScriptService": {
+			"Core": {
+				"$className": "Folder",
+				"$ignoreUnknownInstances": false,
+				"Character": {
+					"$className": "Folder",
+					"$ignoreUnknownInstances": false
+				},
+				"Data": {
+					"$className": "Folder",
+					"$ignoreUnknownInstances": false
+				},
+				"Player": {
+					"$className": "Folder",
+					"$ignoreUnknownInstances": false
+				}
+			}
+		},
+		"ServerStorage": {},
+		"SoundService": {},
+		"StarterGui": {},
+		"StarterPack": {},
+		"StarterPlayer": {
+			"StarterCharacterScripts": {},
+			"StarterPlayerScripts": {}
+		},
+		"Workspace": {}
+	}
 }
