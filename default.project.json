@@ -27,6 +27,12 @@
 							}
 						}
 					}
+				},
+				"Features": {
+					"$ignoreUnknownInstances": false,
+					"$path": {
+						"optional": "src/Features"
+					}
 				}
 			},
 			"Packages": {
