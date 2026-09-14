@@ -1,20 +1,12 @@
 {
-    "lint": {
-        "*": "false"
-    },
-    "languageMode": "strict",
-    "aliases": {
-        "pkg": "./packages/roblox",
-        "spkg": "./packages/server",
-        "client": "./src/Client",
-        "server": "./src/Server",
-        "storage": "./src/Storage",
-        "types": "./src/Shared/Types",
-        "util": "./src/Shared/Util",
-        "lib": "./src/Shared/Lib",
-        "data": "./src/Shared/Data",
-        "templates": "./src/Shared/Templates/",
-        "abilities": "./src/Shared/CustomAbilities/",
-        "network": "./src/Shared/Network"
-    }
+  "lint": {
+    "*": false
+  },
+  "languageMode": "strict",
+  "aliases": {
+    "base": "./src/Base",
+    "platform": "./src/Platform",
+    "pkg": "./packages/roblox",
+    "spkg": "./packages/server"
+  }
 }

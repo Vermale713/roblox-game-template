@@ -3,20 +3,25 @@
         "src"
     ],
     "casing": "PascalCase",
+    "verbatim": true,
     "aliases": {
-        "Controller": "ReplicatedStorage",
+        "Controller": "StarterPlayerScripts",
         "Service": "ServerScriptService"
     },
-    "unwrap": true,
     "luau": {
         "output": "default.project.json",
-        "build": "dist"
+        "build": "src"
     },
     "project": {
         "name": "roblox_game_template",
         "emitLegacyScripts": false,
         "tree": {
-            "$className": "DataModel"
+            "$className": "DataModel",
+            "ReplicatedStorage": {
+                "Packages": {
+                    "$path": "packages/roblox"
+                }
+            }
         }
     }
 }

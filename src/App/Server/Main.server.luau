@@ -3,11 +3,11 @@
 const ServerScriptService = game:GetService "ServerScriptService"
 
 -- IMPORTED MODULES
-const Loader = require "@lib/Loader"
+const Loader = require "@platform/Loader"
 
 -- MAIN
 Loader.Start {
-    Root = ServerScriptService,
+    Root = ServerScriptService.Server,
     SingletonMatcher = { "Service$" },
     Lifecycles = {
         { Method = "OnInit" },

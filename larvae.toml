@@ -5,8 +5,7 @@
 input = "src"
 output = "dist"
 target = "roblox-string"
-
-rojo.project = "build.project.json"
+exclude = ["dist", "packages"]
 
 [requires]
 strict = true
@@ -14,6 +13,7 @@ strict = true
 [requires.mounts]
 "packages/roblox" = "@game/ReplicatedStorage/Packages"
 "packages/server" = "@game/ServerStorage/ServerPackages"
+"src/Platform" = "@game/ReplicatedStorage/Shared/Platform"
 
 [process]
 generator = "readable"
@@ -21,7 +21,6 @@ generator = "readable"
 [lsp]
 enabled = true
 analyzer = true
-sourcemap_command = "argon"
 roblox_security_level = "plugin-security"
 fflags.enable_new_solver = true
 sourcemap_autogenerate = false
@@ -30,16 +29,8 @@ completion.imports.require_style = "nearest_absolute"
 [aliases]
 pkg = "@game/ReplicatedStorage/Packages"
 spkg = "@game/ServerStorage/ServerPackages"
-client = "@game/ReplicatedStorage/Client"
-server = "@game/ServerScriptService"
-storage = "@game/ServerStorage"
-types = "@game/ReplicatedStorage/Types"
-util = "@game/ReplicatedStorage/Util"
-lib = "@game/ReplicatedStorage/Lib"
-data = "@game/ReplicatedStorage/Data"
-templates = "@game/ReplicatedStorage/Templates"
-abilities = "@game/ReplicatedStorage/CustomAbilities"
-network = "@game/ReplicatedStorage/Network"
+base = "@game/ReplicatedStorage/Shared/Base"
+platform = "@game/ReplicatedStorage/Shared/Platform"
 
 [fmt]
 # Blink codegen output; regenerate with `just network` instead of formatting it.

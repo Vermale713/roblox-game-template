@@ -1,37 +1,10 @@
-# API
-.env
-
-# Argon
-/sourcemap.json
-
-# Wally
-/Packages
-/ServerPackages
-/DevPackages
-
-# Blink
-src/Client/Network
-src/Server/Network
-src/Shared/Network
-
-# Blink
-*Blink*.luau
-*Blink*.luau
-
-# Artifacts
-/*.rbxl
-/*.rbxlx
-/*.rbxm
-/*.rbxmx
-
-# Claude Code
-.claude/settings.local.json
-
-# Misc
-.DS_Store
-out/
-packages/
-.lpm-patch/
+# tools
 .larvae/
+
+# build
 dist/
+sourcemap.json
+
+# local
+packages/
 .ember-patch/

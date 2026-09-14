@@ -3,17 +3,14 @@
 
 [dependencies]
 Signal = { name = "molyidev/signal", version = "^", index = "pesde" }
-ProfileStore = { name = "lm-loleris/profilestore", version = "^", index = "wally" }
-Scythe = { name = "synttx/scythe", version = "^", index = "wally" }
-Pancakes = { name = "darkgamerroblox/pancakes", version = "^", index = "wally" }    # For the sync library
+Pancakes = { name = "darkgamerroblox/pancakes", version = "^", index = "wally" } # For the sync library
+Scribe = { name = "ericplane/scribe", version = "^", index = "wally" }
 
 [indices]
 wally = "https://github.com/UpliftGames/wally-index"
 pesde = "https://github.com/pesde-pkg/index"
 
 [tools]
-argon = "argon-rbx/argon@2.0.29"
-luau-lsp = "johnnymorganz/luau-lsp@1.69.0"
-blink = "1axen/blink@0.18.8"
-rogen = "ldgerrits/rogen@1.4.4"
 rojo = "rojo-rbx/rojo@7.6.1"
+rogen = "ldgerrits/rogen@1.4.4"
+luau-lsp = "johnnymorganz/luau-lsp@1.69.0"

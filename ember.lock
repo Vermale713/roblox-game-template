@@ -11,13 +11,13 @@ type = "zip"
 url = "https://api.wally.run/v1/package-contents/darkgamerroblox/pancakes/1.0.0"
 
 [[package]]
-name = "lm-loleris/profilestore"
-version = "1.0.3"
-environment = "server"
-link = "ProfileStore"
+name = "ericplane/scribe"
+version = "2.3.0"
+environment = "roblox"
+link = "Scribe"
 index = "https://github.com/UpliftGames/wally-index"
 type = "zip"
-url = "https://api.wally.run/v1/package-contents/lm-loleris/profilestore/1.0.3"
+url = "https://api.wally.run/v1/package-contents/ericplane/scribe/2.3.0"
 
 [[package]]
 name = "molyidev/signal"
@@ -27,12 +27,3 @@ link = "Signal"
 index = "https://github.com/pesde-pkg/index"
 type = "tar-gz"
 url = "https://registry.pesde.daimond113.com/v1/packages/molyidev%2Fsignal/1.0.3/roblox/archive"
-
-[[package]]
-name = "synttx/scythe"
-version = "1.2.2"
-environment = "roblox"
-link = "Scythe"
-index = "https://github.com/UpliftGames/wally-index"
-type = "zip"
-url = "https://api.wally.run/v1/package-contents/synttx/scythe/1.2.2"

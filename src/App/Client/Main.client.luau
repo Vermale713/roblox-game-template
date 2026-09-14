@@ -3,7 +3,7 @@
 const ReplicatedStorage = game:GetService "ReplicatedStorage"
 
 -- IMPORTED MODULES
-const Loader = require "@lib/Loader"
+const Loader = require "@platform/Loader"
 
 -- MAIN
 Loader.Start {
