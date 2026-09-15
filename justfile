@@ -1,6 +1,11 @@
 [parallel]
 dev: rogen process sourcemap serve
 
+check:
+    larvae check
+    larvae fmt --check
+    larvae lint
+
 process:
     larvae process -w
 

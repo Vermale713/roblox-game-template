@@ -1,7 +1,6 @@
 --!strict
 -- SERVICES
 const AssetService = game:GetService "AssetService"
-const LogService = game:GetService "LogService"
 const MaterialService = game:GetService "MaterialService"
 
 -- TYPES
@@ -57,6 +56,10 @@ type Patch = {
     NormalX: { number },
     NormalY: { number },
     NormalZ: { number },
+    -- Reused every pose to hand values to the EditableMesh batch setters, indexed like VertexIds/NormalIds/UvIds.
+    Positions: { Vector3 },
+    Normals: { Vector3 },
+    Uvs: { Vector2 },
     -- TextureScale the UVs were last written with; they are rewritten when it changes or the texture flows.
     UvScale: number,
 }
@@ -93,8 +96,6 @@ type State = {
     ShiftZ: number,
     Connection: RBXScriptConnection?,
 }
-
--- ALIASES
 
 -- CONSTANTS
 -- Required attributes; the part fails to load without them.
@@ -170,12 +171,9 @@ end
 const function requiredNumberAttribute(part: MeshPart, name: string): number
     const value = part:GetAttribute(name)
     if typeof(value) ~= "number" then
-        LogService:Error(
-            "[Water] Required number attribute '{attribute}' is missing from '{part}'.",
-            { attribute = name, part = part:GetFullName() }
-        )
+        error(`[Water] Required number attribute '{name}' is missing from '{part:GetFullName()}'.`, 0)
     end
-    return value :: number
+    return value
 end
 
 const function findMaterialVariant(name: string): MaterialVariant?
@@ -232,7 +230,10 @@ const function readConfig(part: MeshPart): Config
     const flowSpeed = numberAttribute(part, FLOW_SPEED_ATTRIBUTE, DEFAULT_FLOW_SPEED)
     -- Flows with the waves unless told otherwise.
     const flowDirection = math.rad(numberAttribute(part, FLOW_DIRECTION_ATTRIBUTE, waveDegrees))
-    const textureScale = math.max(numberAttribute(part, TEXTURE_SCALE_ATTRIBUTE, DEFAULT_TEXTURE_SCALE), MIN_TEXTURE_SCALE)
+    const textureScale = math.max(
+        numberAttribute(part, TEXTURE_SCALE_ATTRIBUTE, DEFAULT_TEXTURE_SCALE),
+        MIN_TEXTURE_SCALE
+    )
 
     -- Seeded so every client (and every part sharing a seed) generates the same waves.
     const random = Random.new(numberAttribute(part, WAVE_SEED_ATTRIBUTE, DEFAULT_WAVE_SEED))
@@ -408,13 +409,14 @@ const function clearPatch(patch: Patch)
     table.clear(patch.NormalX)
     table.clear(patch.NormalY)
     table.clear(patch.NormalZ)
+    table.clear(patch.Positions)
+    table.clear(patch.Normals)
+    table.clear(patch.Uvs)
 end
 
 -- Replaces the patch's triangles in the mesh with a grid at `level`. Old vertices are left for RemoveUnused.
 const function buildPatch(state: State, mesh: EditableMesh, patch: Patch, level: number)
-    for _, faceId in patch.FaceIds do
-        mesh:RemoveFace(faceId)
-    end
+    if #patch.FaceIds > 0 then mesh:BatchRemove(patch.FaceIds) end
     state.Triangles -= #patch.FaceIds
     clearPatch(patch)
 
@@ -424,9 +426,10 @@ const function buildPatch(state: State, mesh: EditableMesh, patch: Patch, level:
     const stepZ = patch.SizeZ / cellsZ
     const rowWidth = cellsX + 1
 
-    const vertexIds = patch.VertexIds
-    const normalIds = patch.NormalIds
-    const uvIds = patch.UvIds
+    -- Placeholders; the next pose writes the real positions, normals and UVs.
+    const positions = patch.Positions
+    const normals = patch.Normals
+    const uvs = patch.Uvs
 
     for iz = 0, cellsZ do
         for ix = 0, cellsX do
@@ -434,10 +437,9 @@ const function buildPatch(state: State, mesh: EditableMesh, patch: Patch, level:
             const localZ = patch.CenterZ - patch.SizeZ / 2 + iz * stepZ
             const world = state.Origin:PointToWorldSpace(Vector3.new(localX, 0, localZ))
 
-            table.insert(vertexIds, mesh:AddVertex(Vector3.new(localX, 0, localZ)))
-            -- Placeholders; the next pose writes the real normals and UVs.
-            table.insert(normalIds, mesh:AddNormal(Vector3.yAxis))
-            table.insert(uvIds, mesh:AddUV(Vector2.zero))
+            table.insert(positions, Vector3.new(localX, 0, localZ))
+            table.insert(normals, Vector3.yAxis)
+            table.insert(uvs, Vector2.zero)
             table.insert(patch.LocalX, localX)
             table.insert(patch.LocalZ, localZ)
             table.insert(patch.WorldX, world.X)
@@ -449,6 +451,18 @@ const function buildPatch(state: State, mesh: EditableMesh, patch: Patch, level:
         end
     end
 
+    const vertexIds = mesh:BatchAdd(Enum.MeshAttribute.Vertex, positions) :: { number }
+    const normalIds = mesh:BatchAdd(Enum.MeshAttribute.Normal, normals) :: { number }
+    const uvIds = mesh:BatchAdd(Enum.MeshAttribute.UV, uvs) :: { number }
+    patch.VertexIds = vertexIds
+    patch.NormalIds = normalIds
+    patch.UvIds = uvIds
+
+    -- Corner lists for every triangle, in the same order across the three arrays.
+    const faceVertices: { { number } } = {}
+    const faceNormals: { { number } } = {}
+    const faceUvs: { { number } } = {}
+
     for iz = 0, cellsZ - 1 do
         for ix = 0, cellsX - 1 do
             const a = iz * rowWidth + ix + 1
@@ -457,17 +471,20 @@ const function buildPatch(state: State, mesh: EditableMesh, patch: Patch, level:
             const d = b + 1
 
             -- Wound so both triangles face +Y.
-            const first = mesh:AddTriangle(vertexIds[a], vertexIds[b], vertexIds[c])
-            mesh:SetFaceNormals(first, { normalIds[a], normalIds[b], normalIds[c] })
-            mesh:SetFaceUVs(first, { uvIds[a], uvIds[b], uvIds[c] })
-            table.insert(patch.FaceIds, first)
+            table.insert(faceVertices, { vertexIds[a], vertexIds[b], vertexIds[c] })
+            table.insert(faceNormals, { normalIds[a], normalIds[b], normalIds[c] })
+            table.insert(faceUvs, { uvIds[a], uvIds[b], uvIds[c] })
 
-            const second = mesh:AddTriangle(vertexIds[c], vertexIds[b], vertexIds[d])
-            mesh:SetFaceNormals(second, { normalIds[c], normalIds[b], normalIds[d] })
-            mesh:SetFaceUVs(second, { uvIds[c], uvIds[b], uvIds[d] })
-            table.insert(patch.FaceIds, second)
+            table.insert(faceVertices, { vertexIds[c], vertexIds[b], vertexIds[d] })
+            table.insert(faceNormals, { normalIds[c], normalIds[b], normalIds[d] })
+            table.insert(faceUvs, { uvIds[c], uvIds[b], uvIds[d] })
         end
     end
+
+    const faceIds = mesh:BatchAdd(Enum.MeshAttribute.Face, faceVertices) :: { number }
+    mesh:BatchSetFaceAttributes(faceIds, faceNormals)
+    mesh:BatchSetFaceAttributes(faceIds, faceUvs)
+    patch.FaceIds = faceIds
 
     patch.Level = level
     patch.CellsX = cellsX
@@ -637,17 +654,22 @@ const function pose(state: State, mesh: EditableMesh, now: number)
 
         const localX = patch.LocalX
         const localZ = patch.LocalZ
-        const normalIds = patch.NormalIds
+        const positions = patch.Positions
+        const normals = patch.Normals
 
-        for index, vertexId in patch.VertexIds do
-            mesh:SetPosition(vertexId, Vector3.new(localX[index] + shiftX, heights[index], localZ[index] + shiftZ))
-            mesh:SetNormal(normalIds[index], Vector3.new(normalX[index], normalY[index], normalZ[index]))
+        for index = 1, #heights do
+            positions[index] = Vector3.new(localX[index] + shiftX, heights[index], localZ[index] + shiftZ)
+            normals[index] = Vector3.new(normalX[index], normalY[index], normalZ[index])
         end
+        mesh:BatchSetValues(patch.VertexIds, positions)
+        mesh:BatchSetValues(patch.NormalIds, normals)
 
         if flowing or patch.UvScale ~= scale then
-            for index, uvId in patch.UvIds do
-                mesh:SetUV(uvId, Vector2.new((worldX[index] - offsetU) / scale, (worldZ[index] - offsetV) / scale))
+            const uvs = patch.Uvs
+            for index = 1, #worldX do
+                uvs[index] = Vector2.new((worldX[index] - offsetU) / scale, (worldZ[index] - offsetV) / scale)
             end
+            mesh:BatchSetValues(patch.UvIds, uvs)
             patch.UvScale = scale
         end
     end
@@ -785,6 +807,9 @@ const function layout(state: State, focus: Vector3)
                 NormalX = {},
                 NormalY = {},
                 NormalZ = {},
+                Positions = {},
+                Normals = {},
+                Uvs = {},
                 UvScale = 0,
             }
 
@@ -848,8 +873,6 @@ const function adopt(state: State, part: MeshPart, config: Config)
 
     applySource(part, state.Source :: MeshPart)
 end
-
--- PRIVATE MODULE
 
 -- PUBLIC MODULE
 const Water = {}
@@ -957,12 +980,15 @@ function Water.Release(part: MeshPart)
     state.ReleasedAt = releasedAt
     _cache[key] = state
 
-    task.delay(CACHE_LIFETIME, function()
-        if _cache[key] ~= state or state.ReleasedAt ~= releasedAt then return end
+    task.delay(
+        CACHE_LIFETIME,
+        function()
+            if _cache[key] ~= state or state.ReleasedAt ~= releasedAt then return end
 
-        _cache[key] = nil
-        reset(state)
-    end)
+            _cache[key] = nil
+            reset(state)
+        end
+    )
 end
 
 -- Frees the part's mesh right away, without caching it.
