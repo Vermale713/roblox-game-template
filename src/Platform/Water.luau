@@ -1,19 +1,10 @@
 --!strict
 -- SERVICES
 const AssetService = game:GetService "AssetService"
+const LogService = game:GetService "LogService"
 const MaterialService = game:GetService "MaterialService"
 
 -- TYPES
-export type Water = {
-    Part: BasePart,
-    StreamIn: (self: Water, focus: Vector3) -> (),
-    StreamOut: (self: Water) -> (),
-    Update: (self: Water, now: number, focus: Vector3) -> (),
-    GetHeightAt: (self: Water, position: Vector3, now: number) -> number,
-    IsRendered: (self: Water) -> boolean,
-    Destroy: (self: Water) -> (),
-}
-
 type Wave = {
     Length: number,
     DirX: number,
@@ -28,12 +19,6 @@ type Config = {
     WaveHeight: number,
     CellSize: number,
     LodDistance: number,
-    Color: Color3,
-    Transparency: number,
-    Reflectance: number,
-    Material: Enum.Material,
-    MaterialVariant: string,
-    Texture: string,
     TextureScale: number,
     MaterialTile: number,
     FlowX: number,
@@ -44,7 +29,7 @@ type Config = {
     Waves: { Wave },
 }
 
--- A region of the area's single mesh with its own level of detail. When the level changes its triangles are
+-- A region of the part's single mesh with its own level of detail. When the level changes its triangles are
 -- swapped in place inside the shared EditableMesh.
 type Patch = {
     GridX: number,
@@ -63,7 +48,7 @@ type Patch = {
     VertexIds: { number },
     NormalIds: { number },
     UvIds: { number },
-    -- Surface space, relative to the area centre.
+    -- Surface space, relative to the part centre.
     LocalX: { number },
     LocalZ: { number },
     WorldX: { number },
@@ -76,37 +61,65 @@ type Patch = {
     UvScale: number,
 }
 
-type WaterInternal = {
-    Part: BasePart,
-    _config: Config,
-    _state: "Out" | "In",
-    -- Bumped on every StreamIn/StreamOut so a build that yielded can tell it is stale.
-    _token: number,
-    _building: boolean,
-    _retryAt: number,
-    _origin: CFrame,
-    -- Last camera position given to StreamIn/Update; drives LOD and how much small-wave detail is drawn.
-    _focus: Vector3,
-    _mesh: EditableMesh?,
-    _surface: MeshPart?,
-    _patches: { Patch },
-    _byDistance: { Patch },
-    _patchesX: number,
-    _patchesZ: number,
-    _baseCellsX: number,
-    _baseCellsZ: number,
-    _maxLevel: number,
-    _triangles: number,
-    -- How far the MeshPart currently sits from the area centre (surface space) to slide part-mapped materials.
-    _shiftX: number,
-    _shiftZ: number,
-    _attributeConnection: RBXScriptConnection?,
-    _destroyed: boolean,
+type State = {
+    Part: MeshPart,
+    Config: Config,
+    -- Identifies the part across streaming, where it comes back as a new instance.
+    Key: string,
+    -- When the state was last released into the cache, so an old expiry timer can tell it is stale.
+    ReleasedAt: number,
+    -- Bumped on every rebuild and on Destroy so a build that yielded can tell it is stale.
+    Token: number,
+    Building: boolean,
+    RetryAt: number,
+    -- The part's CFrame when it was added. The part itself is slid around to flow materials, so this is the
+    -- reference for everything else.
+    Origin: CFrame,
+    -- Last camera position; drives LOD and how much small-wave detail is drawn.
+    Focus: Vector3,
+    Mesh: EditableMesh?,
+    -- The MeshPart built from Mesh, kept so a part that streams back in can have it applied without rebuilding.
+    Source: MeshPart?,
+    Patches: { Patch },
+    ByDistance: { Patch },
+    PatchesX: number,
+    PatchesZ: number,
+    BaseCellsX: number,
+    BaseCellsZ: number,
+    MaxLevel: number,
+    Triangles: number,
+    -- How far the part currently sits from Origin (surface space) to slide part-mapped materials.
+    ShiftX: number,
+    ShiftZ: number,
+    Connection: RBXScriptConnection?,
 }
 
 -- ALIASES
 
 -- CONSTANTS
+-- Required attributes; the part fails to load without them.
+const CELL_SIZE_ATTRIBUTE = "CellSize"
+const WAVE_HEIGHT_ATTRIBUTE = "WaveHeight"
+const WAVE_LENGTH_ATTRIBUTE = "WaveLength"
+const WAVE_SPEED_ATTRIBUTE = "WaveSpeed"
+const WAVE_DIRECTION_ATTRIBUTE = "WaveDirection"
+
+-- Optional attributes.
+const FLOW_SPEED_ATTRIBUTE = "FlowSpeed"
+const FLOW_DIRECTION_ATTRIBUTE = "FlowDirection"
+const TEXTURE_SCALE_ATTRIBUTE = "TextureScale"
+const WAVE_SEED_ATTRIBUTE = "WaveSeed"
+const WAVE_VARIATION_ATTRIBUTE = "WaveVariation"
+const LOD_DISTANCE_ATTRIBUTE = "LodDistance"
+
+-- Optional appearance attributes; any that aren't set leave the part's own property as authored.
+const WATER_COLOR_ATTRIBUTE = "WaterColor"
+const WATER_TRANSPARENCY_ATTRIBUTE = "WaterTransparency"
+const WATER_REFLECTANCE_ATTRIBUTE = "WaterReflectance"
+const WATER_MATERIAL_ATTRIBUTE = "WaterMaterial"
+const WATER_MATERIAL_VARIANT_ATTRIBUTE = "WaterMaterialVariant"
+const WATER_TEXTURE_ATTRIBUTE = "WaterTexture"
+
 const WAVE_COUNT = 8
 -- The shortest wave, as a fraction of WaveLength.
 const WAVE_SHORTEST = 0.15
@@ -123,16 +136,7 @@ const NOISE_PERIOD = 256
 const FADE_MIN_SAMPLES = 2.5
 const FADE_FULL_SAMPLES = 5
 
-const DEFAULT_WAVE_HEIGHT = 0.6
-const DEFAULT_WAVE_LENGTH = 40
-const DEFAULT_WAVE_SPEED = 6
-const DEFAULT_WAVE_DIRECTION = 0
-const DEFAULT_CELL_SIZE = 4
 const DEFAULT_LOD_DISTANCE = 100
-const DEFAULT_COLOR = Color3.fromRGB(40, 110, 150)
-const DEFAULT_TRANSPARENCY = 0.35
-const DEFAULT_REFLECTANCE = 0.15
-const DEFAULT_MATERIAL = Enum.Material.Glass
 const DEFAULT_TEXTURE_SCALE = 16
 const DEFAULT_FLOW_SPEED = 0
 const DEFAULT_WAVE_SEED = 0
@@ -149,10 +153,13 @@ const MAX_TRIANGLES = 20000
 -- Patch rebuilds are synchronous, so spread them over frames.
 const MAX_REBUILDS_PER_FRAME = 2
 const BUILD_RETRY_DELAY = 5
--- A perfectly flat mesh has a zero-height bounding box, so the initial geometry is pinned to at least this.
-const MIN_BOUNDS_HEIGHT = 0.05
+-- Seconds a released part's mesh is kept for the part to stream back in before it's freed.
+const CACHE_LIFETIME = 30
 
 -- PRIVATE STATE
+const _states: { [MeshPart]: State } = {}
+-- Released states by Key, waiting for their part to stream back in.
+const _cache: { [string]: State } = {}
 
 -- PRIVATE FUNCTIONS
 const function numberAttribute(instance: Instance, name: string, default: number): number
@@ -160,52 +167,75 @@ const function numberAttribute(instance: Instance, name: string, default: number
     return if typeof(value) == "number" then value else default
 end
 
-const function colorAttribute(instance: Instance, name: string, default: Color3): Color3
-    const value = instance:GetAttribute(name)
-    return if typeof(value) == "Color3" then value else default
+const function requiredNumberAttribute(part: MeshPart, name: string): number
+    const value = part:GetAttribute(name)
+    if typeof(value) ~= "number" then
+        LogService:Error(
+            "[Water] Required number attribute '{attribute}' is missing from '{part}'.",
+            { attribute = name, part = part:GetFullName() }
+        )
+    end
+    return value :: number
 end
 
-const function materialAttribute(instance: Instance, name: string, default: Enum.Material): Enum.Material
-    const value = instance:GetAttribute(name)
-    if typeof(value) ~= "string" then return default end
-
-    const ok, material = pcall(function() return (Enum.Material :: any)[value] end)
-    return if ok and typeof(material) == "EnumItem" then material :: any else default
-end
-
--- Accepts a bare asset id (number or digits) or a full content URI.
-const function textureAttribute(instance: Instance, name: string): string
-    const value = instance:GetAttribute(name)
-    if typeof(value) == "number" then return `rbxassetid://{value}` end
-    if typeof(value) ~= "string" then return "" end
-    return if value:match "^%d+$" then `rbxassetid://{value}` else value
-end
-
--- A variant only shows when the part's Material matches its BaseMaterial, so that is taken from the variant.
-const function findMaterialVariant(part: BasePart): MaterialVariant?
-    const name = part:GetAttribute "WaterMaterialVariant"
-    if typeof(name) ~= "string" or name == "" then return nil end
+const function findMaterialVariant(name: string): MaterialVariant?
+    if name == "" then return nil end
 
     const variant = MaterialService:FindFirstChild(name, true)
-    if variant and variant:IsA "MaterialVariant" then return variant end
-
-    warn(`[Water] MaterialVariant '{name}' for {part:GetFullName()} was not found under MaterialService`)
-    return nil
+    return if variant and variant:IsA "MaterialVariant" then variant else nil
 end
 
-const function readConfig(part: BasePart): Config
-    const waveHeight = math.max(numberAttribute(part, "WaveHeight", DEFAULT_WAVE_HEIGHT), 0)
-    const waveLength = math.max(numberAttribute(part, "WaveLength", DEFAULT_WAVE_LENGTH), 1)
-    const waveSpeed = numberAttribute(part, "WaveSpeed", DEFAULT_WAVE_SPEED)
-    const waveDegrees = numberAttribute(part, "WaveDirection", DEFAULT_WAVE_DIRECTION)
-    const waveDirection = math.rad(waveDegrees)
-    const flowSpeed = numberAttribute(part, "FlowSpeed", DEFAULT_FLOW_SPEED)
-    -- Flows with the waves unless told otherwise.
-    const flowDirection = math.rad(numberAttribute(part, "FlowDirection", waveDegrees))
-    const textureScale = math.max(numberAttribute(part, "TextureScale", DEFAULT_TEXTURE_SCALE), MIN_TEXTURE_SCALE)
+-- Water appearance attributes override the part's own properties; any that aren't set leave the part as authored.
+const function applyAppearance(part: MeshPart)
+    const color = part:GetAttribute(WATER_COLOR_ATTRIBUTE)
+    if typeof(color) == "Color3" then part.Color = color end
 
-    -- Seeded so every client (and every area sharing a seed) generates the same waves.
-    const random = Random.new(numberAttribute(part, "WaveSeed", DEFAULT_WAVE_SEED))
+    const transparency = part:GetAttribute(WATER_TRANSPARENCY_ATTRIBUTE)
+    if typeof(transparency) == "number" then part.Transparency = transparency end
+
+    const reflectance = part:GetAttribute(WATER_REFLECTANCE_ATTRIBUTE)
+    if typeof(reflectance) == "number" then part.Reflectance = reflectance end
+
+    const material = part:GetAttribute(WATER_MATERIAL_ATTRIBUTE)
+    if typeof(material) == "string" then
+        const ok, item = pcall(function() return (Enum.Material :: any)[material] end)
+        if ok and typeof(item) == "EnumItem" then part.Material = item :: any end
+    end
+
+    -- A variant only shows when the part's Material matches its BaseMaterial, so that is taken from the variant.
+    const variantName = part:GetAttribute(WATER_MATERIAL_VARIANT_ATTRIBUTE)
+    if typeof(variantName) == "string" then
+        const variant = findMaterialVariant(variantName)
+        if variant then
+            part.Material = variant.BaseMaterial
+            part.MaterialVariant = variant.Name
+        elseif variantName ~= "" then
+            warn(`[Water] MaterialVariant '{variantName}' for {part:GetFullName()} was not found under MaterialService`)
+        end
+    end
+
+    -- Accepts a bare asset id (number or digits) or a full content URI.
+    const texture = part:GetAttribute(WATER_TEXTURE_ATTRIBUTE)
+    if typeof(texture) == "number" then
+        part.TextureContent = Content.fromUri(`rbxassetid://{texture}`)
+    elseif typeof(texture) == "string" and texture ~= "" then
+        part.TextureContent = Content.fromUri(if texture:match "^%d+$" then `rbxassetid://{texture}` else texture)
+    end
+end
+
+const function readConfig(part: MeshPart): Config
+    const waveHeight = math.max(requiredNumberAttribute(part, WAVE_HEIGHT_ATTRIBUTE), 0)
+    const waveLength = math.max(requiredNumberAttribute(part, WAVE_LENGTH_ATTRIBUTE), 1)
+    const waveSpeed = requiredNumberAttribute(part, WAVE_SPEED_ATTRIBUTE)
+    const waveDegrees = requiredNumberAttribute(part, WAVE_DIRECTION_ATTRIBUTE)
+    const waveDirection = math.rad(waveDegrees)
+    const flowSpeed = numberAttribute(part, FLOW_SPEED_ATTRIBUTE, DEFAULT_FLOW_SPEED)
+    -- Flows with the waves unless told otherwise.
+    const flowDirection = math.rad(numberAttribute(part, FLOW_DIRECTION_ATTRIBUTE, waveDegrees))
+    const textureScale = math.max(numberAttribute(part, TEXTURE_SCALE_ATTRIBUTE, DEFAULT_TEXTURE_SCALE), MIN_TEXTURE_SCALE)
+
+    -- Seeded so every client (and every part sharing a seed) generates the same waves.
+    const random = Random.new(numberAttribute(part, WAVE_SEED_ATTRIBUTE, DEFAULT_WAVE_SEED))
     const waves: { Wave } = {}
     local amplitudeTotal = 0
 
@@ -240,24 +270,18 @@ const function readConfig(part: BasePart): Config
     end
     table.sort(waves, function(a: Wave, b: Wave) return a.Length > b.Length end)
 
-    const variant = findMaterialVariant(part)
+    const variant = findMaterialVariant(part.MaterialVariant)
 
     return {
         WaveHeight = waveHeight,
-        CellSize = math.max(numberAttribute(part, "CellSize", DEFAULT_CELL_SIZE), MIN_CELL_SIZE),
-        LodDistance = math.max(numberAttribute(part, "LodDistance", DEFAULT_LOD_DISTANCE), 1),
-        Color = colorAttribute(part, "WaterColor", DEFAULT_COLOR),
-        Transparency = numberAttribute(part, "WaterTransparency", DEFAULT_TRANSPARENCY),
-        Reflectance = numberAttribute(part, "WaterReflectance", DEFAULT_REFLECTANCE),
-        Material = if variant then variant.BaseMaterial else materialAttribute(part, "WaterMaterial", DEFAULT_MATERIAL),
-        MaterialVariant = if variant then variant.Name else "",
-        Texture = textureAttribute(part, "WaterTexture"),
+        CellSize = math.max(requiredNumberAttribute(part, CELL_SIZE_ATTRIBUTE), MIN_CELL_SIZE),
+        LodDistance = math.max(numberAttribute(part, LOD_DISTANCE_ATTRIBUTE, DEFAULT_LOD_DISTANCE), 1),
         TextureScale = textureScale,
         -- Built-in materials don't expose their tile size, so TextureScale stands in for it.
         MaterialTile = if variant then math.max(variant.StudsPerTile, MIN_TEXTURE_SCALE) else textureScale,
         FlowX = math.cos(flowDirection) * flowSpeed,
         FlowZ = math.sin(flowDirection) * flowSpeed,
-        Variation = math.clamp(numberAttribute(part, "WaveVariation", DEFAULT_WAVE_VARIATION), 0, 1),
+        Variation = math.clamp(numberAttribute(part, WAVE_VARIATION_ATTRIBUTE, DEFAULT_WAVE_VARIATION), 0, 1),
         VariationScale = waveLength * VARIATION_SCALE,
         Waves = waves,
     }
@@ -299,23 +323,17 @@ const function sampleSurface(config: Config, x: number, z: number, now: number, 
     return height, slopeX, slopeZ
 end
 
-const function surfaceCFrame(part: BasePart): CFrame return part.CFrame * CFrame.new(0, part.Size.Y / 2, 0) end
-
-const function applyAppearance(surface: MeshPart, config: Config)
-    surface.Color = config.Color
-    surface.Transparency = config.Transparency
-    surface.Reflectance = config.Reflectance
-    surface.Material = config.Material
-    surface.MaterialVariant = config.MaterialVariant
-    surface.TextureContent = if config.Texture ~= "" then Content.fromUri(config.Texture) else Content.none
+const function getFocus(part: MeshPart): Vector3
+    const camera = workspace.CurrentCamera
+    return if camera then camera.CFrame.Position else part.Position
 end
 
 const function log2(value: number): number return math.floor(math.log(value, 2) + 0.5) end
 
 const function cellsForLevel(baseCells: number, level: number): number return math.max(baseCells // 2 ^ level, 1) end
 
-const function trianglesForLevel(self: WaterInternal, level: number): number
-    return 2 * cellsForLevel(self._baseCellsX, level) * cellsForLevel(self._baseCellsZ, level)
+const function trianglesForLevel(state: State, level: number): number
+    return 2 * cellsForLevel(state.BaseCellsX, level) * cellsForLevel(state.BaseCellsZ, level)
 end
 
 -- Level 0 inside LodDistance, then one level coarser each time the distance doubles.
@@ -332,10 +350,10 @@ const function patchDistance(patch: Patch, localFocus: Vector3): number
     return math.sqrt(dx * dx + dy * dy + dz * dz)
 end
 
-const function neighborCells(self: WaterInternal, gridX: number, gridZ: number, alongX: boolean): number?
-    if gridX < 0 or gridX >= self._patchesX or gridZ < 0 or gridZ >= self._patchesZ then return nil end
+const function neighborCells(state: State, gridX: number, gridZ: number, alongX: boolean): number?
+    if gridX < 0 or gridX >= state.PatchesX or gridZ < 0 or gridZ >= state.PatchesZ then return nil end
 
-    const patch = self._patches[gridZ * self._patchesX + gridX + 1]
+    const patch = state.Patches[gridZ * state.PatchesX + gridX + 1]
     if patch.Level < 0 then return nil end
 
     return if alongX then patch.CellsX else patch.CellsZ
@@ -393,15 +411,15 @@ const function clearPatch(patch: Patch)
 end
 
 -- Replaces the patch's triangles in the mesh with a grid at `level`. Old vertices are left for RemoveUnused.
-const function buildPatch(self: WaterInternal, mesh: EditableMesh, patch: Patch, level: number)
+const function buildPatch(state: State, mesh: EditableMesh, patch: Patch, level: number)
     for _, faceId in patch.FaceIds do
         mesh:RemoveFace(faceId)
     end
-    self._triangles -= #patch.FaceIds
+    state.Triangles -= #patch.FaceIds
     clearPatch(patch)
 
-    const cellsX = cellsForLevel(self._baseCellsX, level)
-    const cellsZ = cellsForLevel(self._baseCellsZ, level)
+    const cellsX = cellsForLevel(state.BaseCellsX, level)
+    const cellsZ = cellsForLevel(state.BaseCellsZ, level)
     const stepX = patch.SizeX / cellsX
     const stepZ = patch.SizeZ / cellsZ
     const rowWidth = cellsX + 1
@@ -414,7 +432,7 @@ const function buildPatch(self: WaterInternal, mesh: EditableMesh, patch: Patch,
         for ix = 0, cellsX do
             const localX = patch.CenterX - patch.SizeX / 2 + ix * stepX
             const localZ = patch.CenterZ - patch.SizeZ / 2 + iz * stepZ
-            const world = self._origin:PointToWorldSpace(Vector3.new(localX, 0, localZ))
+            const world = state.Origin:PointToWorldSpace(Vector3.new(localX, 0, localZ))
 
             table.insert(vertexIds, mesh:AddVertex(Vector3.new(localX, 0, localZ)))
             -- Placeholders; the next pose writes the real normals and UVs.
@@ -455,17 +473,17 @@ const function buildPatch(self: WaterInternal, mesh: EditableMesh, patch: Patch,
     patch.CellsX = cellsX
     patch.CellsZ = cellsZ
     patch.UvScale = 0
-    self._triangles += #patch.FaceIds
+    state.Triangles += #patch.FaceIds
 end
 
-const function refreshLevels(self: WaterInternal, focus: Vector3)
-    self._focus = focus
-    const localFocus = self._origin:PointToObjectSpace(focus)
-    const lodDistance = self._config.LodDistance
-    const maxLevel = self._maxLevel
+const function refreshLevels(state: State, focus: Vector3)
+    state.Focus = focus
+    const localFocus = state.Origin:PointToObjectSpace(focus)
+    const lodDistance = state.Config.LodDistance
+    const maxLevel = state.MaxLevel
     local triangles = 0
 
-    for _, patch in self._patches do
+    for _, patch in state.Patches do
         const distance = patchDistance(patch, localFocus)
         local want = levelForDistance(distance, lodDistance, maxLevel)
 
@@ -482,13 +500,13 @@ const function refreshLevels(self: WaterInternal, focus: Vector3)
 
         patch.Distance = distance
         patch.Want = want
-        triangles += trianglesForLevel(self, want)
+        triangles += trianglesForLevel(state, want)
     end
 
     if triangles <= MAX_TRIANGLES then return end
 
     -- Over budget: coarsen one level at a time, farthest patches first, until it fits.
-    const byDistance = self._byDistance
+    const byDistance = state.ByDistance
     table.sort(byDistance, function(a: Patch, b: Patch) return a.Distance > b.Distance end)
 
     local coarsened = true
@@ -498,7 +516,7 @@ const function refreshLevels(self: WaterInternal, focus: Vector3)
         for _, patch in byDistance do
             if patch.Want >= maxLevel then continue end
 
-            triangles += trianglesForLevel(self, patch.Want + 1) - trianglesForLevel(self, patch.Want)
+            triangles += trianglesForLevel(state, patch.Want + 1) - trianglesForLevel(state, patch.Want)
             patch.Want += 1
             coarsened = true
 
@@ -507,55 +525,56 @@ const function refreshLevels(self: WaterInternal, focus: Vector3)
     end
 end
 
-const function rebuildPatches(self: WaterInternal, mesh: EditableMesh)
+const function rebuildPatches(state: State, mesh: EditableMesh)
     local remaining = MAX_REBUILDS_PER_FRAME
 
     -- Coarsen first so the triangles they free are available to the refinements.
-    for _, patch in self._patches do
+    for _, patch in state.Patches do
         if remaining == 0 then break end
         if patch.Want <= patch.Level then continue end
 
-        buildPatch(self, mesh, patch, patch.Want)
+        buildPatch(state, mesh, patch, patch.Want)
         remaining -= 1
     end
 
     while remaining > 0 do
         local nearest: Patch? = nil
 
-        for _, patch in self._patches do
+        for _, patch in state.Patches do
             if patch.Want >= patch.Level then continue end
             if nearest and patch.Distance >= nearest.Distance then continue end
 
-            const cost = trianglesForLevel(self, patch.Want) - #patch.FaceIds
-            if self._triangles + cost <= MAX_TRIANGLES then nearest = patch end
+            const cost = trianglesForLevel(state, patch.Want) - #patch.FaceIds
+            if state.Triangles + cost <= MAX_TRIANGLES then nearest = patch end
         end
 
         if not nearest then break end
 
-        buildPatch(self, mesh, nearest, nearest.Want)
+        buildPatch(state, mesh, nearest, nearest.Want)
         remaining -= 1
     end
 
     if remaining < MAX_REBUILDS_PER_FRAME then mesh:RemoveUnused() end
 end
 
-const function pose(self: WaterInternal, mesh: EditableMesh, surface: MeshPart, now: number)
-    const config = self._config
+const function pose(state: State, mesh: EditableMesh, now: number)
+    const config = state.Config
+    const origin = state.Origin
 
     -- Materials and MaterialVariants are mapped relative to the part and ignore UVs, so they flow by sliding the
-    -- MeshPart and moving the vertices back by the same amount. Wrapped to one tile so it never drifts far.
+    -- part and moving the vertices back by the same amount. Wrapped to one tile so it never drifts far.
     const tile = config.MaterialTile
-    const flow = self._origin:VectorToObjectSpace(Vector3.new(config.FlowX, 0, config.FlowZ))
+    const flow = origin:VectorToObjectSpace(Vector3.new(config.FlowX, 0, config.FlowZ))
     const shiftX = (-flow.X * now) % tile
     const shiftZ = (-flow.Z * now) % tile
 
-    if shiftX ~= self._shiftX or shiftZ ~= self._shiftZ then
-        surface.CFrame = self._origin * CFrame.new(-shiftX, 0, -shiftZ)
-        self._shiftX = shiftX
-        self._shiftZ = shiftZ
+    if shiftX ~= state.ShiftX or shiftZ ~= state.ShiftZ then
+        state.Part.CFrame = origin * CFrame.new(-shiftX, 0, -shiftZ)
+        state.ShiftX = shiftX
+        state.ShiftZ = shiftZ
     end
 
-    -- UVs come from world XZ so textures line up across patches and areas. The flow offset is wrapped to one tile
+    -- UVs come from world XZ so textures line up across patches and parts. The flow offset is wrapped to one tile
     -- because server time is in the billions and would lose precision on the GPU.
     const scale = config.TextureScale
     const flowing = config.FlowX ~= 0 or config.FlowZ ~= 0
@@ -563,18 +582,18 @@ const function pose(self: WaterInternal, mesh: EditableMesh, surface: MeshPart, 
     const offsetV = (config.FlowZ * now) % scale
 
     -- For rotating world-space normals into the mesh's space.
-    const right = self._origin.XVector
-    const up = self._origin.YVector
-    const back = self._origin.ZVector
+    const right = origin.XVector
+    const up = origin.YVector
+    const back = origin.ZVector
 
     -- A continuous stand-in for the mesh spacing at a distance (the finest spacing that LOD level could have), so
     -- small waves fade out smoothly with distance instead of changing abruptly at patch borders.
-    const focus = self._focus
-    const surfaceY = self._origin.Position.Y
+    const focus = state.Focus
+    const surfaceY = origin.Position.Y
     const baseCell = config.CellSize
     const inverseLodDistance = 1 / config.LodDistance
 
-    for _, patch in self._patches do
+    for _, patch in state.Patches do
         if patch.Level < 0 then continue end
 
         const heights = patch.Heights
@@ -606,10 +625,10 @@ const function pose(self: WaterInternal, mesh: EditableMesh, surface: MeshPart, 
             normalZ[index] = nz * inverseLength
         end
 
-        const leftCells = neighborCells(self, patch.GridX - 1, patch.GridZ, false)
-        const rightCells = neighborCells(self, patch.GridX + 1, patch.GridZ, false)
-        const bottomCells = neighborCells(self, patch.GridX, patch.GridZ - 1, true)
-        const topCells = neighborCells(self, patch.GridX, patch.GridZ + 1, true)
+        const leftCells = neighborCells(state, patch.GridX - 1, patch.GridZ, false)
+        const rightCells = neighborCells(state, patch.GridX + 1, patch.GridZ, false)
+        const bottomCells = neighborCells(state, patch.GridX, patch.GridZ - 1, true)
+        const topCells = neighborCells(state, patch.GridX, patch.GridZ + 1, true)
 
         stitchPatch(patch, heights, leftCells, rightCells, bottomCells, topCells)
         stitchPatch(patch, normalX, leftCells, rightCells, bottomCells, topCells)
@@ -634,29 +653,42 @@ const function pose(self: WaterInternal, mesh: EditableMesh, surface: MeshPart, 
     end
 end
 
--- Yields while the engine builds the MeshPart.
-const function buildSurface(self: WaterInternal, token: number)
-    const part = self.Part
+-- Water is static, so a part that streams back in has the same CFrame and Size as the instance it replaces.
+const function cacheKey(part: MeshPart): string return `{part.CFrame}|{part.Size}` end
+
+-- Overwrites the part's geometry with the source's. ApplyMesh also overwrites TextureContent with the source's empty
+-- one, so it's put back afterwards.
+const function applySource(part: MeshPart, source: MeshPart)
+    const texture = part.TextureContent
+    part:ApplyMesh(source)
+    part.TextureContent = texture
+    applyAppearance(part)
+end
+
+-- Yields while the engine builds the MeshPart, then overwrites the part's geometry with it.
+const function buildSurface(state: State, token: number)
+    const part = state.Part
 
     const createdOk, created = pcall(function() return AssetService:CreateEditableMesh {} end)
-    if token ~= self._token then return end
+    if token ~= state.Token then return end
 
     if not createdOk or not created then
         warn(`[Water] Could not create EditableMesh for {part:GetFullName()}: {created}`)
-        self._building = false
-        self._retryAt = os.clock() + BUILD_RETRY_DELAY
+        state.Building = false
+        state.RetryAt = os.clock() + BUILD_RETRY_DELAY
         return
     end
     const mesh = created :: EditableMesh
 
-    for _, patch in self._patches do
-        buildPatch(self, mesh, patch, patch.Want)
+    for _, patch in state.Patches do
+        buildPatch(state, mesh, patch, patch.Want)
     end
 
-    -- Symmetric bounds keep the mesh centred on the surface and give the MeshPart a 1:1 scale with room for waves.
-    const bounds = math.max(self._config.WaveHeight, MIN_BOUNDS_HEIGHT)
-    const first = self._patches[1]
-    const last = self._patches[#self._patches]
+    -- ApplyMesh stretches the mesh's bounds to the part's Size, so pinning two corners to the part's top and bottom
+    -- keeps it at 1:1 scale. The first pose moves them back.
+    const bounds = part.Size.Y / 2
+    const first = state.Patches[1]
+    const last = state.Patches[#state.Patches]
     const lastIndex = #last.VertexIds
     mesh:SetPosition(first.VertexIds[1], Vector3.new(first.LocalX[1], bounds, first.LocalZ[1]))
     mesh:SetPosition(last.VertexIds[lastIndex], Vector3.new(last.LocalX[lastIndex], -bounds, last.LocalZ[lastIndex]))
@@ -668,66 +700,44 @@ const function buildSurface(self: WaterInternal, token: number)
         )
     end)
 
-    if token ~= self._token then
-        -- StreamOut or Destroy ran while we were yielding.
+    if token ~= state.Token then
+        -- A rebuild or Destroy ran while we were yielding.
         if builtOk and built then (built :: MeshPart):Destroy() end
         mesh:Destroy()
         return
     end
 
-    self._building = false
+    state.Building = false
 
     if not builtOk or not built then
         warn(`[Water] Could not build surface for {part:GetFullName()}: {built}`)
         mesh:Destroy()
-        for _, patch in self._patches do
+        for _, patch in state.Patches do
             clearPatch(patch)
         end
-        self._triangles = 0
-        self._retryAt = os.clock() + BUILD_RETRY_DELAY
+        state.Triangles = 0
+        state.RetryAt = os.clock() + BUILD_RETRY_DELAY
         return
     end
 
-    const surface = built :: MeshPart
-    surface.Name = "WaterSurface"
-    surface.Anchored = true
-    surface.CanCollide = false
-    surface.CanQuery = false
-    surface.CanTouch = false
-    surface.CastShadow = false
-    applyAppearance(surface, self._config)
+    -- The EditableMesh must stay alive while applied.
+    const source = built :: MeshPart
+    applySource(part, source)
 
-    -- SurfaceAppearance images can't be set from scripts, so one authored under the water part is cloned instead.
-    const appearance = part:FindFirstChildOfClass "SurfaceAppearance"
-    if appearance then appearance:Clone().Parent = surface end
-
-    self._mesh = mesh
-    self._surface = surface
-    pose(self, mesh, surface, workspace:GetServerTimeNow())
-
-    part.LocalTransparencyModifier = 1
-    surface.Parent = part
+    state.Mesh = mesh
+    state.Source = source
+    pose(state, mesh, workspace:GetServerTimeNow())
 end
 
-const function startBuild(self: WaterInternal)
-    self._building = true
-    task.spawn(buildSurface, self, self._token)
+const function startBuild(state: State)
+    state.Building = true
+    task.spawn(buildSurface, state, state.Token)
 end
 
--- PRIVATE MODULE
-const Impl = {}
-Impl.__index = Impl
-
--- Lays out the patches and starts building the mesh in the background; `focus` picks the starting detail.
-function Impl.StreamIn(self: WaterInternal, focus: Vector3)
-    if self._destroyed or self._state == "In" then return end
-
-    self._state = "In"
-    self._token += 1
-
-    const part = self.Part
-    const size = part.Size
-    const cellSize = self._config.CellSize
+-- Lays out the patches; `focus` picks the starting detail.
+const function layout(state: State, focus: Vector3)
+    const size = state.Part.Size
+    const cellSize = state.Config.CellSize
     const patchSize = cellSize * PATCH_CELLS
 
     const patchesX = math.max(math.ceil(size.X / patchSize), 1)
@@ -739,16 +749,15 @@ function Impl.StreamIn(self: WaterInternal, focus: Vector3)
     const baseCellsX = 2 ^ log2(math.clamp(sizeX / cellSize, 1, PATCH_CELLS))
     const baseCellsZ = 2 ^ log2(math.clamp(sizeZ / cellSize, 1, PATCH_CELLS))
 
-    self._origin = surfaceCFrame(part)
-    self._patchesX = patchesX
-    self._patchesZ = patchesZ
-    self._baseCellsX = baseCellsX
-    self._baseCellsZ = baseCellsZ
-    self._maxLevel = math.max(log2(baseCellsX), log2(baseCellsZ))
-    self._triangles = 0
-    self._shiftX = math.huge
-    self._shiftZ = math.huge
-    self._retryAt = 0
+    state.PatchesX = patchesX
+    state.PatchesZ = patchesZ
+    state.BaseCellsX = baseCellsX
+    state.BaseCellsZ = baseCellsZ
+    state.MaxLevel = math.max(log2(baseCellsX), log2(baseCellsZ))
+    state.Triangles = 0
+    state.ShiftX = math.huge
+    state.ShiftZ = math.huge
+    state.RetryAt = 0
 
     for gridZ = 0, patchesZ - 1 do
         for gridX = 0, patchesX - 1 do
@@ -779,110 +788,191 @@ function Impl.StreamIn(self: WaterInternal, focus: Vector3)
                 UvScale = 0,
             }
 
-            table.insert(self._patches, patch)
-            table.insert(self._byDistance, patch)
+            table.insert(state.Patches, patch)
+            table.insert(state.ByDistance, patch)
         end
     end
 
-    refreshLevels(self, focus)
-    startBuild(self)
+    refreshLevels(state, focus)
 end
 
-function Impl.StreamOut(self: WaterInternal)
-    if self._state == "Out" then return end
+-- Frees the mesh and patches; any build still yielding is discarded.
+const function reset(state: State)
+    state.Token += 1
+    state.Building = false
 
-    self._token += 1
-    self._state = "Out"
-    self._building = false
-    self.Part.LocalTransparencyModifier = 0
-
-    const surface = self._surface
-    const mesh = self._mesh
-    self._surface = nil
-    self._mesh = nil
-    if surface then surface:Destroy() end
+    const mesh = state.Mesh
+    state.Mesh = nil
     if mesh then mesh:Destroy() end
 
-    table.clear(self._patches)
-    table.clear(self._byDistance)
-    self._triangles = 0
+    const source = state.Source
+    state.Source = nil
+    if source then source:Destroy() end
+
+    table.clear(state.Patches)
+    table.clear(state.ByDistance)
+    state.Triangles = 0
 end
 
--- `now` should be shared across clients (workspace:GetServerTimeNow()) so everyone sees the same waves.
--- `focus` is usually the camera position; it drives each patch's level of detail.
-function Impl.Update(self: WaterInternal, now: number, focus: Vector3)
-    if self._state ~= "In" then return end
-
-    refreshLevels(self, focus)
-
-    const mesh = self._mesh
-    const surface = self._surface
-    if not mesh or not surface then
-        if not self._building and os.clock() >= self._retryAt then startBuild(self) end
-        return
-    end
-
-    rebuildPatches(self, mesh)
-    pose(self, mesh, surface, now)
+const function rebuild(state: State)
+    reset(state)
+    layout(state, getFocus(state.Part))
+    startBuild(state)
 end
 
--- World-space Y of the animated surface above `position`; works whether or not the area is rendered.
-function Impl.GetHeightAt(self: WaterInternal, position: Vector3, now: number): number
-    return surfaceCFrame(self.Part).Position.Y + (sampleSurface(self._config, position.X, position.Z, now, 0))
+-- Wave, flow, appearance and LodDistance changes apply live; CellSize changes rebuild the mesh.
+const function connect(state: State)
+    const part = state.Part
+    state.Connection = part.AttributeChanged:Connect(function()
+        applyAppearance(part)
+
+        const cellSize = state.Config.CellSize
+        state.Config = readConfig(part)
+        if state.Config.CellSize ~= cellSize then rebuild(state) end
+    end)
 end
 
-function Impl.IsRendered(self: WaterInternal): boolean return self._state == "In" end
-
-function Impl.Destroy(self: WaterInternal)
-    if self._destroyed then return end
-
-    Impl.StreamOut(self)
-    self._destroyed = true
-
-    const connection = self._attributeConnection
-    self._attributeConnection = nil
+const function disconnect(state: State)
+    const connection = state.Connection
+    state.Connection = nil
     if connection then connection:Disconnect() end
 end
+
+-- Hands a cached state's mesh to the instance that replaced its part. Nothing is rebuilt.
+const function adopt(state: State, part: MeshPart, config: Config)
+    state.Part = part
+    state.Config = config
+    -- The new instance sits at Origin, so the next pose has to slide it again.
+    state.ShiftX = math.huge
+    state.ShiftZ = math.huge
+
+    applySource(part, state.Source :: MeshPart)
+end
+
+-- PRIVATE MODULE
 
 -- PUBLIC MODULE
 const Water = {}
 
--- Cheap: reads config only. The mesh is built after StreamIn and freed on StreamOut.
-function Water.new(part: BasePart): Water
-    const self: WaterInternal = {
+-- Builds the mesh in the background and overwrites the part's geometry with it once it's ready. A part streaming
+-- back in within CACHE_LIFETIME of being released picks its old mesh back up instead.
+function Water.new(part: MeshPart)
+    if _states[part] then return end
+
+    -- Before readConfig, which takes the flow tile size from the part's MaterialVariant.
+    applyAppearance(part)
+    const config = readConfig(part)
+    const key = cacheKey(part)
+
+    const cached = _cache[key]
+    if cached then
+        _cache[key] = nil
+
+        if cached.Config.CellSize == config.CellSize then
+            adopt(cached, part, config)
+            _states[part] = cached
+            connect(cached)
+            return
+        end
+
+        reset(cached)
+    end
+
+    const state: State = {
         Part = part,
-        _config = readConfig(part),
-        _state = "Out",
-        _token = 0,
-        _building = false,
-        _retryAt = 0,
-        _origin = surfaceCFrame(part),
-        _focus = part.Position,
-        _mesh = nil,
-        _surface = nil,
-        _patches = {},
-        _byDistance = {},
-        _patchesX = 0,
-        _patchesZ = 0,
-        _baseCellsX = 1,
-        _baseCellsZ = 1,
-        _maxLevel = 0,
-        _triangles = 0,
-        _shiftX = math.huge,
-        _shiftZ = math.huge,
-        _attributeConnection = nil,
-        _destroyed = false,
+        Config = config,
+        Key = key,
+        ReleasedAt = 0,
+        Token = 0,
+        Building = false,
+        RetryAt = 0,
+        Origin = part.CFrame,
+        Focus = part.Position,
+        Mesh = nil,
+        Source = nil,
+        Patches = {},
+        ByDistance = {},
+        PatchesX = 0,
+        PatchesZ = 0,
+        BaseCellsX = 1,
+        BaseCellsZ = 1,
+        MaxLevel = 0,
+        Triangles = 0,
+        ShiftX = math.huge,
+        ShiftZ = math.huge,
+        Connection = nil,
     }
+    _states[part] = state
+    connect(state)
 
-    -- Wave, flow, appearance and LodDistance changes apply live; CellSize changes apply on the next StreamIn.
-    self._attributeConnection = part.AttributeChanged:Connect(function()
-        self._config = readConfig(part)
+    layout(state, getFocus(part))
+    startBuild(state)
+end
 
-        const surface = self._surface
-        if surface then applyAppearance(surface, self._config) end
+-- `sync` should be shared across clients (workspace:GetServerTimeNow()) so everyone sees the same waves.
+function Water.Update(part: MeshPart, sync: number)
+    const state = _states[part]
+    if not state then return end
+
+    refreshLevels(state, getFocus(part))
+
+    const mesh = state.Mesh
+    if not mesh then
+        if not state.Building and os.clock() >= state.RetryAt then startBuild(state) end
+        return
+    end
+
+    rebuildPatches(state, mesh)
+    pose(state, mesh, sync)
+end
+
+-- World-space Y of the animated surface above `position`, whether or not the part is being updated.
+function Water.GetHeightAt(part: MeshPart, position: Vector3, sync: number): number?
+    const state = _states[part]
+    if not state then return nil end
+
+    return state.Origin.Position.Y + (sampleSurface(state.Config, position.X, position.Z, sync, 0))
+end
+
+-- For a part leaving the client, e.g. streaming out. Its mesh is kept for CACHE_LIFETIME seconds in case the part
+-- streams back in, then freed.
+function Water.Release(part: MeshPart)
+    const state = _states[part]
+    if not state then return end
+
+    _states[part] = nil
+    disconnect(state)
+
+    -- Still building (or failed), so there's nothing worth keeping.
+    if not state.Mesh or not state.Source then
+        reset(state)
+        return
+    end
+
+    const key = state.Key
+    const existing = _cache[key]
+    if existing then reset(existing) end
+
+    const releasedAt = os.clock()
+    state.ReleasedAt = releasedAt
+    _cache[key] = state
+
+    task.delay(CACHE_LIFETIME, function()
+        if _cache[key] ~= state or state.ReleasedAt ~= releasedAt then return end
+
+        _cache[key] = nil
+        reset(state)
     end)
+end
 
-    return (setmetatable(self, Impl) :: any) :: Water
+-- Frees the part's mesh right away, without caching it.
+function Water.Destroy(part: MeshPart)
+    const state = _states[part]
+    if not state then return end
+
+    _states[part] = nil
+    disconnect(state)
+    reset(state)
 end
 
 return Water
