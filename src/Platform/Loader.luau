@@ -104,6 +104,12 @@ function Loader.Start(opts: StartOpts)
         -- check if its a singleton by checking name for matchers
         if not matchesAny(descendant.Name, matchers) then continue end
 
+        -- check if disabled
+        if descendant:GetAttribute "Disabled" == true then
+            LogService:Info("[Loader] '{module}' is disabled skipping require", { module = descendant.Name })
+            continue
+        end
+
         -- check if its already registered
         if _singletons[descendant.Name] then
             const duplicate = _singletonModules[descendant.Name]

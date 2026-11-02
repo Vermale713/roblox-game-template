@@ -1,107 +1,64 @@
 {
-	"emitLegacyScripts": false,
-	"name": "roblox_game_template",
-	"tree": {
-		"$className": "DataModel",
-		"Lighting": {},
-		"ReplicatedFirst": {},
-		"ReplicatedStorage": {
-			"Client": {
-				"$className": "Folder",
-				"$ignoreUnknownInstances": false,
-				"App": {
-					"$ignoreUnknownInstances": false,
-					"$path": {
-						"optional": "src/App/Client"
-					}
-				},
-				"Core": {
-					"$className": "Folder",
-					"$ignoreUnknownInstances": false,
-					"Data": {
-						"$className": "Folder",
-						"$ignoreUnknownInstances": false,
-						"DataController": {
-							"$path": {
-								"optional": "src/Core/Data/DataController.luau"
-							}
-						}
-					}
-				},
-				"Features": {
-					"$ignoreUnknownInstances": false,
-					"$path": {
-						"optional": "src/Features"
-					}
-				}
-			},
-			"Packages": {
-				"$path": "packages/roblox"
-			},
-			"Shared": {
-				"$className": "Folder",
-				"$ignoreUnknownInstances": false,
-				"Base": {
-					"$ignoreUnknownInstances": false,
-					"$path": {
-						"optional": "src/Base"
-					}
-				},
-				"Core": {
-					"$className": "Folder",
-					"$ignoreUnknownInstances": false,
-					"Data": {
-						"$className": "Folder",
-						"$ignoreUnknownInstances": false,
-						"DataTemplate": {
-							"$path": {
-								"optional": "src/Core/Data/DataTemplate.luau"
-							}
-						}
-					}
-				},
-				"Platform": {
-					"$ignoreUnknownInstances": false,
-					"$path": {
-						"optional": "src/Platform"
-					}
-				}
-			}
-		},
-		"RobloxPluginGuiService": {},
-		"ServerScriptService": {
-			"Server": {
-				"$className": "Folder",
-				"$ignoreUnknownInstances": false,
-				"App": {
-					"$ignoreUnknownInstances": false,
-					"$path": {
-						"optional": "src/App/Server"
-					}
-				},
-				"Core": {
-					"$className": "Folder",
-					"$ignoreUnknownInstances": false,
-					"Data": {
-						"$className": "Folder",
-						"$ignoreUnknownInstances": false,
-						"DataService": {
-							"$path": {
-								"optional": "src/Core/Data/DataService.luau"
-							}
-						}
-					}
-				}
-			}
-		},
-		"ServerStorage": {},
-		"SoundService": {},
-		"StarterGui": {},
-		"StarterPack": {},
-		"StarterPlayer": {
-			"StarterCharacterScripts": {},
-			"StarterPlayerScripts": {}
-		},
-		"Workspace": {}
-	}
+  "name": "roblox_game_template",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Client": {
+        "$className": "Folder",
+        "Game": {
+          "$className": "Folder",
+          "Main": {
+            "$path": {
+              "optional": "dist/Game/Main.client.luau"
+            }
+          },
+          "$ignoreUnknownInstances": false
+        },
+        "$ignoreUnknownInstances": false
+      },
+      "Packages": {
+        "$path": "packages/roblox"
+      },
+      "Shared": {
+        "$className": "Folder",
+        "Features": {
+          "$path": {
+            "optional": "dist/Features"
+          }
+        },
+        "Platform": {
+          "$path": {
+            "optional": "dist/Platform"
+          }
+        },
+        "$ignoreUnknownInstances": false
+      }
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "Core": {
+        "$className": "Folder",
+        "Data": {
+          "$className": "Folder",
+          "DataService": {
+            "$path": {
+              "optional": "dist/Core/Data/DataService@Server.luau"
+            }
+          },
+          "$ignoreUnknownInstances": false
+        },
+        "$ignoreUnknownInstances": false
+      },
+      "Game": {
+        "$className": "Folder",
+        "Main": {
+          "$path": {
+            "optional": "src/Game/Main.server.luau"
+          }
+        },
+        "$ignoreUnknownInstances": false
+      }
+    }
+  },
+  "emitLegacyScripts": false
 }

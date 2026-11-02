@@ -16,6 +16,9 @@
 -- PRIVATE MODULE
 
 -- PUBLIC MODULE
-const Thread = {}
+const DataService = {}
 
-return Thread
+function DataService.OnInit()
+end
+
+return DataService

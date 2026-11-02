@@ -2,28 +2,10 @@
 version = 2
 
 [[package]]
-name = "darkgamerroblox/pancakes"
-version = "1.0.0"
+name = "pepeeltoro41/ui-labs"
+version = "2.4.2"
 environment = "roblox"
-link = "Pancakes"
+link = "UiLabs"
 index = "https://github.com/UpliftGames/wally-index"
 type = "zip"
-url = "https://api.wally.run/v1/package-contents/darkgamerroblox/pancakes/1.0.0"
-
-[[package]]
-name = "ericplane/scribe"
-version = "2.3.0"
-environment = "roblox"
-link = "Scribe"
-index = "https://github.com/UpliftGames/wally-index"
-type = "zip"
-url = "https://api.wally.run/v1/package-contents/ericplane/scribe/2.3.0"
-
-[[package]]
-name = "molyidev/signal"
-version = "1.0.3"
-environment = "roblox"
-link = "Signal"
-index = "https://github.com/pesde-pkg/index"
-type = "tar-gz"
-url = "https://registry.pesde.daimond113.com/v1/packages/molyidev%2Fsignal/1.0.3/roblox/archive"
+url = "https://api.wally.run/v1/package-contents/pepeeltoro41/ui-labs/2.4.2"

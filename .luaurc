@@ -1,12 +1,11 @@
 {
-  "lint": {
-    "*": false
-  },
-  "languageMode": "strict",
-  "aliases": {
-    "base": "./src/Base",
-    "platform": "./src/Platform",
-    "pkg": "./packages/roblox",
-    "spkg": "./packages/server"
-  }
+    "lint": {
+        "*": false
+    },
+    "languageMode": "strict",
+    "aliases": {
+        "platform": "./src/Platform",
+        "pkg": "./packages/roblox",
+        "spkg": "./packages/server"
+    }
 }

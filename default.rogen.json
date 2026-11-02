@@ -1,0 +1,34 @@
+{
+    "name": "roblox_game_template",
+    "sourcePaths": [
+        "src"
+    ],
+    "routes": {
+        "Server": "ServerScriptService",
+        "Client": "ReplicatedStorage/Client",
+        "Shared": "ReplicatedStorage/Shared",
+        "*": "ReplicatedStorage/Shared"
+    },
+    "compiledPath": "dist",
+    "emitLegacyScripts": false,
+    "tree": {
+        "$className": "DataModel",
+        "ServerScriptService": {
+            "$className": "ServerScriptService",
+            "Game": {
+                "$className": "Folder",
+                "Main": {
+                    "$path": {
+                        "optional": "src/Game/Main.server.luau"
+                    }
+                },
+                "$ignoreUnknownInstances": false
+            }
+        },
+        "ReplicatedStorage": {
+            "Packages": {
+                "$path": "packages/roblox"
+            }
+        }
+    }
+}

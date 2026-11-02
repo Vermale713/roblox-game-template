@@ -1,30 +1,22 @@
 #:schema https://raw.githubusercontent.com/larvae-luau/larvae/master/crates/larvae/larvae.schema.json
 # larvae configuration, run `larvae self code` for editor completion.
-# Mounts come from default.project.json, nothing to repeat here.
+# No default.project.json found, the roblox-string target needs one
+# or a [requires.mounts] table.
 
 input = "src"
 output = "dist"
 target = "roblox-string"
 exclude = ["dist", "packages"]
 
+
 [requires]
 strict = true
+sourcemap = "sourcemap.json"
 
 [requires.mounts]
 "packages/roblox" = "@game/ReplicatedStorage/Packages"
 "packages/server" = "@game/ServerStorage/ServerPackages"
 "src/Platform" = "@game/ReplicatedStorage/Shared/Platform"
-
-[process]
-generator = "readable"
-
-[lsp]
-enabled = true
-analyzer = true
-roblox_security_level = "plugin-security"
-fflags.enable_new_solver = true
-sourcemap_autogenerate = false
-completion.imports.require_style = "nearest_absolute"
 
 [aliases]
 pkg = "@game/ReplicatedStorage/Packages"
@@ -32,9 +24,17 @@ spkg = "@game/ServerStorage/ServerPackages"
 base = "@game/ReplicatedStorage/Shared/Base"
 platform = "@game/ReplicatedStorage/Shared/Platform"
 
+[lsp]
+enabled = true
+fflags.enable_new_solver = true
+completion.imports.require_style = "nearest_absolute"
+
+[process]
+generator = "readable"
+
 [fmt]
 # Blink codegen output; regenerate with `just network` instead of formatting it.
-exclude = ["src/Shared/Network/**"]
+exclude = ["src/Core/Network/**", "src/StarterPlayer"]
 recommended = true
 column_width = 120
 indent_type = "spaces"
@@ -54,7 +54,7 @@ function_style = "const"
 
 [lint]
 # Blink codegen output; not ours to fix.
-exclude = ["src/Shared/Network/**"]
+exclude = ["src/Core/Network/**", "src/StarterPlayer"]
 recommended = true
 std = "roblox"
 
@@ -64,7 +64,6 @@ unused_function = "warn"
 unused_import = "warn"
 almost_swapped = "deny"
 and_or_conditional = "deny"
-
-# rules.unused_variable = "warn"
+mixed_table = "allow"
 # Set a level for one lint under [lint.rules], or for a whole kind
 # under [lint.groups]. `larvae lint --explain <name>` describes one.

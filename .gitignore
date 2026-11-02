@@ -1,10 +1,6 @@
-# tools
-.larvae/
-
-# build
-dist/
-sourcemap.json
-
-# local
 packages/
 .ember-patch/
+.larvae/
+dist/
+*.project.json
+sourcemap.json

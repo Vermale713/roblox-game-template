@@ -1,19 +1,17 @@
 [parallel]
-dev: rogen process sourcemap serve
+dev: write process sourcemap serve
 
-check:
-    larvae check
-    larvae fmt --check
-    larvae lint
+# serve:
+#     rogen serve
 
-process:
-    larvae process -w
+serve:
+    rojo serve .larvae/build.project.json
 
-rogen:
-    rogen watch
+write:
+    rogen write --watch
 
 sourcemap:
     rojo sourcemap default.project.json -o sourcemap.json --watch
 
-serve:
-    rojo serve .larvae/build.project.json
+process:
+    larvae process -w
